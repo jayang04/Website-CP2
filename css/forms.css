@@ -1,0 +1,59 @@
+/* ========================================
+   FORM STYLES (LOGIN & SIGNUP)
+   ======================================== */
+
+.login-container, .signup-container {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2.5rem;
+  background: #fff;
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
+}
+
+.login-container h2, .signup-container h2 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+}
+
+.login-container form, .signup-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-container input, .signup-container input {
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+  background: #fff;
+}
+
+.login-container input:focus, .signup-container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.1);
+}
+
+.login-container button, .signup-container button {
+  padding: 1rem;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.login-container button:hover, .signup-container button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}

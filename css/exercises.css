@@ -1,0 +1,73 @@
+/* ========================================
+   EXERCISE/REHAB PAGE STYLES
+   ======================================== */
+
+.program-overview {
+  background: #fff;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-color);
+}
+
+.program-overview h2 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.exercise-list {
+  background: #fff;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-color);
+}
+
+.exercise-list h3 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.exercise-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.exercise-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--secondary-color);
+  transition: var(--transition);
+}
+
+.exercise-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+.exercise-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--border-radius);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.exercise-card h4 {
+  color: var(--primary-color);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.exercise-card p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}

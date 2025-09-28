@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Rehab Hub</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-text">Rehab Hub</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="signup.html">Sign Up</a>
+        <a href="login.html">Login</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+      </nav>
+      <button class="hamburger" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu">
+      <div class="mobile-menu-header">
+        <a href="index.html" class="logo">
+          <span class="logo-text">Rehab Hub</span>
+        </a>
+        <button class="close-menu" aria-label="Close menu">&times;</button>
+      </div>
+      <nav class="mobile-nav">
+        <a href="index.html">Home</a>
+        <a href="signup.html">Sign Up</a>
+        <a href="login.html">Login</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container">
+      <h1>Your Rehabilitation Dashboard</h1>
+      <p>Track your progress, view your programs, and continue your recovery journey</p>
+    </div>
+  </section>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">Rehab Hub</div>
+      <ul>
+        <li><a href="dashboard.html">Home</a></li>
+        <li><a href="knee-rehab.html">Knee Rehab</a></li>
+        <li><a href="ankle-rehab.html">Ankle Rehab</a></li>
+        <li><a href="index.html">Logout</a></li>
+      </ul>
+    </aside>
+    <div class="dashboard-main">
+      <header class="dashboard-header">
+        <h2>👋 Welcome back, Sarah!</h2>
+        <img src="https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=56&h=56&q=80" alt="User Avatar" class="dashboard-avatar">
+      </header>
+      <section class="dashboard-widgets">
+        <div class="widget widget-progress">
+          <h3>📊 Your Progress</h3>
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Progress Chart" class="widget-img">
+          <p>You've completed 75% of your knee rehabilitation program. Keep up the great work!</p>
+        </div>
+        <div class="widget widget-activity">
+          <h3>🏃‍♀️ Recent Activity</h3>
+          <ul>
+            <li>✅ Completed "Quad Sets" exercise</li>
+            <li>📝 Logged pain level: 2/10</li>
+            <li>⏰ Morning check-in: 10:00 AM</li>
+            <li>🎯 Achieved daily movement goal</li>
+          </ul>
+        </div>
+        <div class="widget widget-links">
+          <h3>🔗 Quick Actions</h3>
+          <ul>
+            <li><a href="knee-rehab.html">Start Knee Exercises</a></li>
+            <li><a href="ankle-rehab.html">View Ankle Program</a></li>
+            <li><a href="#">Contact Your Therapist</a></li>
+            <li><a href="#">Schedule Next Session</a></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <span class="logo-text">Rehab Hub</span>
+        <p>Your comprehensive partner in recovery and rehabilitation. Providing guided exercises, progress tracking, and professional support for knee and ankle rehabilitation.</p>
+      </div>
+      <div class="footer-info">
+        <h4>Contact Information</h4>
+        <p><strong>Email:</strong><br>
+          <a href="mailto:support@rehabhub.com">support@rehabhub.com</a><br>
+          <a href="mailto:help@rehabhub.com">help@rehabhub.com</a>
+        </p>
+        <p><strong>Phone:</strong><br>
+          <a href="tel:+1234567890">+1 (234) 567-890</a><br>
+          <a href="tel:+1234567891">+1 (234) 567-891</a>
+        </p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <a href="index.html">Home</a>
+        <a href="signup.html">Sign Up</a>
+        <a href="login.html">Login</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="knee-rehab.html">Knee Rehab</a>
+        <a href="ankle-rehab.html">Ankle Rehab</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Rehab Hub - Capstone Project. All Rights Reserved.</p>
+    </div>
+  </footer>
+  <script type="module" src="dist/main.js"></script>
+</body>
+</html> 

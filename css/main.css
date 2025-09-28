@@ -1,0 +1,20 @@
+/* ========================================
+   REHAB HUB - MAIN STYLESHEET
+   Modular CSS Architecture
+   ======================================== */
+
+/* Base Styles & Variables */
+@import url('./base.css');
+
+/* Components */
+@import url('./navigation.css');
+@import url('./footer.css');
+
+/* Pages */
+@import url('./home.css');
+@import url('./forms.css');
+@import url('./dashboard.css');
+@import url('./exercises.css');
+
+/* Responsive Design */
+@import url('./responsive.css');

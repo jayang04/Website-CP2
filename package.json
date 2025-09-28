@@ -1,0 +1,25 @@
+{
+  "name": "rehab-hub",
+  "version": "1.0.0",
+  "description": "Knee and Ankle Rehabilitation Platform - Capstone Project",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "serve": "live-server --open=/index.html",
+    "dev": "concurrently \"npm run watch\" \"npm run serve\""
+  },
+  "keywords": ["rehabilitation", "healthcare", "typescript", "web-app"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "live-server": "^1.2.2",
+    "concurrently": "^8.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "dependencies": {
+    "chart.js": "^4.0.0",
+    "date-fns": "^2.30.0"
+  }
+}
