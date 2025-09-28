@@ -24,6 +24,7 @@ export class NavigationComponent {
     }
 
     this.bindEvents();
+    this.initUserDropdown();
   }
 
   private bindEvents(): void {
@@ -134,5 +135,42 @@ export class NavigationComponent {
     // Remove custom event listeners
     // Note: We don't remove all listeners as they're handled by browser cleanup
     console.log('Navigation component destroyed');
+  }
+
+  /**
+   * Initialize user dropdown functionality
+   */
+  private initUserDropdown(): void {
+    const userDropdown = document.querySelector('.user-dropdown');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    
+    if (!userDropdown || !dropdownMenu) return;
+
+    let hoverTimeout: NodeJS.Timeout;
+
+    userDropdown.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimeout);
+      dropdownMenu.classList.add('show');
+    });
+
+    userDropdown.addEventListener('mouseleave', () => {
+      hoverTimeout = setTimeout(() => {
+        dropdownMenu.classList.remove('show');
+      }, 100);
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      if (!userDropdown.contains(e.target as Node)) {
+        dropdownMenu.classList.remove('show');
+      }
+    });
+
+    // Close dropdown on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dropdownMenu.classList.remove('show');
+      }
+    });
   }
 }

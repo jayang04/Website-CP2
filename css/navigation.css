@@ -17,7 +17,7 @@
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
 }
 
 .logo {
@@ -186,4 +186,42 @@
 .mobile-nav a.active {
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
+}
+
+/* Account Navigation Styling */
+.account-nav {
+  background: var(--primary-color) !important;
+  color: #fff !important;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  padding: 0.75rem 1.25rem !important;
+  transition: var(--transition);
+}
+
+.account-nav:hover {
+  background: var(--primary-dark) !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.account-nav.active {
+  background: var(--primary-dark) !important;
+  color: #fff !important;
+}
+
+.account-nav.active::after {
+  display: none;
+}
+
+/* Mobile account nav styling */
+.mobile-nav .account-nav {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.mobile-nav .account-nav:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: #fff !important;
 }

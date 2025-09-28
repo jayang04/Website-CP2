@@ -7,17 +7,55 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <header class="site-header">
+  <!-- Navigation Bar with User Dropdown -->
+  <header class="site-header dashboard-header">
     <div class="nav-container">
       <a href="index.html" class="logo">
         <span class="logo-text">Rehab Hub</span>
       </a>
       <nav class="main-nav">
         <a href="index.html">Home</a>
-        <a href="signup.html">Sign Up</a>
-        <a href="login.html">Login</a>
         <a href="dashboard.html" class="active">Dashboard</a>
+        <div class="user-dropdown">
+          <button class="user-menu-btn">
+            <img src="https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80" alt="User Avatar" class="nav-avatar">
+            <span>Sarah Johnson</span>
+            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+              <path d="M6 9l-3-3h6l-3 3z"/>
+            </svg>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dropdown-header">
+              <img src="https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80" alt="User Avatar" class="dropdown-avatar">
+              <div>
+                <h4>Sarah Johnson</h4>
+                <p>Premium Member</p>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a href="#profile" class="dropdown-item">
+              <span class="dropdown-icon">👤</span>
+              My Profile
+            </a>
+            <a href="#progress" class="dropdown-item">
+              <span class="dropdown-icon">📊</span>
+              Progress Reports
+            </a>
+            <a href="#appointments" class="dropdown-item">
+              <span class="dropdown-icon">📅</span>
+              Appointments
+            </a>
+            <a href="#settings" class="dropdown-item">
+              <span class="dropdown-icon">⚙️</span>
+              Settings
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="index.html" class="dropdown-item logout">
+              <span class="dropdown-icon">🚪</span>
+              Logout
+            </a>
+          </div>
+        </div>
       </nav>
       <button class="hamburger" aria-label="Open menu">
         <span></span>
@@ -34,63 +72,125 @@
         <button class="close-menu" aria-label="Close menu">&times;</button>
       </div>
       <nav class="mobile-nav">
+        <div class="mobile-user-profile">
+          <img src="https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80" alt="User Avatar" class="mobile-avatar">
+          <div>
+            <h4>Sarah Johnson</h4>
+            <p>Premium Member</p>
+          </div>
+        </div>
         <a href="index.html">Home</a>
-        <a href="signup.html">Sign Up</a>
-        <a href="login.html">Login</a>
         <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="#profile">My Profile</a>
+        <a href="#progress">Progress Reports</a>
+        <a href="#appointments">Appointments</a>
+        <a href="#settings">Settings</a>
+        <a href="index.html" class="logout">Logout</a>
       </nav>
     </div>
   </header>
 
-  <section class="page-header">
-    <div class="container">
-      <h1>Your Rehabilitation Dashboard</h1>
-      <p>Track your progress, view your programs, and continue your recovery journey</p>
+  <!-- Full Screen Dashboard Content -->
+  <main class="dashboard-fullscreen">
+    <div class="dashboard-hero">
+      <div class="hero-content">
+        <h1>👋 Welcome back, Sarah!</h1>
+        <p>Your rehabilitation journey continues - here's your progress and activities</p>
+      </div>
+      <div class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-number">75%</div>
+          <div class="stat-label">Progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Days Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
     </div>
-  </section>
 
-  <div class="dashboard-layout">
-    <aside class="sidebar">
-      <div class="sidebar-logo">Rehab Hub</div>
-      <ul>
-        <li><a href="dashboard.html">Home</a></li>
-        <li><a href="knee-rehab.html">Knee Rehab</a></li>
-        <li><a href="ankle-rehab.html">Ankle Rehab</a></li>
-        <li><a href="index.html">Logout</a></li>
-      </ul>
-    </aside>
-    <div class="dashboard-main">
-      <header class="dashboard-header">
-        <h2>👋 Welcome back, Sarah!</h2>
-        <img src="https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=56&h=56&q=80" alt="User Avatar" class="dashboard-avatar">
-      </header>
-      <section class="dashboard-widgets">
-        <div class="widget widget-progress">
-          <h3>📊 Your Progress</h3>
-          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Progress Chart" class="widget-img">
-          <p>You've completed 75% of your knee rehabilitation program. Keep up the great work!</p>
+    <div class="dashboard-container">
+      <div class="dashboard-grid">
+        <!-- Quick Actions -->
+        <div class="dashboard-section">
+          <h2>🚀 Quick Actions</h2>
+          <div class="action-cards">
+            <a href="knee-rehab.html" class="action-card">
+              <div class="action-icon">🦵</div>
+              <h3>Knee Rehabilitation</h3>
+              <p>Continue your knee recovery program</p>
+            </a>
+            <a href="ankle-rehab.html" class="action-card">
+              <div class="action-icon">🦶</div>
+              <h3>Ankle Rehabilitation</h3>
+              <p>Start your ankle strengthening exercises</p>
+            </a>
+            <a href="#appointments" class="action-card">
+              <div class="action-icon">📅</div>
+              <h3>Book Appointment</h3>
+              <p>Schedule with your therapist</p>
+            </a>
+          </div>
         </div>
-        <div class="widget widget-activity">
-          <h3>🏃‍♀️ Recent Activity</h3>
-          <ul>
-            <li>✅ Completed "Quad Sets" exercise</li>
-            <li>📝 Logged pain level: 2/10</li>
-            <li>⏰ Morning check-in: 10:00 AM</li>
-            <li>🎯 Achieved daily movement goal</li>
-          </ul>
+
+        <!-- Progress Overview -->
+        <div class="dashboard-section">
+          <h2>📊 Progress Overview</h2>
+          <div class="progress-widget">
+            <div class="progress-chart">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Progress Chart" class="chart-img">
+            </div>
+            <div class="progress-details">
+              <h3>Knee Rehabilitation Program</h3>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 75%"></div>
+              </div>
+              <p>Week 3 of 8 - You're doing great! Keep up the excellent work.</p>
+            </div>
+          </div>
         </div>
-        <div class="widget widget-links">
-          <h3>🔗 Quick Actions</h3>
-          <ul>
-            <li><a href="knee-rehab.html">Start Knee Exercises</a></li>
-            <li><a href="ankle-rehab.html">View Ankle Program</a></li>
-            <li><a href="#">Contact Your Therapist</a></li>
-            <li><a href="#">Schedule Next Session</a></li>
-          </ul>
+
+        <!-- Recent Activity -->
+        <div class="dashboard-section">
+          <h2>🏃‍♀️ Recent Activity</h2>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon completed">✅</div>
+              <div class="activity-content">
+                <h4>Completed "Quad Sets" exercise</h4>
+                <p>2 hours ago</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon logged">📝</div>
+              <div class="activity-content">
+                <h4>Logged pain level: 2/10</h4>
+                <p>3 hours ago</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon checkin">⏰</div>
+              <div class="activity-content">
+                <h4>Morning check-in completed</h4>
+                <p>This morning at 10:00 AM</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon goal">🎯</div>
+              <div class="activity-content">
+                <h4>Achieved daily movement goal</h4>
+                <p>Yesterday</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
-  </div>
+  </main>
   
   <!-- Footer -->
   <footer class="site-footer">
@@ -126,4 +226,4 @@
   </footer>
   <script type="module" src="dist/main.js"></script>
 </body>
-</html> 
+</html>

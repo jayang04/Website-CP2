@@ -67,29 +67,129 @@
   }
   
   /* Dashboard */
-  .dashboard-header {
+  .dashboard-hero {
     flex-direction: column;
-    align-items: flex-start;
+    text-align: center;
+    padding: 3rem 1rem !important;
+    align-items: center;
+  }
+  
+  .hero-content {
+    margin-bottom: 2rem;
+  }
+  
+  .hero-content h1 {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .hero-content p {
+    font-size: 1rem;
+  }
+  
+  .quick-stats {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .stat-card {
+    min-width: 80px;
+    padding: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 1.8rem;
+  }
+  
+  .dashboard-container {
+    padding: 2rem 1rem;
+  }
+  
+  /* Dashboard Mobile */
+  .dashboard-hero {
+    padding: 2rem 1rem !important;
+  }
+  
+  .hero-content h1 {
+    font-size: 1.75rem;
+  }
+  
+  .quick-stats {
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
   }
   
-  .dashboard-layout {
-    flex-direction: column;
+  .stat-card {
+    min-width: 100px;
+    padding: 1.5rem;
   }
   
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    order: 2;
+  .stat-number {
+    font-size: 2rem;
   }
   
-  .dashboard-main {
-    order: 1;
+  .dashboard-container {
+    padding: 2rem 1rem;
   }
   
-  .dashboard-widgets {
+  .dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .progress-widget {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+  
+  .progress-details {
+    margin-top: 1.5rem;
+    max-width: 100%;
+  }
+  
+  .chart-img {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .action-cards {
+    gap: 1rem;
+  }
+  
+  .action-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+    align-items: center;
+  }
+  
+  .action-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 1rem;
+  }
+  
+  .action-card h3 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .activity-item {
+    padding: 1rem 0.75rem;
+  }
+  
+  /* User dropdown mobile */
+  .user-dropdown {
+    display: none;
+  }
+  
+  .mobile-user-profile {
+    display: flex;
   }
 }
 
@@ -116,6 +216,51 @@
   /* Typography */
   .hero-header h1 {
     font-size: 1.75rem;
+  }
+  
+  /* Dashboard Small Screen */
+  .dashboard-hero {
+    padding: 1.5rem 0.75rem !important;
+    text-align: center;
+  }
+  
+  .hero-content {
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+  
+  .quick-stats {
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    min-width: 80px;
+  }
+  
+  .stat-number {
+    font-size: 1.75rem;
+  }
+  
+  .dashboard-container {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .dashboard-section {
+    padding: 1.5rem;
+  }
+  
+  .dashboard-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
   }
   
   /* Cards */
