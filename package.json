@@ -6,20 +6,18 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "serve": "live-server --open=/index.html",
-    "dev": "concurrently \"npm run watch\" \"npm run serve\""
+    "serve": "python3 -m http.server 8000",
+    "dev": "tsc && python3 -m http.server 8000"
   },
-  "keywords": ["rehabilitation", "healthcare", "typescript", "web-app"],
+  "keywords": [
+    "rehabilitation",
+    "healthcare",
+    "typescript",
+    "web-app"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "live-server": "^1.2.2",
-    "concurrently": "^8.0.0",
-    "@types/node": "^20.0.0"
-  },
-  "dependencies": {
-    "chart.js": "^4.0.0",
-    "date-fns": "^2.30.0"
+    "typescript": "^5.0.0"
   }
 }

@@ -146,7 +146,7 @@ export class NavigationComponent {
     
     if (!userDropdown || !dropdownMenu) return;
 
-    let hoverTimeout: NodeJS.Timeout;
+    let hoverTimeout: number;
 
     userDropdown.addEventListener('mouseenter', () => {
       clearTimeout(hoverTimeout);
