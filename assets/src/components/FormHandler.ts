@@ -2,6 +2,18 @@ import type { LoginForm, SignupForm } from '../types/index.js';
 import { validateLoginForm, validateSignupForm } from '../utils/validation.js';
 
 export class FormHandler {
+  private static authService: any = null;
+  private static dataService: any = null;
+  
+  // Initialize Firebase services
+  private static async initializeServices() {
+    if (!this.authService) {
+      const authModule = await import('../firebase/auth.js');
+      const dataModule = await import('../firebase/data.js');
+      this.authService = new (authModule as any).AuthService();
+      this.dataService = new (dataModule as any).DataService();
+    }
+  }
   
   /**
    * Handle login form submission
@@ -33,14 +45,27 @@ export class FormHandler {
       submitButton.textContent = 'Signing in...';
       
       try {
-        // Simulate API call
-        await FormHandler.simulateLogin(loginData);
+        // Initialize Firebase services
+        await FormHandler.initializeServices();
         
-        // Redirect to dashboard on success
-        window.location.href = 'dashboard.html';
+        // Authenticate with Firebase
+        const result = await FormHandler.authService.login(loginData.email, loginData.password);
+        
+        if (result.success) {
+          // Update last login time
+          await FormHandler.dataService.updateUserProfile(result.user.uid, {
+            lastLogin: new Date()
+          });
+          
+          // Redirect to dashboard on success
+          window.location.href = 'dashboard.html';
+        } else {
+          FormHandler.displayError(formElement, result.message);
+        }
         
       } catch (error) {
-        FormHandler.displayError(formElement, 'Invalid email or password. Please try again.');
+        console.error('Login error:', error);
+        FormHandler.displayError(formElement, 'An unexpected error occurred. Please try again.');
       } finally {
         // Restore button state
         submitButton.disabled = false;
@@ -81,18 +106,44 @@ export class FormHandler {
       submitButton.textContent = 'Creating account...';
       
       try {
-        // Simulate API call
-        await FormHandler.simulateSignup(signupData);
+        // Initialize Firebase services
+        await FormHandler.initializeServices();
         
-        // Show success message and redirect
-        FormHandler.displaySuccess(formElement, 'Account created successfully! Redirecting...');
+        // Create account with Firebase Auth
+        const authResult = await FormHandler.authService.register(
+          signupData.email, 
+          signupData.password, 
+          signupData.name
+        );
         
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 2000);
+        if (authResult.success) {
+          // Create user profile in Firestore
+          const profileResult = await FormHandler.dataService.createUserProfile(authResult.user.uid, {
+            email: signupData.email,
+            displayName: signupData.name,
+            profileComplete: true
+          });
+          
+          if (profileResult.success) {
+            // Show success message and redirect
+            FormHandler.displaySuccess(formElement, 'Account created successfully! Redirecting...');
+            
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 2000);
+          } else {
+            FormHandler.displayError(formElement, 'Account created but profile setup failed. Please complete your profile.');
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 3000);
+          }
+        } else {
+          FormHandler.displayError(formElement, authResult.message);
+        }
         
       } catch (error) {
-        FormHandler.displayError(formElement, 'Failed to create account. Please try again.');
+        console.error('Signup error:', error);
+        FormHandler.displayError(formElement, 'An unexpected error occurred. Please try again.');
       } finally {
         // Restore button state
         submitButton.disabled = false;

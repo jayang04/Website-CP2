@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome - Rehab Hub</title>
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -127,6 +127,24 @@
       <p>&copy; 2025 Rehab Hub - Capstone Project. All Rights Reserved.</p>
     </div>
   </footer>
-  <script type="module" src="dist/main.js"></script>
+  
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Initialize Firebase when needed
+    window.initFirebase = async () => {
+      if (!window.firebaseInitialized) {
+        await import('./src/firebase/config.js');
+        window.firebaseInitialized = true;
+      }
+    };
+  </script>
+  
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Initialize Firebase for homepage
+    import('./assets/src/firebase/config.js');
+  </script>
+  
+  <script type="module" src="assets/dist/main.js"></script>
 </body>
 </html> 

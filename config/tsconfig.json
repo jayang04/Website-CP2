@@ -5,8 +5,8 @@
     "moduleResolution": "node",
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
     "allowJs": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "outDir": "../assets/dist",
+    "rootDir": "../assets/src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -26,10 +26,10 @@
     "noUncheckedIndexedAccess": true
   },
   "include": [
-    "src/**/*"
+    "../assets/src/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "../assets/dist"
   ]
 }

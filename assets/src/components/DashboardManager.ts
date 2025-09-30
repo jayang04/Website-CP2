@@ -4,34 +4,88 @@ import { generateProgressMetrics, formatRelativeDate, getPainLevelColor } from '
 export class DashboardManager {
   private user: User | null = null;
   private sessions: ExerciseSession[] = [];
+  private authService: any = null;
+  private dataService: any = null;
+  private unsubscribe: any = null;
   
   constructor() {
-    this.loadUserData();
-    this.loadSessions();
+    this.initializeServices();
   }
   
   /**
-   * Load user data from localStorage or API
+   * Initialize Firebase services and load data
    */
-  private loadUserData(): void {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      this.user = JSON.parse(storedUser);
-      this.updateUserDisplay();
+  private async initializeServices(): Promise<void> {
+    try {
+      const authModule = await import('../firebase/auth.js');
+      const dataModule = await import('../firebase/data.js');
+      
+      this.authService = new (authModule as any).AuthService();
+      this.dataService = new (dataModule as any).DataService();
+      
+      // Listen for auth state changes
+      this.authService.onAuthStateChange((user: any) => {
+        if (user) {
+          this.loadUserData(user.uid);
+          this.loadSessions(user.uid);
+        } else {
+          // Redirect to login if not authenticated
+          window.location.href = 'login.html';
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error initializing Firebase services:', error);
     }
   }
   
   /**
-   * Load exercise sessions from localStorage or API
+   * Load user data from Firestore
    */
-  private loadSessions(): void {
-    const storedSessions = localStorage.getItem('exerciseSessions');
-    if (storedSessions) {
-      this.sessions = JSON.parse(storedSessions).map((session: any) => ({
-        ...session,
-        completedAt: new Date(session.completedAt)
-      }));
-      this.updateProgressDisplay();
+  private async loadUserData(userId: string): Promise<void> {
+    try {
+      const result = await this.dataService.getUserProfile(userId);
+      if (result.success) {
+        this.user = {
+          id: userId,
+          name: result.data.displayName || 'User',
+          email: result.data.email,
+          avatar: `https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80`,
+          createdAt: result.data.createdAt?.toDate() || new Date(),
+          lastLogin: result.data.lastLogin?.toDate() || new Date()
+        };
+        this.updateUserDisplay();
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  }
+  
+  /**
+   * Load exercise sessions from Firestore
+   */
+  private async loadSessions(userId: string): Promise<void> {
+    try {
+      // Subscribe to real-time session updates
+      this.unsubscribe = this.dataService.subscribeToUserSessions(userId, (sessions: any[]) => {
+        this.sessions = sessions.map((session: any) => ({
+          id: session.id,
+          exerciseId: session.exerciseType,
+          userId: userId,
+          exerciseType: session.exerciseType,
+          exerciseName: session.exerciseName,
+          duration: session.duration,
+          painLevel: session.painLevel,
+          difficultyRating: session.difficulty === 'easy' ? 1 : session.difficulty === 'moderate' ? 2 : 3,
+          completedAt: session.timestamp?.toDate() || new Date(),
+          completed: session.completed
+        }));
+        this.updateProgressDisplay();
+        this.updateActivityWidget();
+      });
+      
+    } catch (error) {
+      console.error('Error loading sessions:', error);
     }
   }
   
@@ -195,5 +249,45 @@ export class DashboardManager {
    */
   public getProgressMetrics(): ProgressMetrics {
     return generateProgressMetrics(this.sessions);
+  }
+  
+  /**
+   * Handle user logout
+   */
+  public async logout(): Promise<void> {
+    try {
+      if (this.authService) {
+        await this.authService.logout();
+      }
+      this.cleanup();
+      window.location.href = 'index.html';
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  }
+  
+  /**
+   * Log exercise completion
+   */
+  public async logExercise(exerciseData: any): Promise<void> {
+    try {
+      const currentUser = this.authService?.getCurrentUser();
+      if (!currentUser) return;
+      
+      await this.dataService.logExerciseSession(currentUser.uid, exerciseData);
+      // Sessions will be updated automatically via the real-time listener
+    } catch (error) {
+      console.error('Error logging exercise:', error);
+    }
+  }
+  
+  /**
+   * Cleanup resources
+   */
+  public cleanup(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
   }
 }
