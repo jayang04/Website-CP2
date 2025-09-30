@@ -23,7 +23,7 @@ function isToday(date: Date): boolean {
 /**
  * Format a date for display in the UI
  */
-export function formatDate(date: Date, formatString: string = 'MMM d, yyyy'): string {
+export function formatDate(date: Date): string {
   return formatDateInternal(date);
 }
 
