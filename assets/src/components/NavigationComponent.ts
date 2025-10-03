@@ -138,39 +138,90 @@ export class NavigationComponent {
   }
 
   /**
-   * Initialize user dropdown functionality
+   * Initialize profile dropdown functionality
    */
   private initUserDropdown(): void {
-    const userDropdown = document.querySelector('.user-dropdown');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
+    const profileBtn = document.getElementById('profileBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
     
-    if (!userDropdown || !dropdownMenu) return;
+    if (!profileBtn || !profileDropdown) return;
 
-    let hoverTimeout: number;
-
-    userDropdown.addEventListener('mouseenter', () => {
-      clearTimeout(hoverTimeout);
-      dropdownMenu.classList.add('show');
+    // Toggle dropdown on button click
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isExpanded = profileBtn.getAttribute('aria-expanded') === 'true';
+      
+      if (isExpanded) {
+        this.closeDropdown(profileBtn, profileDropdown);
+      } else {
+        this.openDropdown(profileBtn, profileDropdown);
+      }
     });
 
-    userDropdown.addEventListener('mouseleave', () => {
-      hoverTimeout = setTimeout(() => {
-        dropdownMenu.classList.remove('show');
-      }, 100);
-    });
-
-    // Close dropdown on outside click
+    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
-      if (!userDropdown.contains(e.target as Node)) {
-        dropdownMenu.classList.remove('show');
+      if (!profileBtn.contains(e.target as Node) && !profileDropdown.contains(e.target as Node)) {
+        this.closeDropdown(profileBtn, profileDropdown);
       }
     });
 
     // Close dropdown on escape key
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        dropdownMenu.classList.remove('show');
+      if (e.key === 'Escape' && profileDropdown.classList.contains('show')) {
+        this.closeDropdown(profileBtn, profileDropdown);
+        profileBtn.focus();
       }
     });
+
+    // Handle logout
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleLogout();
+      });
+    }
+
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.handleLogout();
+      });
+    }
+  }
+
+  /**
+   * Open dropdown menu
+   */
+  private openDropdown(button: HTMLElement, menu: HTMLElement): void {
+    button.setAttribute('aria-expanded', 'true');
+    menu.classList.add('show');
+  }
+
+  /**
+   * Close dropdown menu
+   */
+  private closeDropdown(button: HTMLElement, menu: HTMLElement): void {
+    button.setAttribute('aria-expanded', 'false');
+    menu.classList.remove('show');
+  }
+
+  /**
+   * Handle user logout
+   */
+  private async handleLogout(): Promise<void> {
+    try {
+      const authModule = await import('../firebase/auth.js');
+      const authService = new (authModule as any).AuthService();
+      await authService.logout();
+      
+      // Redirect to home page
+      window.location.href = 'index.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Fallback: just redirect
+      window.location.href = 'index.html';
+    }
   }
 }

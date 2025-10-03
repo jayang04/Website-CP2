@@ -82,7 +82,8 @@ export interface LoginForm {
 }
 
 export interface SignupForm {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;

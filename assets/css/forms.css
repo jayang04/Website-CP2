@@ -57,3 +57,14 @@
   transform: translateY(-1px);
   box-shadow: var(--shadow-medium);
 }
+
+/* Name row for signup form */
+.name-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.name-row input {
+  width: 100%;
+}

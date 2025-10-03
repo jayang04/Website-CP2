@@ -191,6 +191,79 @@
   .mobile-user-profile {
     display: flex;
   }
+  
+  /* User Dropdown Responsive */
+  .user-dropdown {
+    right: -1rem;
+    min-width: 250px;
+  }
+  
+  .dropdown-header {
+    padding: 0.75rem;
+  }
+  
+  .dropdown-item {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  /* Quick Access Responsive */
+  .quick-access {
+    padding: 3rem 1rem;
+  }
+  
+  .quick-access h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .quick-access-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .quick-card {
+    padding: 1.5rem;
+  }
+  
+  .quick-card-icon {
+    font-size: 2.5rem;
+  }
+  
+  .quick-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  /* Mobile User Section */
+  .mobile-user-profile {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .mobile-nav-item {
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+  
+  /* Profile Dropdown */
+  .profile-btn {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .profile-name {
+    display: none;
+  }
+  
+  .profile-dropdown-menu {
+    right: -1rem;
+    min-width: 260px;
+  }
+  
+  /* Mobile Logged In Links */
+  #mobileLoggedInLinks a {
+    font-size: 1.2rem;
+    padding: 0.75rem 1rem;
+  }
 }
 
 @media (max-width: 480px) {

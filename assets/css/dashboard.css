@@ -13,143 +13,270 @@ html, body {
 
 /* Dashboard Header */
 .dashboard-header {
-  position: relative;
-}
-
-/* User Dropdown Menu */
-.user-dropdown {
-  position: relative;
-}
-
-.user-menu-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: var(--transition);
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.user-menu-btn:hover {
-  background: rgba(13, 71, 161, 0.05);
-  color: var(--primary-color);
-}
-
-.nav-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--primary-color);
-  object-fit: cover;
-}
-
-.dropdown-arrow {
-  transition: transform 0.2s ease;
-}
-
-.user-dropdown:hover .dropdown-arrow {
-  transform: rotate(180deg);
-}
-
-/* Dropdown Menu */
-.dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  min-width: 280px;
-  background: #fff;
-  border-radius: var(--border-radius-large);
-  box-shadow: var(--shadow-heavy);
-  border: 1px solid var(--border-color);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.2s ease;
+  position: sticky;
+  top: 0;
   z-index: 1000;
+  background: #fff;
 }
 
-.user-dropdown:hover .dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+/* ========================================
+   PROFILE DROPDOWN STYLES
+   ======================================== */
+
+/* Profile Dropdown Container */
+.profile-dropdown {
+  position: relative;
 }
 
-.dropdown-menu.show {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateY(0) !important;
-}
-
-.dropdown-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.dropdown-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 3px solid var(--primary-color);
-  object-fit: cover;
-}
-
-.dropdown-header h4 {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.dropdown-header p {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
-.dropdown-item {
+/* Profile Button */
+.profile-btn {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
+  background: #fff;
+  border: 2px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
   color: var(--text-primary);
-  text-decoration: none;
-  transition: var(--transition);
+  font-weight: 500;
   font-size: 0.95rem;
 }
 
-.dropdown-item:hover {
-  background: var(--accent-color);
+.profile-btn:hover {
+  border-color: var(--primary-color);
+  background: rgba(13, 71, 161, 0.05);
   color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.15);
 }
 
-.dropdown-item.logout {
-  color: #dc3545;
+.profile-btn:active {
+  transform: translateY(0);
 }
 
-.dropdown-item.logout:hover {
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
+/* Profile Icon */
+.profile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  color: #fff;
 }
 
-.dropdown-icon {
-  font-size: 1rem;
+.profile-icon svg {
   width: 20px;
-  text-align: center;
+  height: 20px;
 }
 
+/* Profile Name */
+.profile-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Chevron Icon */
+.chevron-icon {
+  transition: transform 0.3s ease;
+  color: var(--text-secondary);
+}
+
+.profile-btn[aria-expanded="true"] .chevron-icon {
+  transform: rotate(90deg);
+}
+
+/* Dropdown Menu */
+.profile-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  min-width: 280px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border-color);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.profile-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* Dropdown User Info Section */
+.dropdown-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(13, 71, 161, 0.05), rgba(33, 150, 243, 0.05));
+}
+
+.dropdown-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.dropdown-avatar svg {
+  width: 32px;
+  height: 32px;
+}
+
+.dropdown-user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.dropdown-username {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-email {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dropdown Divider */
 .dropdown-divider {
   height: 1px;
   background: var(--border-color);
   margin: 0.5rem 0;
 }
+
+/* Dropdown Links */
+.dropdown-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.dropdown-link:hover {
+  background: rgba(13, 71, 161, 0.05);
+  color: var(--primary-color);
+}
+
+.dropdown-link svg {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dropdown-link:hover svg {
+  color: var(--primary-color);
+}
+
+/* Logout Link */
+.logout-link {
+  color: #d32f2f;
+}
+
+.logout-link:hover {
+  background: rgba(211, 47, 47, 0.05);
+  color: #c62828;
+}
+
+.logout-link svg {
+  color: #d32f2f;
+}
+
+.logout-link:hover svg {
+  color: #c62828;
+}
+
+/* Mobile User Profile */
+.mobile-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(13, 71, 161, 0.05), rgba(33, 150, 243, 0.05));
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.mobile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.mobile-avatar svg {
+  width: 32px;
+  height: 32px;
+}
+
+.mobile-username {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.mobile-email {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-btn {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .profile-name {
+    display: none;
+  }
+  
+  .profile-dropdown-menu {
+    right: -1rem;
+    min-width: 260px;
+  }
+}
+
+/* ========================================
+   DASHBOARD HERO SECTION
+   ======================================== */
 
 /* Full Screen Dashboard Layout */
 .dashboard-fullscreen {

@@ -3,13 +3,39 @@ import { generateProgressMetrics, formatRelativeDate, getPainLevelColor } from '
 
 export class DashboardManager {
   private user: User | null = null;
+  private firstName: string = '';
   private sessions: ExerciseSession[] = [];
   private authService: any = null;
   private dataService: any = null;
   private unsubscribe: any = null;
   
   constructor() {
+    console.log('📊 Dashboard: DashboardManager constructor called');
     this.initializeServices();
+    
+    // Add a delayed fallback to ensure dashboard shows even if data fails to load
+    setTimeout(() => {
+      console.log('📊 Dashboard: Fallback timeout - ensuring dashboard is visible');
+      const dashboard = document.querySelector('.dashboard-fullscreen') as HTMLElement;
+      
+      if (dashboard && dashboard.style.opacity === '0') {
+        console.log('📊 Dashboard: Fallback - forcing dashboard to show');
+        
+        // Try to get user from auth service directly
+        if (this.authService && this.authService.getCurrentUser()) {
+          const user = this.authService.getCurrentUser();
+          console.log('📊 Dashboard: Fallback - got user from auth:', user);
+          const fallbackName = user.displayName?.split(' ')[0] || 
+                              user.email?.split('@')[0] || 
+                              'User';
+          this.firstName = fallbackName;
+          this.updateUserDisplay();
+        } else {
+          // Dashboard will show automatically since we removed the opacity block
+          console.log('📊 Dashboard: No user data, but dashboard should be visible');
+        }
+      }
+    }, 2000); // 2 second fallback
   }
   
   /**
@@ -25,12 +51,21 @@ export class DashboardManager {
       
       // Listen for auth state changes
       this.authService.onAuthStateChange((user: any) => {
+        console.log('📊 Dashboard: Auth state changed, user:', user);
+        
         if (user) {
+          console.log('📊 Dashboard: User authenticated, UID:', user.uid);
+          console.log('📊 Dashboard: User email:', user.email);
+          console.log('📊 Dashboard: User displayName:', user.displayName);
+          
           this.loadUserData(user.uid);
           this.loadSessions(user.uid);
         } else {
-          // Redirect to login if not authenticated
-          window.location.href = 'login.html';
+          console.log('🚫 Dashboard: User not authenticated');
+          // Don't redirect here - let the main app logic handle redirects
+          // Just clear the user data
+          this.user = null;
+          this.firstName = '';
         }
       });
       
@@ -40,24 +75,114 @@ export class DashboardManager {
   }
   
   /**
+   * Generate a unique avatar URL based on user's first name
+   */
+  private generateUserAvatar(firstName: string): string {
+    // Array of different professional-looking avatar images
+    const avatarOptions = [
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80', // Male 1
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80', // Male 2  
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80', // Male 3
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80', // Female 1
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80', // Female 2
+      'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80', // Female 3
+    ];
+    
+    // Generate a consistent index based on the first letter of the name
+    const charCode = firstName.charCodeAt(0) || 65; // Default to 'A' if empty
+    const index = charCode % avatarOptions.length;
+    
+    return (avatarOptions[index] || avatarOptions[0]) as string;
+  }
+
+  /**
    * Load user data from Firestore
    */
   private async loadUserData(userId: string): Promise<void> {
     try {
+      console.log('📊 Dashboard: Loading user data for ID:', userId);
+      
+      // Get current Firebase Auth user for fallback
+      const currentAuthUser = this.authService.getCurrentUser();
+      console.log('📊 Dashboard: Firebase Auth user:', currentAuthUser);
+      
       const result = await this.dataService.getUserProfile(userId);
+      console.log('📊 Dashboard: User profile result:', result);
+      
       if (result.success) {
+        console.log('📊 Dashboard: User data from Firestore:', result.data);
+        
+        // Extract first name from either firstName field or displayName
+        const firstName = result.data.firstName || 
+                         result.data.displayName?.split(' ')[0] || 
+                         currentAuthUser?.displayName?.split(' ')[0] ||
+                         currentAuthUser?.email?.split('@')[0] || 
+                         'User';
+                         
+        console.log('📊 Dashboard: Extracted firstName:', firstName);
+        
+        // Get email from Firestore or Firebase Auth
+        const userEmail = result.data.email || currentAuthUser?.email || 'user@example.com';
+        console.log('📊 Dashboard: User email:', userEmail);
+        
         this.user = {
           id: userId,
-          name: result.data.displayName || 'User',
-          email: result.data.email,
-          avatar: `https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40&q=80`,
+          name: result.data.displayName || `${result.data.firstName || ''} ${result.data.lastName || ''}`.trim() || 'User',
+          email: userEmail,
+          avatar: this.generateUserAvatar(result.data.firstName || firstName),
           createdAt: result.data.createdAt?.toDate() || new Date(),
           lastLogin: result.data.lastLogin?.toDate() || new Date()
         };
+        
+        // Store first name for easy access
+        this.firstName = firstName;
+        console.log('📊 Dashboard: Stored firstName:', this.firstName);
+        console.log('📊 Dashboard: Stored user.email:', this.user.email);
+        
         this.updateUserDisplay();
+        console.log('📊 Dashboard: Called updateUserDisplay()');
+      } else {
+        console.log('❌ Dashboard: Failed to get user profile:', result);
+        
+        // Use Firebase Auth data as complete fallback
+        if (currentAuthUser) {
+          console.log('🔄 Dashboard: Using complete Firebase Auth fallback');
+          const fallbackFirstName = currentAuthUser.displayName?.split(' ')[0] || 
+                                    currentAuthUser.email?.split('@')[0] || 
+                                    'User';
+          this.firstName = fallbackFirstName;
+          this.user = {
+            id: userId,
+            name: currentAuthUser.displayName || fallbackFirstName,
+            email: currentAuthUser.email || 'user@example.com',
+            avatar: this.generateUserAvatar(fallbackFirstName),
+            createdAt: new Date(),
+            lastLogin: new Date()
+          };
+          this.updateUserDisplay();
+        }
       }
     } catch (error) {
-      console.error('Error loading user data:', error);
+      console.error('❌ Dashboard: Error loading user data:', error);
+      
+      // Fallback: try to get name from Firebase Auth user
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser) {
+        console.log('🔄 Dashboard: Using fallback from Firebase Auth due to error');
+        const fallbackFirstName = currentUser.displayName?.split(' ')[0] || 
+                                  currentUser.email?.split('@')[0] || 
+                                  'User';
+        this.firstName = fallbackFirstName;
+        this.user = {
+          id: userId,
+          name: currentUser.displayName || fallbackFirstName,
+          email: currentUser.email || 'user@example.com',
+          avatar: this.generateUserAvatar(fallbackFirstName),
+          createdAt: new Date(),
+          lastLogin: new Date()
+        };
+        this.updateUserDisplay();
+      }
     }
   }
   
@@ -93,17 +218,67 @@ export class DashboardManager {
    * Update user display in the dashboard
    */
   private updateUserDisplay(): void {
-    if (!this.user) return;
+    console.log('📊 Dashboard: updateUserDisplay called');
+    console.log('📊 Dashboard: this.user:', this.user);
+    console.log('📊 Dashboard: this.firstName:', this.firstName);
     
-    const nameElement = document.querySelector('.dashboard-header h2');
-    const avatarElement = document.querySelector('.dashboard-avatar') as HTMLImageElement;
-    
-    if (nameElement) {
-      nameElement.textContent = `👋 Welcome back, ${this.user.name}!`;
+    if (!this.user && !this.firstName) {
+      console.log('❌ Dashboard: No user data available for display update');
+      return;
     }
     
-    if (avatarElement && this.user.avatar) {
-      avatarElement.src = this.user.avatar;
+    // Use firstName if available, otherwise fallback to user.name
+    const displayName = this.firstName || this.user?.name || 'User';
+    console.log('📊 Dashboard: Using display name:', displayName);
+    
+    // Update welcome message in hero section
+    const heroTitle = document.querySelector('.hero-content h1') as HTMLElement;
+    if (heroTitle) {
+      heroTitle.textContent = `👋 Welcome back, ${displayName}!`;
+    }
+    
+    // Update profile button name
+    const profileName = document.querySelector('.profile-name') as HTMLElement;
+    if (profileName) {
+      profileName.textContent = displayName;
+    }
+    
+    // Update dropdown username
+    const dropdownUsername = document.querySelector('.dropdown-username') as HTMLElement;
+    if (dropdownUsername) {
+      dropdownUsername.textContent = this.user?.name || displayName;
+    }
+    
+    // Update dropdown email
+    const dropdownEmail = document.querySelector('.dropdown-email') as HTMLElement;
+    if (dropdownEmail && this.user?.email) {
+      dropdownEmail.textContent = this.user.email;
+    }
+    
+    // Update mobile username
+    const mobileUsername = document.querySelector('.mobile-username') as HTMLElement;
+    if (mobileUsername) {
+      mobileUsername.textContent = this.user?.name || displayName;
+    }
+    
+    // Update mobile email
+    const mobileEmail = document.querySelector('.mobile-email') as HTMLElement;
+    if (mobileEmail && this.user?.email) {
+      mobileEmail.textContent = this.user.email;
+    }
+    
+    // Trigger dashboard fade-in when user data is ready
+    this.triggerDashboardFadeIn();
+  }
+  
+  /**
+   * Trigger dashboard fade-in (faster when user data is ready)
+   */
+  private triggerDashboardFadeIn(): void {
+    const dashboard = document.querySelector('.dashboard-fullscreen') as HTMLElement;
+    if (dashboard) {
+      console.log('📊 Dashboard: User data ready, triggering fade-in');
+      dashboard.style.opacity = '1';
     }
   }
   

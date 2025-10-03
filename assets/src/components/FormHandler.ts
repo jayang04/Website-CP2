@@ -83,7 +83,8 @@ export class FormHandler {
       
       const formData = new FormData(formElement);
       const signupData: SignupForm = {
-        name: formData.get('name') as string,
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
         email: formData.get('email') as string,
         password: formData.get('password') as string,
         confirmPassword: formData.get('confirmPassword') as string
@@ -110,17 +111,20 @@ export class FormHandler {
         await FormHandler.initializeServices();
         
         // Create account with Firebase Auth
+        const fullName = `${signupData.firstName} ${signupData.lastName}`;
         const authResult = await FormHandler.authService.register(
           signupData.email, 
           signupData.password, 
-          signupData.name
+          fullName
         );
         
         if (authResult.success) {
           // Create user profile in Firestore
           const profileResult = await FormHandler.dataService.createUserProfile(authResult.user.uid, {
             email: signupData.email,
-            displayName: signupData.name,
+            displayName: fullName,
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
             profileComplete: true
           });
           

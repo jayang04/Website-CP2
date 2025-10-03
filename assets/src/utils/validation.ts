@@ -73,10 +73,16 @@ export function validateSignupForm(form: SignupForm): {
 } {
   const errors: Partial<Record<keyof SignupForm, string>> = {};
   
-  if (!form.name) {
-    errors.name = 'Name is required';
-  } else if (form.name.length < 2) {
-    errors.name = 'Name must be at least 2 characters long';
+  if (!form.firstName) {
+    errors.firstName = 'First name is required';
+  } else if (form.firstName.length < 2) {
+    errors.firstName = 'First name must be at least 2 characters long';
+  }
+  
+  if (!form.lastName) {
+    errors.lastName = 'Last name is required';
+  } else if (form.lastName.length < 2) {
+    errors.lastName = 'Last name must be at least 2 characters long';
   }
   
   if (!form.email) {
