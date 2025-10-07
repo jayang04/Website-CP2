@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { authService } from './firebase/auth'
 import { type User as FirebaseUser } from 'firebase/auth'
+import RehabExercise from './pages/RehabExercise'
+import DebugPage from './pages/Debug'
 
 // Types
 interface User {
@@ -12,7 +14,7 @@ interface User {
   uid: string;
 }
 
-type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile';
+type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'exercises' | 'debug';
 
 // Helper function to extract first name
 function getFirstName(fullName: string): string {
@@ -25,6 +27,23 @@ function App() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Handle hash-based routing (for easy debug access)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1); // Remove the '#'
+      if (hash === 'debug') {
+        setCurrentPage('debug');
+      }
+    };
+
+    // Check on mount
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Listen for auth state changes
   useEffect(() => {
@@ -131,7 +150,10 @@ function App() {
           <nav className="main-nav">
             <a onClick={() => navigateTo('home')} className={currentPage === 'home' ? 'active' : ''}>Home</a>
             {user && (
-              <a onClick={() => navigateTo('dashboard')} className={currentPage === 'dashboard' ? 'active' : ''}>Dashboard</a>
+              <>
+                <a onClick={() => navigateTo('dashboard')} className={currentPage === 'dashboard' ? 'active' : ''}>Dashboard</a>
+                <a onClick={() => navigateTo('exercises')} className={currentPage === 'exercises' ? 'active' : ''}>Exercises</a>
+              </>
             )}
             
             {!user ? (
@@ -282,6 +304,8 @@ function App() {
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} navigateTo={navigateTo} />}
       {currentPage === 'signup' && <SignupPage onSignup={handleSignup} navigateTo={navigateTo} />}
       {currentPage === 'profile' && <ProfilePage user={user} onProfilePictureUpload={handleProfilePictureUpload} />}
+      {currentPage === 'exercises' && <RehabExercise />}
+      {currentPage === 'debug' && <DebugPage />}
 
       {/* Footer */}
       <footer className="site-footer">
