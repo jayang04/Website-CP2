@@ -145,7 +145,7 @@ function App() {
       <header className="site-header">
         <div className="nav-container">
           <a onClick={() => navigateTo('home')} className="logo">
-            <span className="logo-text">Rehab Hub</span>
+            <img src="/logo.png" alt="Rehab Hub Logo" style={{ width: '150px', height: '110px' }} />
           </a>
           <nav className="main-nav">
             <a onClick={() => navigateTo('home')} className={currentPage === 'home' ? 'active' : ''}>Home</a>
@@ -261,7 +261,7 @@ function App() {
           <div className="mobile-menu active">
             <div className="mobile-menu-header">
               <a onClick={() => navigateTo('home')} className="logo">
-                <span className="logo-text">Rehab Hub</span>
+                <img src="/logo.png" alt="Rehab Hub Logo" style={{ width: '100px', height: '100px' }} />
               </a>
               <button className="close-menu" onClick={() => setShowMobileMenu(false)}>&times;</button>
             </div>
@@ -311,10 +311,10 @@ function App() {
       <footer className="site-footer">
         <div className="footer-content">
           <div className="footer-logo">
-            <span className="logo-text">Rehab Hub</span>
+            <img src="/logo.png" alt="Rehab Hub Logo" style={{ width: '160px', height: '160px', marginBottom: '15px' }} />
             <p>Your comprehensive partner in recovery and rehabilitation. Providing guided exercises, progress tracking, and professional support for knee and ankle rehabilitation.</p>
           </div>
-          <div className="footer-info">
+          <div className="footer-contact">
             <h4>Contact Information</h4>
             <p><strong>Email:</strong><br />
               <a href="mailto:support@rehabhub.com">support@rehabhub.com</a><br />

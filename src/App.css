@@ -91,6 +91,7 @@ main {
   top: 0;
   z-index: 1000;
   border-bottom: 1px solid var(--border-color);
+  overflow: visible;
 }
 
 .nav-container {
@@ -99,20 +100,26 @@ main {
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem 2rem;
+  padding: 0.5rem 2rem;
+  overflow: visible;
 }
 
 .logo {
-  flex-shrink: 0;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  position: relative;
+  z-index: 10;
 }
 
-.logo-text {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  text-decoration: none;
-  letter-spacing: -0.025em;
+.logo img {
+  display: block;
+  object-fit: contain;
+  margin: 0;
+  padding: 0;
+  transform: scale(1.4);
+  transform-origin: left center;
 }
 
 .main-nav {
