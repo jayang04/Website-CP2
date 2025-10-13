@@ -534,10 +534,30 @@ function DashboardPage({ user }: { user: User | null }) {
 function LoginPage({ onLogin, navigateTo }: { onLogin: (email: string, password: string) => void; navigateTo: (page: Page) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
+  const [resetError, setResetError] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onLogin(email, password);
+  };
+
+  const handleForgotPassword = async () => {
+    setResetMessage(null);
+    setResetError(null);
+    if (!email) {
+      setResetError('Please enter your email address above first.');
+      return;
+    }
+    setResetting(true);
+    const result = await authService.resetPassword(email);
+    setResetting(false);
+    if (result.success) {
+      setResetMessage('Password reset email sent! Please check your inbox.');
+    } else {
+      setResetError(result.message || 'Failed to send reset email.');
+    }
   };
 
   return (
@@ -564,10 +584,12 @@ function LoginPage({ onLogin, navigateTo }: { onLogin: (email: string, password:
         <button type="submit">Sign In</button>
       </form>
       <p style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-        <a href="#" style={{ color: 'var(--primary-color)', textDecoration: 'none', fontSize: '0.9rem' }}>
-          Forgot your password?
-        </a>
+        <button type="button" onClick={handleForgotPassword} style={{ color: 'var(--primary-color)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.9rem', padding: 0 }} disabled={resetting}>
+          {resetting ? 'Sending...' : 'Forgot your password?'}
+        </button>
       </p>
+      {resetMessage && <p style={{ color: 'green', textAlign: 'center', marginTop: '0.5rem' }}>{resetMessage}</p>}
+      {resetError && <p style={{ color: 'red', textAlign: 'center', marginTop: '0.5rem' }}>{resetError}</p>}
       <p style={{ textAlign: 'center', marginTop: '1rem', color: 'var(--text-secondary)' }}>
         Don't have an account?{' '}
         <a onClick={() => navigateTo('signup')} style={{ color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 600, cursor: 'pointer' }}>
