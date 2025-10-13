@@ -26,6 +26,9 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
   const [poseDetectedCount, setPoseDetectedCount] = useState(0);
   const animationFrameRef = useRef<number | undefined>(undefined);
   const isDetectingRef = useRef(false); // Use ref to track detection state for immediate access
+  const previousAnglesRef = useRef<JointAngles>({ leftKnee: 0, rightKnee: 0, leftAnkle: 0, rightAnkle: 0 });
+  const noDetectionFramesRef = useRef(0); // Track consecutive frames without detection
+  const previousLandmarksRef = useRef<any>(null); // Store previous landmarks for smoothing
 
   // Initialize MediaPipe Pose Landmarker
   useEffect(() => {
@@ -45,9 +48,9 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
           },
           runningMode: 'VIDEO',
           numPoses: 1,
-          minPoseDetectionConfidence: 0.1,
-          minPosePresenceConfidence: 0.1,
-          minTrackingConfidence: 0.1,
+          minPoseDetectionConfidence: 0.7,
+          minPosePresenceConfidence: 0.7,
+          minTrackingConfidence: 0.7,
           outputSegmentationMasks: false
         });
 
@@ -213,8 +216,25 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
       console.log(`📊 Frame ${frameCount}: Landmarks found:`, results.landmarks?.length || 0);
     }
 
-    // Clear canvas (but keep test square)
-    ctx.clearRect(40, 0, canvas.width - 40, canvas.height);
+    // Clear canvas completely - remove ghost landmarks
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Smooth landmarks function - reduces jitter
+    const smoothLandmarks = (currentLandmarks: any, previousLandmarks: any, alpha = 0.5) => {
+      if (!previousLandmarks) return currentLandmarks;
+      
+      return currentLandmarks.map((landmark: any, index: number) => {
+        const prev = previousLandmarks[index];
+        if (!prev) return landmark;
+        
+        return {
+          x: prev.x * (1 - alpha) + landmark.x * alpha,
+          y: prev.y * (1 - alpha) + landmark.y * alpha,
+          z: prev.z * (1 - alpha) + landmark.z * alpha,
+          visibility: landmark.visibility
+        };
+      });
+    };
 
     // Draw pose landmarks
     if (results.landmarks && results.landmarks.length > 0) {
@@ -225,7 +245,11 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
       setDetectionStatus(`✅ POSE DETECTED! (${frameCount} frames)`);
       setPoseDetectedCount(frameCount);
       
-      const landmarks = results.landmarks[0];
+      // Apply landmark smoothing to reduce jitter
+      const rawLandmarks = results.landmarks[0];
+      const landmarks = smoothLandmarks(rawLandmarks, previousLandmarksRef.current, 0.3);
+      previousLandmarksRef.current = landmarks; // Store for next frame
+      
       const drawingUtils = new DrawingUtils(ctx);
 
       // Draw connections first (skeleton lines) - thicker and more visible
@@ -251,76 +275,106 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
       const leftFootIndex = landmarks[PoseLandmarks.LEFT_FOOT_INDEX];
       const rightFootIndex = landmarks[PoseLandmarks.RIGHT_FOOT_INDEX];
 
-      // Very lenient visibility check - just check if landmarks exist
-      const leftLegVisible = leftHip && leftKnee && leftAnkle;
-      const rightLegVisible = rightHip && rightKnee && rightAnkle;
+      // Strict visibility check - require high confidence for accurate tracking
+      const minVisibility = 0.65; // Increased from 0.3 to 0.65 for better accuracy
       
-      console.log('Left leg visible:', leftLegVisible, 'Right leg visible:', rightLegVisible);
-      if (leftHip) console.log('Visibilities - L Hip:', leftHip.visibility, 'L Knee:', leftKnee?.visibility, 'L Ankle:', leftAnkle?.visibility);
+      const leftLegVisible = leftHip?.visibility > minVisibility && 
+                            leftKnee?.visibility > minVisibility && 
+                            leftAnkle?.visibility > minVisibility;
+      
+      const rightLegVisible = rightHip?.visibility > minVisibility && 
+                             rightKnee?.visibility > minVisibility && 
+                             rightAnkle?.visibility > minVisibility;
+      
+      // Only log occasionally to avoid spam
+      if (frameCount % 60 === 0) {
+        console.log('Visibility check - L Leg:', leftLegVisible, 'R Leg:', rightLegVisible);
+        if (leftHip) console.log('L Hip vis:', leftHip.visibility?.toFixed(2), 
+                                 'L Knee vis:', leftKnee?.visibility?.toFixed(2), 
+                                 'L Ankle vis:', leftAnkle?.visibility?.toFixed(2));
+      }
 
       const newAngles: JointAngles = {
         leftKnee: leftLegVisible ? calculateKneeAngle(leftHip, leftKnee, leftAnkle) : 0,
         rightKnee: rightLegVisible ? calculateKneeAngle(rightHip, rightKnee, rightAnkle) : 0,
-        leftAnkle: leftLegVisible && leftFootIndex?.visibility > 0.1 
+        leftAnkle: leftLegVisible && leftFootIndex?.visibility > minVisibility 
           ? calculateAnkleAngle(leftKnee, leftAnkle, leftFootIndex) : 0,
-        rightAnkle: rightLegVisible && rightFootIndex?.visibility > 0.1 
+        rightAnkle: rightLegVisible && rightFootIndex?.visibility > minVisibility 
           ? calculateAnkleAngle(rightKnee, rightAnkle, rightFootIndex) : 0
       };
 
-      onAnglesUpdate?.(newAngles);
+      // Smooth angles to reduce jitter (exponential moving average)
+      const smoothingFactor = 0.3; // Lower = smoother but slower response
+      const smoothedAngles: JointAngles = {
+        leftKnee: newAngles.leftKnee > 0 
+          ? previousAnglesRef.current.leftKnee * (1 - smoothingFactor) + newAngles.leftKnee * smoothingFactor
+          : 0,
+        rightKnee: newAngles.rightKnee > 0 
+          ? previousAnglesRef.current.rightKnee * (1 - smoothingFactor) + newAngles.rightKnee * smoothingFactor
+          : 0,
+        leftAnkle: newAngles.leftAnkle > 0 
+          ? previousAnglesRef.current.leftAnkle * (1 - smoothingFactor) + newAngles.leftAnkle * smoothingFactor
+          : 0,
+        rightAnkle: newAngles.rightAnkle > 0 
+          ? previousAnglesRef.current.rightAnkle * (1 - smoothingFactor) + newAngles.rightAnkle * smoothingFactor
+          : 0
+      };
+
+      previousAnglesRef.current = smoothedAngles;
+      noDetectionFramesRef.current = 0; // Reset no detection counter
+
+      onAnglesUpdate?.(smoothedAngles);
 
       // Draw angle text on canvas with better visibility
-      ctx.font = 'bold 24px Arial';
+      ctx.font = 'bold 20px Arial';
       ctx.strokeStyle = '#000000';
       ctx.lineWidth = 3;
       ctx.fillStyle = '#00FF00';
       
-      let yPos = 40;
+      let yPos = 30;
       
       // Left Knee
       if (leftLegVisible) {
-        const text = `L Knee: ${Math.round(newAngles.leftKnee)}°`;
-        ctx.strokeText(text, 20, yPos);
-        ctx.fillText(text, 20, yPos);
-        yPos += 35;
-      } else {
-        ctx.fillStyle = '#FF0000';
-        ctx.strokeText('L Knee: Not Visible', 20, yPos);
-        ctx.fillText('L Knee: Not Visible', 20, yPos);
-        ctx.fillStyle = '#00FF00';
-        yPos += 35;
+        const text = `L Knee: ${Math.round(smoothedAngles.leftKnee)}°`;
+        ctx.strokeText(text, 15, yPos);
+        ctx.fillText(text, 15, yPos);
+        yPos += 30;
       }
       
       // Right Knee
       if (rightLegVisible) {
-        const text = `R Knee: ${Math.round(newAngles.rightKnee)}°`;
-        ctx.strokeText(text, 20, yPos);
-        ctx.fillText(text, 20, yPos);
-        yPos += 35;
-      } else {
-        ctx.fillStyle = '#FF0000';
-        ctx.strokeText('R Knee: Not Visible', 20, yPos);
-        ctx.fillText('R Knee: Not Visible', 20, yPos);
-        ctx.fillStyle = '#00FF00';
-        yPos += 35;
+        const text = `R Knee: ${Math.round(smoothedAngles.rightKnee)}°`;
+        ctx.strokeText(text, 15, yPos);
+        ctx.fillText(text, 15, yPos);
+        yPos += 30;
       }
       
       // Left Ankle
-      if (leftLegVisible && leftFootIndex?.visibility > 0.5) {
-        const text = `L Ankle: ${Math.round(newAngles.leftAnkle)}°`;
-        ctx.strokeText(text, 20, yPos);
-        ctx.fillText(text, 20, yPos);
-        yPos += 35;
+      if (leftLegVisible && leftFootIndex?.visibility > minVisibility) {
+        const text = `L Ankle: ${Math.round(smoothedAngles.leftAnkle)}°`;
+        ctx.strokeText(text, 15, yPos);
+        ctx.fillText(text, 15, yPos);
+        yPos += 30;
       }
       
       // Right Ankle
-      if (rightLegVisible && rightFootIndex?.visibility > 0.5) {
-        const text = `R Ankle: ${Math.round(newAngles.rightAnkle)}°`;
-        ctx.strokeText(text, 20, yPos);
-        ctx.fillText(text, 20, yPos);
+      if (rightLegVisible && rightFootIndex?.visibility > minVisibility) {
+        const text = `R Ankle: ${Math.round(smoothedAngles.rightAnkle)}°`;
+        ctx.strokeText(text, 15, yPos);
+        ctx.fillText(text, 15, yPos);
       }
     } else {
-      // No pose detected
+      // No pose detected - increment counter and reset angles after threshold
+      noDetectionFramesRef.current += 1;
+      
+      // After 10 frames of no detection, reset angles to prevent ghost values
+      if (noDetectionFramesRef.current > 10) {
+        const zeroAngles: JointAngles = { leftKnee: 0, rightKnee: 0, leftAnkle: 0, rightAnkle: 0 };
+        previousAnglesRef.current = zeroAngles;
+        previousLandmarksRef.current = null; // Reset landmarks smoothing
+        onAnglesUpdate?.(zeroAngles);
+      }
+      
       console.log('⚠️ No pose detected in frame');
       setDetectionStatus('❌ NO POSE - Check lighting & distance');
       ctx.font = 'bold 28px Arial';
@@ -353,7 +407,7 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
         marginBottom: '5px',
         fontFamily: 'monospace' 
       }}>
-        PoseDetector v2.1 - Fixed async bug
+        PoseDetector v3.0 - Smoothed tracking + Higher confidence
       </div>
       
       {/* Status Banner */}

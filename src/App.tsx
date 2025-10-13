@@ -3,7 +3,8 @@ import './App.css'
 import { authService } from './firebase/auth'
 import { type User as FirebaseUser } from 'firebase/auth'
 import RehabExercise from './pages/RehabExercise'
-import DebugPage from './pages/Debug'
+import RehabProgram from './pages/RehabProgram'
+import PoseTestPage from './pages/PoseTest'
 
 // Types
 interface User {
@@ -14,7 +15,7 @@ interface User {
   uid: string;
 }
 
-type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'exercises' | 'debug';
+type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'exercises' | 'debug' | 'rehab-program';
 
 // Helper function to extract first name
 function getFirstName(fullName: string): string {
@@ -145,7 +146,7 @@ function App() {
       <header className="site-header">
         <div className="nav-container">
           <a onClick={() => navigateTo('home')} className="logo">
-            <img src="/logo.png" alt="Rehab Hub Logo" style={{ width: '150px', height: '110px' }} />
+            <img src="/logo.png" alt="RehabMotion Logo" style={{ width: '200px', height: 'auto' }} />
           </a>
           <nav className="main-nav">
             <a onClick={() => navigateTo('home')} className={currentPage === 'home' ? 'active' : ''}>Home</a>
@@ -261,7 +262,7 @@ function App() {
           <div className="mobile-menu active">
             <div className="mobile-menu-header">
               <a onClick={() => navigateTo('home')} className="logo">
-                <img src="/logo.png" alt="Rehab Hub Logo" style={{ width: '100px', height: '100px' }} />
+                <img src="/logo.png" alt="RehabMotion Logo" style={{ width: '150px', height: 'auto' }} />
               </a>
               <button className="close-menu" onClick={() => setShowMobileMenu(false)}>&times;</button>
             </div>
@@ -300,25 +301,28 @@ function App() {
 
       {/* Main Content */}
       {currentPage === 'home' && <HomePage />}
-      {currentPage === 'dashboard' && <DashboardPage user={user} />}
+      {currentPage === 'dashboard' && <DashboardPage user={user} navigateTo={navigateTo} />}
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} navigateTo={navigateTo} />}
       {currentPage === 'signup' && <SignupPage onSignup={handleSignup} navigateTo={navigateTo} />}
       {currentPage === 'profile' && <ProfilePage user={user} onProfilePictureUpload={handleProfilePictureUpload} />}
       {currentPage === 'exercises' && <RehabExercise />}
-      {currentPage === 'debug' && <DebugPage />}
+      {currentPage === 'rehab-program' && <RehabProgram user={user} />}
+      {currentPage === 'debug' && <PoseTestPage />}
 
       {/* Footer */}
       <footer className="site-footer">
         <div className="footer-content">
           <div className="footer-logo">
-            <img src="/logo.png" alt="Rehab Hub Logo" style={{ width: '160px', height: '160px', marginBottom: '15px' }} />
+            <div className="footer-logo-bg">
+              <img src="/logo.png" alt="RehabMotion Logo" style={{ width: '180px', height: 'auto', objectFit: 'contain' }} />
+            </div>
             <p>Your comprehensive partner in recovery and rehabilitation. Providing guided exercises, progress tracking, and professional support for knee and ankle rehabilitation.</p>
           </div>
-          <div className="footer-contact">
+          <div className="footer-info">
             <h4>Contact Information</h4>
             <p><strong>Email:</strong><br />
-              <a href="mailto:support@rehabhub.com">support@rehabhub.com</a><br />
-              <a href="mailto:help@rehabhub.com">help@rehabhub.com</a>
+              <a href="mailto:support@rehabmotion.com">support@rehabmotion.com</a><br />
+              <a href="mailto:help@rehabmotion.com">help@rehabmotion.com</a>
             </p>
             <p><strong>Phone:</strong><br />
               <a href="tel:+1234567890">+1 (234) 567-890</a><br />
@@ -334,7 +338,7 @@ function App() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2025 Rehab Hub - Capstone Project. All Rights Reserved.</p>
+          <p>&copy; 2025 RehabMotion - Interactive Injury Recovery. All Rights Reserved.</p>
         </div>
       </footer>
     </div>
@@ -347,8 +351,8 @@ function HomePage() {
     <>
       <div className="hero-header">
         <div className="container">
-          <h1>Welcome to Knee and Ankle Rehab Hub</h1>
-          <p>Your comprehensive platform for guided rehabilitation and recovery tracking</p>
+          <h1>Welcome to RehabMotion</h1>
+          <p>Interactive injury recovery for knee and ankle rehabilitation</p>
         </div>
       </div>
 
@@ -407,7 +411,7 @@ function HomePage() {
 }
 
 // Dashboard Page Component
-function DashboardPage({ user }: { user: User | null }) {
+function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (page: Page) => void }) {
   if (!user) {
     return (
       <div className="login-container">
@@ -451,12 +455,12 @@ function DashboardPage({ user }: { user: User | null }) {
           <div className="dashboard-section">
             <h2>🚀 Quick Actions</h2>
             <div className="action-cards">
-              <a href="#" className="action-card">
+              <a href="#" className="action-card" onClick={(e) => { e.preventDefault(); navigateTo('rehab-program'); }}>
                 <div className="action-icon">🦵</div>
                 <h3>Knee Rehabilitation</h3>
                 <p>Continue your knee recovery program</p>
               </a>
-              <a href="#" className="action-card">
+              <a href="#" className="action-card" onClick={(e) => { e.preventDefault(); navigateTo('rehab-program'); }}>
                 <div className="action-icon">🦶</div>
                 <h3>Ankle Rehabilitation</h3>
                 <p>Start your ankle strengthening exercises</p>
