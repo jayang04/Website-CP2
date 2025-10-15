@@ -7,6 +7,19 @@ export interface JointAngles {
   rightAnkle: number;
 }
 
+export interface Exercise {
+  id: string;
+  name: string;
+  phase: number;
+  sets: number;
+  reps: number;
+  hold?: string;
+  description: string;
+  image: string;
+  videoUrl?: string;
+  completed: boolean;
+}
+
 export interface ExerciseSession {
   id: string;
   userId: string;

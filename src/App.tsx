@@ -22,6 +22,22 @@ function getFirstName(fullName: string): string {
   return fullName.split(' ')[0];
 }
 
+// Helper function to format timestamp
+function formatTimestamp(timestamp: Date): string {
+  const now = new Date();
+  const diff = now.getTime() - new Date(timestamp).getTime();
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (seconds < 60) return 'Just now';
+  if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+  if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+  if (days < 7) return `${days} day${days !== 1 ? 's' : ''} ago`;
+  return new Date(timestamp).toLocaleDateString();
+}
+
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [user, setUser] = useState<User | null>(null);
@@ -412,6 +428,18 @@ function HomePage() {
 
 // Dashboard Page Component
 function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (page: Page) => void }) {
+  const [dashboardData, setDashboardData] = useState<any>(null);
+
+  useEffect(() => {
+    if (user) {
+      // Import and load dashboard data
+      import('./services/dataService').then(({ dashboardService }) => {
+        const data = dashboardService.getDashboardData(user.uid);
+        setDashboardData(data);
+      });
+    }
+  }, [user]);
+
   if (!user) {
     return (
       <div className="login-container">
@@ -426,6 +454,10 @@ function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (p
     );
   }
 
+  if (!dashboardData) {
+    return <div className="dashboard-fullscreen"><p>Loading...</p></div>;
+  }
+
   return (
     <main className="dashboard-fullscreen">
       <div className="dashboard-hero">
@@ -435,15 +467,15 @@ function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (p
         </div>
         <div className="quick-stats">
           <div className="stat-card-hero">
-            <div className="stat-number">75%</div>
+            <div className="stat-number">{dashboardData.stats.progressPercentage}%</div>
             <div className="stat-label">Progress</div>
           </div>
           <div className="stat-card-hero">
-            <div className="stat-number">12</div>
+            <div className="stat-number">{dashboardData.stats.daysActive}</div>
             <div className="stat-label">Days Active</div>
           </div>
           <div className="stat-card-hero">
-            <div className="stat-number">8</div>
+            <div className="stat-number">{dashboardData.stats.exercisesCompleted}</div>
             <div className="stat-label">Completed</div>
           </div>
         </div>
@@ -455,21 +487,21 @@ function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (p
           <div className="dashboard-section">
             <h2>🚀 Quick Actions</h2>
             <div className="action-cards">
-              <a href="#" className="action-card" onClick={(e) => { e.preventDefault(); navigateTo('rehab-program'); }}>
-                <div className="action-icon">🦵</div>
-                <h3>Knee Rehabilitation</h3>
-                <p>Continue your knee recovery program</p>
-              </a>
-              <a href="#" className="action-card" onClick={(e) => { e.preventDefault(); navigateTo('rehab-program'); }}>
-                <div className="action-icon">🦶</div>
-                <h3>Ankle Rehabilitation</h3>
-                <p>Start your ankle strengthening exercises</p>
-              </a>
-              <a href="#" className="action-card">
-                <div className="action-icon">📅</div>
-                <h3>Book Appointment</h3>
-                <p>Schedule with your therapist</p>
-              </a>
+              {dashboardData.quickActions.map((action: any) => (
+                <a 
+                  key={action.id}
+                  href="#" 
+                  className="action-card" 
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    if (action.link !== '#') navigateTo(action.link as Page);
+                  }}
+                >
+                  <div className="action-icon">{action.icon}</div>
+                  <h3>{action.title}</h3>
+                  <p>{action.description}</p>
+                </a>
+              ))}
             </div>
           </div>
 
@@ -496,36 +528,23 @@ function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (p
 
           {/* Recent Activity */}
           <div className="dashboard-section">
-            <h2>�‍♀️ Recent Activity</h2>
+            <h2>🏃‍♀️ Recent Activity</h2>
             <div className="activity-list">
-              <div className="activity-item">
-                <div className="activity-icon completed">✅</div>
-                <div className="activity-content">
-                  <h4>Completed "Quad Sets" exercise</h4>
-                  <p>2 hours ago</p>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon logged">📝</div>
-                <div className="activity-content">
-                  <h4>Logged pain level: 2/10</h4>
-                  <p>3 hours ago</p>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon checkin">⏰</div>
-                <div className="activity-content">
-                  <h4>Morning check-in completed</h4>
-                  <p>This morning at 10:00 AM</p>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon goal">🎯</div>
-                <div className="activity-content">
-                  <h4>Achieved daily movement goal</h4>
-                  <p>Yesterday</p>
-                </div>
-              </div>
+              {dashboardData.activities.length > 0 ? (
+                dashboardData.activities.map((activity: any) => (
+                  <div key={activity.id} className="activity-item">
+                    <div className={`activity-icon ${activity.type}`}>{activity.icon}</div>
+                    <div className="activity-content">
+                      <h4>{activity.title}</h4>
+                      <p>{formatTimestamp(activity.timestamp)}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p style={{ textAlign: 'center', color: '#666', padding: '20px' }}>
+                  No recent activities. Start exercising to see your progress here!
+                </p>
+              )}
             </div>
           </div>
         </div>

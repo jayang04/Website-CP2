@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/RehabProgram.css';
+import { exerciseService } from '../services/dataService';
 
 type RehabType = 'knee' | 'ankle' | null;
 
@@ -11,7 +12,7 @@ interface User {
   uid: string;
 }
 
-interface Exercise {
+export interface Exercise {
   id: string;
   name: string;
   phase: number;
@@ -26,158 +27,38 @@ interface Exercise {
 
 export default function RehabProgram({ user }: { user: User | null }) {
   const [selectedProgram, setSelectedProgram] = useState<RehabType>(null);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   
+  // Load exercises when program is selected
+  useEffect(() => {
+    if (user && selectedProgram) {
+      const loadedExercises = exerciseService.getExercises(user.uid, selectedProgram);
+      setExercises(loadedExercises);
+    }
+  }, [user, selectedProgram]);
+
+  // Toggle exercise completion
+  const toggleExercise = (exerciseId: string) => {
+    if (user && selectedProgram) {
+      exerciseService.toggleExerciseCompletion(user.uid, selectedProgram, exerciseId);
+      // Reload exercises to get updated state
+      const updated = exerciseService.getExercises(user.uid, selectedProgram);
+      setExercises(updated);
+    }
+  };
+
   // Mock user data - now using real user if available
   const userData = {
     name: user?.firstName || 'User',
     weekInProgram: 5,
     totalWeeks: 12,
-    completedExercises: 2,
-    totalExercises: 6,
+    completedExercises: exercises.filter(ex => ex.completed).length,
+    totalExercises: exercises.length,
     painLevel: 3,
     lastPainUpdate: '14 days'
   };
 
-  const kneeExercises: Exercise[] = [
-    {
-      id: '1',
-      name: 'Straight Leg Raises',
-      phase: 1,
-      sets: 3,
-      reps: 10,
-      hold: '5 seconds each',
-      description: 'Strengthen quadriceps while keeping knee straight. Helps improve stability and control.',
-      image: '🦵',
-      completed: true
-    },
-    {
-      id: '2',
-      name: 'Seated Knee Extensions',
-      phase: 2,
-      sets: 3,
-      reps: 12,
-      hold: 'Slow, controlled movement',
-      description: 'Strengthen quadriceps and improve range of motion. Use resistance band for added challenge.',
-      image: '💺',
-      completed: true
-    },
-    {
-      id: '3',
-      name: 'Wall Slides',
-      phase: 2,
-      sets: 3,
-      reps: 8,
-      hold: '10 seconds each',
-      description: 'Improve knee stability and strengthen quadriceps in a controlled environment with back support.',
-      image: '🧱',
-      completed: false
-    },
-    {
-      id: '4',
-      name: 'Hamstring Curls',
-      phase: 2,
-      sets: 3,
-      reps: 10,
-      hold: '3 seconds at top',
-      description: 'Strengthen hamstrings to improve knee stability and balance muscle development around the joint.',
-      image: '🏋️',
-      completed: false
-    },
-    {
-      id: '5',
-      name: 'Step-Ups',
-      phase: 3,
-      sets: 3,
-      reps: 10,
-      hold: 'Controlled pace',
-      description: 'Progressive strengthening exercises, improved balance and coordination, and functional movement patterns.',
-      image: '📦',
-      completed: false
-    },
-    {
-      id: '6',
-      name: 'Mini Squats',
-      phase: 3,
-      sets: 3,
-      reps: 12,
-      hold: '2 seconds at bottom',
-      description: 'Build strength with partial squats, focusing on proper form and controlled movement.',
-      image: '🧍',
-      completed: false
-    }
-  ];
-
-  const ankleExercises: Exercise[] = [
-    {
-      id: '1',
-      name: 'Ankle Pumps',
-      phase: 1,
-      sets: 3,
-      reps: 15,
-      hold: '2 seconds each',
-      description: 'Gentle range of motion exercises, gentle range of motion, and protecting the ankle from further injury.',
-      image: '👣',
-      completed: true
-    },
-    {
-      id: '2',
-      name: 'Alphabet Writing',
-      phase: 1,
-      sets: 2,
-      reps: 1,
-      hold: 'Full alphabet',
-      description: 'Use your big toe to write the alphabet in the air. Improves flexibility and range of motion.',
-      image: '✍️',
-      completed: true
-    },
-    {
-      id: '3',
-      name: 'Heel Raises',
-      phase: 2,
-      sets: 3,
-      reps: 12,
-      hold: '3 seconds at top',
-      description: 'Strengthen calf muscles and improve ankle stability. Begin with light strengthening exercises.',
-      image: '🦶',
-      completed: false
-    },
-    {
-      id: '4',
-      name: 'Resistance Band Flexion',
-      phase: 2,
-      sets: 3,
-      reps: 15,
-      hold: 'Controlled movement',
-      description: 'Use resistance band to strengthen ankle in all directions. Improves stability and control.',
-      image: '🔗',
-      completed: false
-    },
-    {
-      id: '5',
-      name: 'Balance Board Training',
-      phase: 3,
-      sets: 3,
-      reps: 1,
-      hold: '30 seconds',
-      description: 'Improve balance, stability, and proprioception. Essential for preventing future injuries.',
-      image: '⚖️',
-      completed: false
-    },
-    {
-      id: '6',
-      name: 'Single Leg Stance',
-      phase: 3,
-      sets: 3,
-      reps: 1,
-      hold: '45 seconds',
-      description: 'Advanced balance exercise to improve stability and functional movement patterns.',
-      image: '🕴️',
-      completed: false
-    }
-  ];
-
-  const currentExercises = selectedProgram === 'knee' ? kneeExercises : ankleExercises;
-  const displayedExercises = currentExercises.slice(0, 4); // Show first 4
+  const displayedExercises = exercises.slice(0, 4); // Show first 4
 
   const phases = [
     {
@@ -390,7 +271,10 @@ export default function RehabProgram({ user }: { user: User | null }) {
                     </div>
                     <div className="exercise-actions">
                       <button className="action-btn primary-btn">Watch Video</button>
-                      <button className="action-btn secondary-btn">
+                      <button 
+                        className={`action-btn ${exercise.completed ? 'completed-btn' : 'secondary-btn'}`}
+                        onClick={() => toggleExercise(exercise.id)}
+                      >
                         {exercise.completed ? '✓ Completed' : 'Mark as Complete'}
                       </button>
                     </div>
@@ -400,7 +284,7 @@ export default function RehabProgram({ user }: { user: User | null }) {
             </div>
 
             <div className="view-all-section">
-              <p>Showing 4 of {currentExercises.length} exercises for your current phase</p>
+              <p>Showing 4 of {exercises.length} exercises for your current phase</p>
               <button className="view-all-btn">View All Exercises</button>
             </div>
           </div>
