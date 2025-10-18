@@ -2,12 +2,16 @@
 
 import { type DashboardData, type Activity, type UserStats, type ProgramProgress } from '../types/dashboard';
 import { type Exercise } from '../types/rehab';
+import { type InjuryType, type UserInjuryProgress } from '../types/injuries';
+import { REHAB_PLANS } from '../data/injuryPlans';
 
 const STORAGE_KEYS = {
   DASHBOARD_DATA: 'rehabmotion_dashboard_data',
   KNEE_EXERCISES: 'rehabmotion_knee_exercises',
   ANKLE_EXERCISES: 'rehabmotion_ankle_exercises',
-  USER_PROGRESS: 'rehabmotion_user_progress'
+  USER_PROGRESS: 'rehabmotion_user_progress',
+  USER_INJURY: 'rehabmotion_user_injury',
+  INJURY_PROGRESS: 'rehabmotion_injury_progress'
 };
 
 // Default dashboard data
@@ -28,16 +32,16 @@ const getDefaultDashboardData = (): DashboardData => ({
   quickActions: [
     {
       id: '1',
-      icon: '🦵',
-      title: 'Knee Rehabilitation',
-      description: 'Start your knee recovery program',
-      link: 'rehab-program'
+      icon: '🏥',
+      title: 'Start Injury Rehab',
+      description: 'Get a personalized plan for your specific injury',
+      link: 'injury-selection'
     },
     {
       id: '2',
-      icon: '🦶',
-      title: 'Ankle Rehabilitation',
-      description: 'Start your ankle strengthening exercises',
+      icon: '�',
+      title: 'Knee Rehabilitation',
+      description: 'General knee recovery program',
       link: 'rehab-program'
     },
     {
@@ -274,3 +278,186 @@ function getDefaultAnkleExercises(): Exercise[] {
     }
   ];
 }
+
+// Injury-Specific Rehabilitation Management
+export const injuryRehabService = {
+  // Get user's selected injury type
+  getUserInjury: (userId: string): InjuryType | null => {
+    const key = `${STORAGE_KEYS.USER_INJURY}_${userId}`;
+    const stored = localStorage.getItem(key);
+    return stored ? (stored as InjuryType) : null;
+  },
+
+  // Set user's injury type
+  setUserInjury: (userId: string, injuryType: InjuryType): void => {
+    const key = `${STORAGE_KEYS.USER_INJURY}_${userId}`;
+    localStorage.setItem(key, injuryType);
+    
+    // Initialize injury progress
+    const progress: UserInjuryProgress = {
+      userId,
+      injuryType,
+      startDate: new Date(),
+      currentPhase: 1,
+      currentWeek: 1,
+      completedExercises: [],
+      painLevel: 0,
+      notes: [],
+      lastUpdated: new Date()
+    };
+    injuryRehabService.saveInjuryProgress(userId, progress);
+    
+    // Update dashboard with injury info
+    const plan = REHAB_PLANS[injuryType];
+    if (plan) {
+      dashboardService.updateProgramProgress(userId, {
+        programName: `${plan.injuryInfo.name} Rehabilitation`,
+        currentWeek: 1,
+        totalWeeks: plan.totalWeeks,
+        progressPercentage: 0,
+        description: `Starting ${plan.phases[0].name}`
+      });
+    }
+  },
+
+  // Get injury rehabilitation plan
+  getInjuryPlan: (userId: string) => {
+    const injuryType = injuryRehabService.getUserInjury(userId);
+    if (!injuryType) return null;
+    return REHAB_PLANS[injuryType] || null;
+  },
+
+  // Get user's injury progress
+  getInjuryProgress: (userId: string): UserInjuryProgress | null => {
+    const key = `${STORAGE_KEYS.INJURY_PROGRESS}_${userId}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      const progress = JSON.parse(stored);
+      progress.startDate = new Date(progress.startDate);
+      progress.lastUpdated = new Date(progress.lastUpdated);
+      return progress;
+    }
+    return null;
+  },
+
+  // Save injury progress
+  saveInjuryProgress: (userId: string, progress: UserInjuryProgress): void => {
+    const key = `${STORAGE_KEYS.INJURY_PROGRESS}_${userId}`;
+    localStorage.setItem(key, JSON.stringify(progress));
+  },
+
+  // Mark exercise as complete in injury plan
+  completeExercise: (userId: string, exerciseId: string): void => {
+    const progress = injuryRehabService.getInjuryProgress(userId);
+    if (!progress) return;
+    
+    if (!progress.completedExercises.includes(exerciseId)) {
+      progress.completedExercises.push(exerciseId);
+      progress.lastUpdated = new Date();
+      injuryRehabService.saveInjuryProgress(userId, progress);
+      
+      // Update dashboard stats
+      dashboardService.updateStats(userId, {
+        exercisesCompleted: progress.completedExercises.length
+      });
+      
+      // Add activity
+      const plan = injuryRehabService.getInjuryPlan(userId);
+      if (plan) {
+        const exercise = plan.phases
+          .flatMap(p => p.exercises)
+          .find(e => e.id === exerciseId);
+        
+        if (exercise) {
+          dashboardService.addActivity(userId, {
+            type: 'completed',
+            title: `Completed "${exercise.name}"`,
+            timestamp: new Date(),
+            icon: '✅'
+          });
+        }
+      }
+    }
+  },
+
+  // Uncomplete exercise
+  uncompleteExercise: (userId: string, exerciseId: string): void => {
+    const progress = injuryRehabService.getInjuryProgress(userId);
+    if (!progress) return;
+    
+    progress.completedExercises = progress.completedExercises.filter(id => id !== exerciseId);
+    progress.lastUpdated = new Date();
+    injuryRehabService.saveInjuryProgress(userId, progress);
+    
+    // Update dashboard stats
+    dashboardService.updateStats(userId, {
+      exercisesCompleted: progress.completedExercises.length
+    });
+  },
+
+  // Update pain level
+  updatePainLevel: (userId: string, painLevel: number, note?: string): void => {
+    const progress = injuryRehabService.getInjuryProgress(userId);
+    if (!progress) return;
+    
+    progress.painLevel = painLevel;
+    progress.lastUpdated = new Date();
+    
+    if (note) {
+      progress.notes.push(`[${new Date().toLocaleDateString()}] Pain: ${painLevel}/10 - ${note}`);
+    }
+    
+    injuryRehabService.saveInjuryProgress(userId, progress);
+    
+    // Add activity
+    dashboardService.addActivity(userId, {
+      type: 'logged',
+      title: `Logged pain level: ${painLevel}/10`,
+      timestamp: new Date(),
+      icon: '📝'
+    });
+  },
+
+  // Progress to next phase
+  progressToNextPhase: (userId: string): boolean => {
+    const progress = injuryRehabService.getInjuryProgress(userId);
+    const plan = injuryRehabService.getInjuryPlan(userId);
+    
+    if (!progress || !plan) return false;
+    
+    if (progress.currentPhase < plan.phases.length) {
+      progress.currentPhase++;
+      progress.lastUpdated = new Date();
+      injuryRehabService.saveInjuryProgress(userId, progress);
+      
+      const newPhase = plan.phases[progress.currentPhase - 1];
+      dashboardService.addActivity(userId, {
+        type: 'goal',
+        title: `Advanced to ${newPhase.name}`,
+        timestamp: new Date(),
+        icon: '🎯'
+      });
+      
+      return true;
+    }
+    
+    return false;
+  },
+
+  // Get exercises for current phase
+  getCurrentPhaseExercises: (userId: string) => {
+    const progress = injuryRehabService.getInjuryProgress(userId);
+    const plan = injuryRehabService.getInjuryPlan(userId);
+    
+    if (!progress || !plan) return [];
+    
+    const phase = plan.phases[progress.currentPhase - 1];
+    return phase ? phase.exercises : [];
+  },
+
+  // Check if exercise is completed
+  isExerciseCompleted: (userId: string, exerciseId: string): boolean => {
+    const progress = injuryRehabService.getInjuryProgress(userId);
+    return progress?.completedExercises.includes(exerciseId) || false;
+  }
+};

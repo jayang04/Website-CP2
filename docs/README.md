@@ -1,43 +1,60 @@
-# Rehab Hub - Rehabilitation Exercise Tracker
+# 📚 Documentat### 🏥 [Complete Rehab Plans](./COMPLETE_REHAB_PLANS.md)
+Detailed rehabilitation plans for all 6 injuries:
+- ACL Tear, MCL Tear, Meniscus Tear
+- Lateral, Medial, and High Ankle Sprains
+- Phase-by-phase breakdown with exercises
 
-Web-based rehabilitation exercise tracker using React, MediaPipe, and Firebase that detects knee and ankle angles in real-time via webcam.
+### 🎥 [Exercise Media Guide](./EXERCISE_MEDIA_GUIDE.md)
+**How to add videos and images to exercises:**
+- Video format requirements and best practices
+- Image guidelines and organization
+- Step-by-step instructions
+- Complete examples with codeSupporting documentation for RehabMotion project.
 
-## 🚀 Quick Start
+## 📄 Available Documentation
 
-```bash
-# Install dependencies
-npm install
+### 📖 [Main README](../README.md)
+**Complete project documentation** - Start here! Includes:
+- Quick start guide
+- Feature overview
+- Developer guide (add injuries, exercises, modify progress)
+- Clinical content details
+- UI/UX design system
+- Changelog and troubleshooting
 
-# Start development server
-npm run dev
+### � [Complete Rehab Plans](./COMPLETE_REHAB_PLANS.md)
+Detailed rehabilitation plans for all 6 injuries:
+- ACL Tear, MCL Tear, Meniscus Tear
+- Lateral, Medial, and High Ankle Sprains
+- Phase-by-phase breakdown with exercises
 
-# Open http://localhost:5173
-```
+### 🔧 [Backend Setup](./BACKEND_SETUP_COMPLETE.md)
+Optional Express server setup:
+- Installation guide
+- API endpoints
+- Configuration
 
-## 📋 Features
+### 🌐 [Server API Reference](./SERVER_README.md)
+Backend API documentation:
+- Endpoint details
+- Request/response formats
 
-- ✅ Real-time pose detection using MediaPipe
-- ✅ Knee and ankle angle measurements
-- ✅ Live webcam feed with skeleton overlay
-- ✅ Zoom and mirror controls for small spaces
-- ✅ Firebase authentication
-- ✅ Exercise tracking interface
-- ✅ Optional backend API server
+### 🎨 [Logo Guide](./LOGO_GUIDE.md)
+Branding and logo usage guidelines
 
-## 🛠️ Tech Stack
+---
 
-- **Frontend:** React 19, TypeScript, Vite
-- **Pose Detection:** MediaPipe Pose Landmarker
-- **Auth & Database:** Firebase
-- **Backend (Optional):** Express, Node.js
-- **Styling:** Bootstrap 5
+## 🚀 Quick Navigation
 
-## 📚 Documentation
+**Need to:**
+- **Get started?** → [Main README](../README.md#quick-start)
+- **Add an injury?** → [Main README - Developer Guide](../README.md#developer-guide)
+- **See rehab plans?** → [Complete Rehab Plans](./COMPLETE_REHAB_PLANS.md)
+- **Setup backend?** → [Backend Setup](./BACKEND_SETUP_COMPLETE.md)
 
-All documentation is in the [`docs/`](./docs/) folder:
+---
 
-- [Backend Setup](./docs/BACKEND_SETUP_COMPLETE.md) - Backend server implementation guide
-- [Server API Reference](./docs/SERVER_README.md) - API endpoints and usage
+**All documentation consolidated into main README for easier access.**
 
 ## 🎯 Project Structure
 

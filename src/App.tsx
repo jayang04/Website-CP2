@@ -5,6 +5,10 @@ import { type User as FirebaseUser } from 'firebase/auth'
 import RehabExercise from './pages/RehabExercise'
 import RehabProgram from './pages/RehabProgram'
 import PoseTestPage from './pages/PoseTest'
+import InjurySelection from './pages/InjurySelection'
+import InjuryRehabProgram from './pages/InjuryRehabProgram'
+import { injuryRehabService } from './services/dataService'
+import { type InjuryType } from './types/injuries'
 
 // Types
 interface User {
@@ -15,7 +19,7 @@ interface User {
   uid: string;
 }
 
-type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'exercises' | 'debug' | 'rehab-program';
+type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'exercises' | 'debug' | 'rehab-program' | 'injury-selection' | 'injury-rehab';
 
 // Helper function to extract first name
 function getFirstName(fullName: string): string {
@@ -169,6 +173,7 @@ function App() {
             {user && (
               <>
                 <a onClick={() => navigateTo('dashboard')} className={currentPage === 'dashboard' ? 'active' : ''}>Dashboard</a>
+                <a onClick={() => navigateTo('injury-selection')} className={currentPage === 'injury-selection' || currentPage === 'injury-rehab' ? 'active' : ''}>Rehab Programs</a>
                 <a onClick={() => navigateTo('exercises')} className={currentPage === 'exercises' ? 'active' : ''}>Exercises</a>
               </>
             )}
@@ -323,6 +328,21 @@ function App() {
       {currentPage === 'profile' && <ProfilePage user={user} onProfilePictureUpload={handleProfilePictureUpload} />}
       {currentPage === 'exercises' && <RehabExercise />}
       {currentPage === 'rehab-program' && <RehabProgram user={user} />}
+      {currentPage === 'injury-selection' && user && (
+        <InjurySelection 
+          onSelectInjury={(injuryType: InjuryType) => {
+            injuryRehabService.setUserInjury(user.uid, injuryType);
+            navigateTo('injury-rehab');
+          }}
+          onBack={() => navigateTo('dashboard')}
+        />
+      )}
+      {currentPage === 'injury-rehab' && user && (
+        <InjuryRehabProgram 
+          userId={user.uid}
+          onBack={() => navigateTo('dashboard')}
+        />
+      )}
       {currentPage === 'debug' && <PoseTestPage />}
 
       {/* Footer */}
