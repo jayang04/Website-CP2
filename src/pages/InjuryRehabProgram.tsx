@@ -15,6 +15,9 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
   const [showPainLog, setShowPainLog] = useState(false);
   const [painLevel, setPainLevel] = useState(0);
   const [painNote, setPainNote] = useState('');
+  const [selectedExercise, setSelectedExercise] = useState<any>(null);
+  const [showExerciseModal, setShowExerciseModal] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -48,11 +51,24 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
     loadData();
   };
 
+  const handleOpenExerciseModal = (exercise: any) => {
+    setSelectedExercise(exercise);
+    setShowExerciseModal(true);
+  };
+
+  const handleCloseExerciseModal = () => {
+    setShowExerciseModal(false);
+    setSelectedExercise(null);
+  };
+
   const handleProgressPhase = () => {
-    if (window.confirm('Are you sure you want to progress to the next phase? Consult with your therapist first.')) {
-      injuryRehabService.progressToNextPhase(userId);
-      loadData();
-    }
+    setShowProgressModal(true);
+  };
+
+  const confirmProgressPhase = () => {
+    injuryRehabService.progressToNextPhase(userId);
+    loadData();
+    setShowProgressModal(false);
   };
 
   if (!plan || !progress) {
@@ -244,7 +260,7 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
                       </div>
                     )}
                     
-                    <p className="exercise-desc">{exercise.description}</p>
+                    <p className="exercise-desc">{exercise.summary || exercise.description}</p>
                     
                     <div className="exercise-details">
                       <div className="detail-row">
@@ -265,12 +281,21 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
                       </div>
                     </div>
                     
-                    <button
-                      className={`exercise-toggle-btn ${isCompleted ? 'completed' : ''}`}
-                      onClick={() => handleToggleExercise(exercise.id)}
-                    >
-                      {isCompleted ? '✓ Completed' : 'Mark as Complete'}
-                    </button>
+                    <div className="exercise-actions">
+                      <button
+                        className="exercise-info-btn"
+                        onClick={() => handleOpenExerciseModal(exercise)}
+                      >
+                        ℹ️ Need Help? Click Here for More Details
+                      </button>
+                      
+                      <button
+                        className={`exercise-toggle-btn ${isCompleted ? 'completed' : ''}`}
+                        onClick={() => handleToggleExercise(exercise.id)}
+                      >
+                        {isCompleted ? '✓ Completed' : 'Mark as Complete'}
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -343,6 +368,179 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
           </div>
         </div>
       </div>
+
+      {/* Exercise Detail Modal */}
+      {showExerciseModal && selectedExercise && (
+        <div className="exercise-modal-overlay" onClick={handleCloseExerciseModal}>
+          <div className="exercise-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={handleCloseExerciseModal}>
+              ✕
+            </button>
+            
+            <div className="modal-header">
+              <span className="modal-exercise-emoji">{selectedExercise.image}</span>
+              <div>
+                <h2>{selectedExercise.name}</h2>
+                <span className={`difficulty-badge ${selectedExercise.difficulty}`}>
+                  {selectedExercise.difficulty}
+                </span>
+              </div>
+            </div>
+
+            <div className="modal-body">
+              {/* Large Video/Media Section */}
+              <div className="modal-media-section">
+                {selectedExercise.media?.videoUrl ? (
+                  <div className="modal-video-container">
+                    <video 
+                      controls 
+                      autoPlay
+                      poster={selectedExercise.media.thumbnail}
+                      className="modal-exercise-video"
+                    >
+                      <source src={selectedExercise.media.videoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                ) : selectedExercise.media?.images && selectedExercise.media.images.length > 0 ? (
+                  <div className="modal-image-gallery">
+                    {selectedExercise.media.images.map((img: string, idx: number) => (
+                      <img 
+                        key={idx}
+                        src={img} 
+                        alt={`${selectedExercise.name} step ${idx + 1}`}
+                        className="modal-exercise-image"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="modal-media-placeholder">
+                    <span className="placeholder-icon-large">🎥</span>
+                    <p>Demo video coming soon</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Detailed Information */}
+              <div className="modal-info-section">
+                <div className="modal-section">
+                  <h3>📋 Exercise Details</h3>
+                  <div className="modal-specs">
+                    <div className="spec-item">
+                      <span className="spec-label">Sets:</span>
+                      <span className="spec-value">{selectedExercise.sets}</span>
+                    </div>
+                    <div className="spec-item">
+                      <span className="spec-label">Reps:</span>
+                      <span className="spec-value">{selectedExercise.reps}</span>
+                    </div>
+                    {selectedExercise.hold && (
+                      <div className="spec-item">
+                        <span className="spec-label">Hold Time:</span>
+                        <span className="spec-value">{selectedExercise.hold}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="modal-section">
+                  <h3>📝 Full Description</h3>
+                  <div className="modal-description">
+                    {selectedExercise.description.split('\n').map((line: string, idx: number) => (
+                      <p key={idx} className="description-line">{line}</p>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedExercise.requiredEquipment && (
+                  <div className="modal-section">
+                    <h3>🛠️ Required Equipment</h3>
+                    <ul className="equipment-list">
+                      {selectedExercise.requiredEquipment.map((item: string, idx: number) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="modal-section">
+                  <h3>⚠️ Pain Threshold</h3>
+                  <div className="pain-threshold-box">
+                    {selectedExercise.painThreshold}
+                  </div>
+                </div>
+
+                <div className="modal-section">
+                  <h3>💡 Key Tips</h3>
+                  <ul className="tips-list">
+                    <li>Maintain proper form throughout the exercise</li>
+                    <li>Breathe steadily - don't hold your breath</li>
+                    <li>Stop immediately if you feel sharp pain</li>
+                    <li>Progress gradually - don't rush recovery</li>
+                    <li>Warm up before and stretch after</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button 
+                className={`modal-complete-btn ${progress.completedExercises.includes(selectedExercise.id) ? 'completed' : ''}`}
+                onClick={() => {
+                  handleToggleExercise(selectedExercise.id);
+                  handleCloseExerciseModal();
+                }}
+              >
+                {progress.completedExercises.includes(selectedExercise.id) ? '✓ Completed' : 'Mark as Complete'}
+              </button>
+              <button className="modal-cancel-btn" onClick={handleCloseExerciseModal}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Progress Phase Confirmation Modal */}
+      {showProgressModal && (
+        <div className="exercise-modal-overlay" onClick={() => setShowProgressModal(false)}>
+          <div className="progress-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setShowProgressModal(false)}>
+              ✕
+            </button>
+            
+            <div className="progress-modal-header">
+              <div className="progress-modal-icon">⚠️</div>
+              <h2>Advance to Next Phase?</h2>
+            </div>
+
+            <div className="progress-modal-body">
+              <p className="progress-modal-warning">
+                Before progressing to the next phase, please ensure:
+              </p>
+              <ul className="progress-checklist">
+                <li>✓ You've completed all exercises in the current phase</li>
+                <li>✓ You can perform exercises with minimal to no pain</li>
+                <li>✓ You've consulted with your physical therapist</li>
+                <li>✓ You meet the phase completion criteria</li>
+              </ul>
+              <p className="progress-modal-note">
+                <strong>Important:</strong> Progressing too quickly may increase injury risk. 
+                Always consult your healthcare provider before advancing phases.
+              </p>
+            </div>
+
+            <div className="progress-modal-footer">
+              <button className="progress-confirm-btn" onClick={confirmProgressPhase}>
+                Yes, Advance Phase
+              </button>
+              <button className="progress-cancel-btn" onClick={() => setShowProgressModal(false)}>
+                Not Yet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,138 +1,173 @@
-# Backend Server Setup
+# 🖥️ Server README
 
-## What Got Added
+## Backend Server for RehabMotion
 
-1. **Express server** (`server/index.ts`) - Node.js backend running on port 4000
-2. **Vite proxy** - Routes `/api/*` requests from frontend to backend
-3. **New scripts** in package.json:
-   - `npm run dev` - Frontend only (Vite on port 5173)
-   - `npm run dev:server` - Backend only (Express on port 4000)
-   - `npm run dev:all` - Both servers simultaneously
+This is the backend server for the RehabMotion rehabilitation tracking application.
 
-## How to Use
+## Setup
 
-### Start Both Servers
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+
+### Installation
+
 ```bash
-npm run dev:all
+# Install dependencies
+npm install
+
+# Or with yarn
+yarn install
 ```
 
-This starts:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:4000
+### Environment Variables
 
-### Test the API
+Create a `.env` file in the root directory:
 
-**Health Check:**
+```env
+PORT=3001
+DATABASE_URL=your_database_url
+JWT_SECRET=your_jwt_secret
+```
+
+## Running the Server
+
+### Development Mode
 ```bash
-curl http://localhost:4000/api/health
+npm run dev
+# or
+yarn dev
 ```
 
-**From Frontend:**
-```typescript
-// No need for full URL - Vite proxy handles it
-fetch('/api/health')
-  .then(r => r.json())
-  .then(data => console.log(data));
-```
+Server will start on `http://localhost:3001`
 
-## Available Endpoints
-
-- `GET /api/health` - Server health check
-- `POST /api/echo` - Echo back request body
-- `GET /api/user-info` - Placeholder user info
-- `POST /api/rehab/session` - Save rehab session data
-
-## How It Works
-
-1. **Vite Proxy** (vite.config.ts):
-   - Intercepts `/api/*` requests from frontend
-   - Forwards to `http://localhost:4000`
-   - Avoids CORS issues
-   - Maintains same-origin for Firebase Auth
-
-2. **Express Server** (server/index.ts):
-   - Listens on port 4000
-   - Handles API routes
-   - Can integrate Firebase Admin SDK
-   - Can connect to database
-
-## Next Steps
-
-### Add Firebase Admin
+### Production Mode
 ```bash
-npm install firebase-admin
+npm run build
+npm start
+# or
+yarn build
+yarn start
 ```
 
-Then in server/index.ts:
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `POST /api/auth/logout` - Logout user
+
+### User Progress
+- `GET /api/progress/:userId` - Get user progress
+- `POST /api/progress` - Save progress
+- `PUT /api/progress/:id` - Update progress
+- `DELETE /api/progress/:id` - Delete progress
+
+### Exercises
+- `GET /api/exercises` - Get all exercises
+- `GET /api/exercises/:id` - Get specific exercise
+- `POST /api/exercises` - Create exercise (admin)
+- `PUT /api/exercises/:id` - Update exercise (admin)
+
+### Rehab Plans
+- `GET /api/rehab-plans` - Get all rehab plans
+- `GET /api/rehab-plans/:injuryType` - Get plan by injury type
+
+## Project Structure
+
+```
+server/
+├── index.ts          # Main server file
+├── routes/           # API routes
+├── controllers/      # Request handlers
+├── models/           # Database models
+├── middleware/       # Custom middleware
+└── utils/            # Utility functions
+```
+
+## Technologies Used
+
+- **Express.js** - Web framework
+- **TypeScript** - Type safety
+- **JWT** - Authentication
+- **CORS** - Cross-origin requests
+
+## Development
+
+### Adding New Routes
+
+1. Create route file in `routes/`
+2. Define handlers in `controllers/`
+3. Import and use in `index.ts`
+
+Example:
 ```typescript
-import admin from 'firebase-admin';
+// routes/example.ts
+import { Router } from 'express';
+import { exampleController } from '../controllers/example';
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+const router = Router();
+router.get('/example', exampleController);
 
-// Verify Firebase tokens
-app.use('/api/*', async (req, res, next) => {
-  const token = req.headers.authorization?.split('Bearer ')[1];
-  if (token) {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken;
-  }
-  next();
-});
+export default router;
 ```
 
-### Save Rehab Sessions
-```typescript
-// Example: save to Firestore from backend
-app.post('/api/rehab/session', async (req, res) => {
-  const { userId, exercise, reps, angles, duration } = req.body;
-  
-  await admin.firestore().collection('sessions').add({
-    userId,
-    exercise,
-    reps,
-    angles,
-    duration,
-    timestamp: admin.firestore.FieldValue.serverTimestamp()
-  });
-  
-  res.json({ success: true });
-});
+## Database
+
+Currently using localStorage on the frontend for simplicity. 
+
+### Future: Database Integration
+- PostgreSQL or MongoDB recommended
+- Set up migrations
+- Add ORM (Prisma or TypeORM)
+
+## Security
+
+- CORS enabled for specific origins
+- JWT token authentication
+- Input validation
+- Rate limiting (to be implemented)
+
+## Testing
+
+```bash
+npm test
+# or
+yarn test
 ```
 
-## Why Use Backend Server?
+## Deployment
 
-- **Server-side validation** - Verify data before saving
-- **Firebase Admin** - Access Firestore/Auth with admin privileges
-- **Third-party APIs** - Call external services without exposing keys
-- **Complex logic** - Heavy processing on server
-- **WebSockets** - Real-time features
-- **File uploads** - Handle large files server-side
+### Recommended Platforms:
+- Heroku
+- Railway
+- Render
+- AWS EC2
 
-## Notes
-
-- Firebase Auth persistence still works (client-side, localStorage)
-- Keep same origin (localhost:5173) for auth to persist
-- Use `/api` prefix for all backend routes
-- Backend auto-restarts on code changes (ts-node-dev)
-- CORS enabled for development
+### Deployment Steps:
+1. Set environment variables
+2. Build the project
+3. Start the server
+4. Configure reverse proxy (nginx)
 
 ## Troubleshooting
 
-**Port 4000 already in use:**
+### Port Already in Use
 ```bash
 # Find and kill process
-lsof -ti:4000 | xargs kill -9
+lsof -ti:3001 | xargs kill -9
 ```
 
-**Hot reload not working:**
-```bash
-# Restart dev server
-npm run dev:all
-```
+### CORS Issues
+Check `CORS_ORIGIN` in environment variables matches your frontend URL.
 
-**Can't reach /api from frontend:**
-- Check Vite proxy config in vite.config.ts
-- Ensure backend is running (npm run dev:server)
-- Check browser Network tab for errors
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes
+4. Submit pull request
+
+---
+
+**Status**: Backend structure in place, ready for database integration

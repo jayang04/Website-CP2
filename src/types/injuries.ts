@@ -34,7 +34,8 @@ export interface PhaseExercise {
   sets: number;
   reps: number | string;
   hold?: string;
-  description: string;
+  summary?: string; // Short one-line description for card display
+  description: string; // Full detailed description for modal (bullet points)
   image: string; // Emoji icon for quick reference
   media?: {
     images?: string[]; // Array of image URLs

@@ -1,24 +1,10 @@
-/* ============================================
-   INJURY REHABILITATION PROGRAM - COMPLETE REWRITE
-   Clean, Modern, and Bug-Free CSS
-   ============================================ */
-
-/* ============================================
-   BASE CONTAINER & LAYOUT
-   ============================================ */
+/* Injury Rehabilitation Program Styles */
 
 .injury-rehab-program {
   max-width: 1600px;
   margin: 0 auto;
   padding: 20px;
-  box-sizing: border-box;
-  min-height: 100vh;
-  width: 100%;
 }
-
-/* ============================================
-   BACK BUTTON
-   ============================================ */
 
 .back-btn {
   padding: 12px 24px;
@@ -29,7 +15,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
   display: inline-flex;
   align-items: center;
@@ -37,27 +23,19 @@
 }
 
 .back-btn:hover {
-  background: #007bff;
+  background: var(--primary-color);
   color: white;
-  border-color: #007bff;
+  border-color: var(--primary-color);
   transform: translateX(-4px);
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
-
-/* ============================================
-   LOADING STATE
-   ============================================ */
 
 .injury-rehab-loading {
   text-align: center;
   padding: 100px 20px;
   font-size: 1.2rem;
-  color: #666;
+  color: var(--text-secondary);
 }
-
-/* ============================================
-   HEADER SECTION
-   ============================================ */
 
 .rehab-header {
   margin-bottom: 30px;
@@ -72,25 +50,19 @@
 
 .injury-icon-large {
   font-size: 4rem;
-  line-height: 1;
 }
 
 .rehab-title h1 {
   font-size: 2.5rem;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
-  line-height: 1.2;
 }
 
 .injury-subtitle {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 1.1rem;
   margin-top: 5px;
 }
-
-/* ============================================
-   STATS GRID
-   ============================================ */
 
 .rehab-stats-grid {
   display: grid;
@@ -119,7 +91,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #007bff, #667eea);
+  background: linear-gradient(90deg, var(--primary-color), #667eea);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -127,7 +99,7 @@
 .stat-box:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  border-color: #007bff;
+  border-color: var(--primary-color);
 }
 
 .stat-box:hover::before {
@@ -142,7 +114,7 @@
 .stat-value {
   font-size: 2.2rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #007bff, #667eea);
+  background: linear-gradient(135deg, var(--primary-color), #667eea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -152,47 +124,35 @@
 
 .stat-label {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* ============================================
-   MAIN CONTENT GRID - THREE COLUMN LAYOUT
-   Left: Phases Nav | Center: Phase Content | Right: Guidelines
-   ============================================ */
-
 .rehab-content {
   display: grid;
-  grid-template-columns: 240px 1fr 300px;
-  gap: 24px;
-  align-items: start;
-  width: 100%;
-  max-width: 100%;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 30px;
+  align-items: start; /* Align items to top */
 }
 
-/* ============================================
-   LEFT SIDEBAR - PHASES NAVIGATION
-   ============================================ */
-
+/* Phases Sidebar */
 .phases-sidebar {
   background: white;
   border: 2px solid #f0f0f0;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 20px;
+  height: fit-content;
   position: sticky;
   top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  width: 240px;
-  box-sizing: border-box;
+  min-width: 0; /* Prevent expansion */
 }
 
 .phases-sidebar h3 {
-  margin: 0 0 20px 0;
+  margin-top: 0;
+  margin-bottom: 20px;
   font-size: 1.2rem;
-  font-weight: 700;
-  color: #333;
 }
 
 .phase-nav-btn {
@@ -200,7 +160,7 @@
   background: white;
   border: 2px solid #e8eaed;
   border-radius: 12px;
-  padding: 16px;
+  padding: 18px;
   margin-bottom: 12px;
   cursor: pointer;
   text-align: left;
@@ -216,35 +176,30 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: #007bff;
+  background: var(--primary-color);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.phase-nav-btn:hover:not(:disabled):not(.locked):not(.active) {
-  border-color: #4CAF50;
-  background: #f1f8f4;
+.phase-nav-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  background: #f8f9ff;
   transform: translateX(4px);
-  color: #333;
 }
 
-.phase-nav-btn:hover:not(:disabled):not(.locked):not(.active)::before {
+.phase-nav-btn:hover:not(:disabled)::before {
   opacity: 1;
-  background: #4CAF50;
 }
 
 .phase-nav-btn.active {
-  border-color: #007bff !important;
-  background: linear-gradient(135deg, #007bff, #667eea) !important;
-  color: white !important;
+  border-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), #667eea);
+  color: white;
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
-.phase-nav-btn.active:hover {
-  color: white !important;
-  background: linear-gradient(135deg, #0056b3, #5568d3) !important;
-  border-color: #0056b3 !important;
-  transform: translateX(4px);
+.phase-nav-btn.active::before {
+  opacity: 0;
 }
 
 .phase-nav-btn.completed {
@@ -267,55 +222,37 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .phase-number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .check-icon, .lock-icon {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .phase-nav-title {
   font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 4px;
-  line-height: 1.3;
+  margin-bottom: 5px;
 }
 
 .phase-nav-duration {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   opacity: 0.8;
 }
 
-/* ============================================
-   CENTER - PHASE CONTENT
-   ============================================ */
-
+/* Main Phase Content */
 .phase-content {
   background: white;
   border: 2px solid #f0f0f0;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 600px;
-  transition: opacity 0.2s ease;
-}
-
-.phase-content-enter {
-  opacity: 0;
-}
-
-.phase-content-enter-active {
-  opacity: 1;
-  transition: opacity 0.2s ease;
+  border-radius: 12px;
+  padding: 30px;
+  min-width: 0; /* Prevent grid blowout */
+  overflow: hidden; /* Contain children */
 }
 
 .phase-header {
@@ -325,27 +262,27 @@
   margin-bottom: 30px;
   padding-bottom: 24px;
   border-bottom: 3px solid #f0f0f0;
-  gap: 20px;
+  gap: 20px; /* Add gap between title and button */
 }
 
 .phase-header > div {
   flex: 1;
-  min-width: 0;
+  min-width: 0; /* Allow text to wrap properly */
 }
 
 .phase-header h2 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #007bff, #667eea);
+  background: linear-gradient(135deg, var(--primary-color), #667eea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  line-height: 1.2;
+  word-wrap: break-word; /* Prevent text overflow */
 }
 
 .phase-duration {
-  color: #666;
+  color: var(--text-secondary);
   margin-top: 8px;
   font-size: 1rem;
   font-weight: 500;
@@ -353,7 +290,7 @@
 
 .progress-phase-btn {
   padding: 14px 28px;
-  background: linear-gradient(135deg, #007bff, #667eea);
+  background: linear-gradient(135deg, var(--primary-color), #667eea);
   color: white;
   border: none;
   border-radius: 10px;
@@ -362,23 +299,14 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-  flex-shrink: 0;
-  white-space: nowrap;
+  flex-shrink: 0; /* Prevent button from shrinking */
+  white-space: nowrap; /* Keep button text on one line */
 }
 
 .progress-phase-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
 }
-
-.progress-phase-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ============================================
-   PHASE PROGRESS BAR
-   ============================================ */
 
 .phase-progress-section {
   margin-bottom: 35px;
@@ -394,7 +322,7 @@
   margin-bottom: 12px;
   font-size: 1rem;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .progress-bar {
@@ -407,7 +335,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #007bff, #4CAF50);
+  background: linear-gradient(90deg, var(--primary-color), #4CAF50);
   transition: width 0.6s ease;
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
   position: relative;
@@ -425,23 +353,24 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
-
-/* ============================================
-   PHASE SECTIONS (GOALS, PRECAUTIONS, ETC)
-   ============================================ */
 
 .phase-section {
   margin-bottom: 40px;
+  position: relative;
 }
 
 .phase-section h3 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   margin-bottom: 20px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -449,7 +378,9 @@
   border-bottom: 3px solid #f0f0f0;
 }
 
-.goals-list {
+
+
+.goals-list, .precautions-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -458,7 +389,7 @@
 .goals-list li {
   padding: 16px 20px;
   background: linear-gradient(to right, #f8f9ff, white);
-  border-left: 5px solid #007bff;
+  border-left: 5px solid var(--primary-color);
   margin-bottom: 12px;
   border-radius: 8px;
   font-size: 1rem;
@@ -485,12 +416,6 @@
   border-bottom-color: #ffe0b2;
 }
 
-.precautions-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
 .precautions-list li {
   padding: 14px 18px;
   background: white;
@@ -508,68 +433,68 @@
   box-shadow: 0 4px 8px rgba(255, 152, 0, 0.15);
 }
 
-/* ============================================
-   EXERCISES SECTION - SINGLE COLUMN LAYOUT
-   ============================================ */
-
-.exercises-grid {
-  display: flex;
-  flex-direction: column;
+/* Exercises Grid - Full Width Layout (One per row) */
+.injury-rehab-program .exercises-grid,
+.phase-content .exercises-grid {
+  display: flex !important;
+  flex-direction: column !important;
   gap: 24px;
   width: 100%;
-  max-width: 100%;
   margin-top: 20px;
-  box-sizing: border-box;
 }
 
-.exercise-card {
+.injury-rehab-program .exercise-card,
+.phase-content .exercise-card {
   background: white;
   border: 2px solid #e8eaed;
   border-radius: 16px;
   padding: 24px;
-  width: 100%;
-  max-width: 100%;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  height: auto;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
-.exercise-card::before {
+.injury-rehab-program .exercise-card::before,
+.phase-content .exercise-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #007bff, #667eea);
+  background: linear-gradient(90deg, var(--primary-color), #667eea);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.exercise-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  transform: translateY(-4px);
-  border-color: #007bff;
-}
-
-.exercise-card:hover::before {
-  opacity: 1;
-}
-
-.exercise-card.completed {
+.injury-rehab-program .exercise-card.completed,
+.phase-content .exercise-card.completed {
   border-color: #4CAF50;
   background: linear-gradient(to bottom, #f1f8f4 0%, white 100%);
 }
 
-.exercise-card.completed::before {
+.injury-rehab-program .exercise-card.completed::before,
+.phase-content .exercise-card.completed::before {
   background: linear-gradient(90deg, #4CAF50, #66bb6a);
   opacity: 1;
 }
 
-.exercise-card.completed:hover {
+.injury-rehab-program .exercise-card:hover,
+.phase-content .exercise-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+}
+
+.injury-rehab-program .exercise-card.completed:hover,
+.phase-content .exercise-card.completed:hover {
   border-color: #4CAF50;
   box-shadow: 0 8px 24px rgba(76, 175, 80, 0.2);
 }
@@ -614,14 +539,17 @@
   color: white;
 }
 
-.exercise-card h4 {
+.injury-rehab-program .exercise-card h4,
+.phase-content .exercise-card h4 {
   font-size: 1.3rem;
   font-weight: 700;
   margin: 0 0 12px 0;
-  color: #333;
+  color: var(--text-primary);
   line-height: 1.3;
+  word-wrap: break-word;
 }
 
+/* Exercise Media Section */
 .exercise-media {
   width: 100%;
   margin-bottom: 16px;
@@ -633,7 +561,7 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
   background: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -668,9 +596,10 @@
 .exercise-image:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-color: #007bff;
+  border-color: var(--primary-color);
 }
 
+/* Media Placeholder */
 .exercise-media-placeholder {
   width: 100%;
   height: 180px;
@@ -681,6 +610,34 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.exercise-media-placeholder::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.3) 10px,
+    rgba(255, 255, 255, 0.3) 20px
+  );
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    transform: translate(0%, 0%);
+  }
 }
 
 .placeholder-content {
@@ -688,6 +645,7 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  z-index: 1;
 }
 
 .placeholder-icon {
@@ -697,17 +655,21 @@
 
 .placeholder-text {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .exercise-desc {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 16px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  flex-grow: 1;
+  min-height: 60px;
 }
 
 .exercise-details {
@@ -724,10 +686,19 @@
 .detail-row {
   display: flex;
   align-items: center;
+  padding: 0;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.4;
   font-weight: 600;
+}
+
+.detail-row:first-child {
+  padding-top: 0;
+}
+
+.detail-row:last-child {
+  padding-bottom: 0;
 }
 
 .detail-row.pain-threshold {
@@ -741,19 +712,120 @@
 .exercise-toggle-btn {
   width: 100%;
   padding: 14px;
-  border: 2px solid #007bff;
+  border: 2px solid var(--primary-color);
   background: white;
-  color: #007bff;
+  color: var(--primary-color);
   border-radius: 10px;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 8px;
+  position: relative;
+  overflow: hidden;
 }
 
-.exercise-toggle-btn:hover {
-  background: #007bff;
+.exercise-toggle-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  opacity: 0.3;
+}
+
+.placeholder-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exercise-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  flex-grow: 1;
+  min-height: 60px;
+}
+
+.exercise-details {
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #e8eaed;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.detail-row:first-child {
+  padding-top: 0;
+}
+
+.detail-row:last-child {
+  padding-bottom: 0;
+}
+
+.detail-row.pain-threshold {
+  color: #FF9800;
+  font-weight: 700;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px solid #ffe0b2;
+}
+
+.exercise-toggle-btn {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid var(--primary-color);
+  background: white;
+  color: var(--primary-color);
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.exercise-toggle-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: var(--primary-color);
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
@@ -773,6 +845,276 @@
   transform: translateY(-2px);
 }
 
+/* Guidelines Sidebar */
+.guidelines-sidebar {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.guideline-section {
+  margin-bottom: 28px;
+}
+
+.guideline-section h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guideline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.guideline-list li {
+  padding: 10px 0 10px 28px;
+  position: relative;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  border-bottom: 1px solid #f5f5f5;
+  transition: all 0.2s ease;
+}
+
+.guideline-list li:last-child {
+  border-bottom: none;
+}
+
+.guideline-list li::before {
+  content: '•';
+  position: absolute;
+  left: 8px;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.guideline-list li:hover {
+  color: var(--text-primary);
+  padding-left: 32px;
+}
+
+.pain-logger-section {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 2px solid #e8eaed;
+}
+
+.pain-logger-section h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.warning-section {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 2px solid #e8eaed;
+}
+
+.warning-section h3 {
+  color: #d32f2f;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.warning-section .guideline-list li::before {
+  color: #d32f2f;
+}
+
+.warning-section .guideline-list li {
+  border-color: #ffebee;
+}
+
+.log-pain-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #2196F3, #42a5f5);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.log-pain-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+}
+
+.pain-log-form label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.pain-slider {
+  width: 100%;
+  margin-bottom: 18px;
+  height: 8px;
+  border-radius: 4px;
+  appearance: none;
+  background: linear-gradient(to right, #4CAF50, #FF9800, #f44336);
+  outline: none;
+}
+
+.pain-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--primary-color);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.pain-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.pain-log-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e8eaed;
+  border-radius: 10px;
+  font-size: 14px;
+  resize: vertical;
+  margin-bottom: 12px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.pain-log-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.pain-log-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.submit-pain-btn {
+  flex: 1;
+  padding: 12px;
+  background: linear-gradient(135deg, #4CAF50, #66bb6a);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.submit-pain-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.cancel-pain-btn {
+  flex: 1;
+  padding: 12px;
+  background: #757575;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-pain-btn:hover {
+  background: #616161;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1200px) {
+  .rehab-content {
+    grid-template-columns: 1fr;
+  }
+
+  .phases-sidebar,
+  .guidelines-sidebar {
+    position: static;
+  }
+
+  .phases-sidebar {
+    display: flex;
+    overflow-x: auto;
+    padding: 15px;
+  }
+
+  .phase-nav-btn {
+    min-width: 200px;
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+
+  .guidelines-sidebar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .rehab-title {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .rehab-title h1 {
+    font-size: 1.8rem;
+  }
+
+  .rehab-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .injury-rehab-program .exercises-grid,
+  .phase-content .exercises-grid {
+    /* Already uses flex-direction: column, just adjust gap for mobile */
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px;
+  }
+
+  .phase-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch; /* Make button full width on mobile */
+  }
+
+  .progress-phase-btn {
+    width: 100%;
+  }
+}
+
+/* Exercise Actions */
 .exercise-actions {
   display: flex;
   flex-direction: column;
@@ -784,7 +1126,7 @@
   width: 100%;
   padding: 10px 16px;
   background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
-  color: #333;
+  color: var(--text-primary);
   border: 2px solid #d0d0d0;
   border-radius: 8px;
   font-weight: 600;
@@ -799,293 +1141,13 @@
 
 .exercise-info-btn:hover {
   background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  border-color: #007bff;
-  color: #007bff;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-/* ============================================
-   RIGHT SIDEBAR - GUIDELINES (DO'S & DON'TS)
-   COMPLETE REWRITE FOR BETTER SPACING
-   ============================================ */
-
-.guidelines-sidebar {
-  background: white;
-  border: 2px solid #f0f0f0;
-  border-radius: 16px;
-  padding: 32px 26px;
-  position: sticky;
-  top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  max-height: calc(100vh - 40px);
-  overflow-y: auto;
-  width: 300px;
-  box-sizing: border-box;
-}
-
-/* Custom scrollbar */
-.guidelines-sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.guidelines-sidebar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.guidelines-sidebar::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 10px;
-}
-
-.guidelines-sidebar::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Main sidebar title */
-.guidelines-sidebar h3 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #333;
-  margin: 0 0 32px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-bottom: 20px;
-  border-bottom: 3px solid #f0f0f0;
-}
-
-/* ========== DO'S AND DON'TS SECTIONS ========== */
-.guideline-section {
-  margin-bottom: 36px;
-}
-
-.guideline-section h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0 0 20px 0;
-  padding-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.guideline-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.guideline-list li {
-  padding: 14px 16px;
-  background: linear-gradient(to right, #f8f9ff, white);
-  border-left: 4px solid #007bff;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #333;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
-}
-
-.guideline-list li:hover {
-  transform: translateX(2px);
-}
-
-/* ========== PAIN LOG SECTION ========== */
-.pain-logger-section {
-  margin-bottom: 36px;
-}
-
-.log-pain-btn {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #FF9800, #ffa726);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(255, 152, 0, 0.3);
-}
-
-.log-pain-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
-}
-
-.pain-log-form {
-  background: linear-gradient(to bottom, #fff8f0, white);
-  border: 2px solid #ffe0b2;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.1);
-}
-
-.pain-log-form label {
-  display: block;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #333;
-  margin-bottom: 12px;
-}
-
-.pain-slider {
-  width: 100%;
-  height: 8px;
-  border-radius: 5px;
-  background: linear-gradient(to right, #4CAF50, #FFC107, #FF5722);
-  outline: none;
-  margin-bottom: 16px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.pain-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: white;
-  border: 3px solid #FF9800;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
-
-.pain-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 3px 10px rgba(255, 152, 0, 0.4);
-}
-
-.pain-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: white;
-  border: 3px solid #FF9800;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
-
-.pain-slider::-moz-range-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 3px 10px rgba(255, 152, 0, 0.4);
-}
-
-.pain-log-form textarea {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-family: inherit;
-  resize: vertical;
-  margin-bottom: 16px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-.pain-log-form textarea:focus {
-  outline: none;
-  border-color: #FF9800;
-  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
-}
-
-.pain-log-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.submit-pain-btn,
-.cancel-pain-btn {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-pain-btn {
-  background: linear-gradient(135deg, #FF9800, #ffa726);
-  color: white;
-  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
-}
-
-.submit-pain-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(255, 152, 0, 0.4);
-}
-
-.cancel-pain-btn {
-  background: white;
-  color: #666;
-  border: 2px solid #e0e0e0;
-}
-
-.cancel-pain-btn:hover {
-  background: #f5f5f5;
-  border-color: #bdbdbd;
-}
-
-/* ========== DOCTOR ALERT SECTION ========== */
-.doctor-alert-section {
-  margin-top: 0;
-  padding: 24px 20px;
-  background: linear-gradient(to bottom, #ffebee, white);
-  border: 2px solid #ffcdd2;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.1);
-}
-
-.doctor-alert-section h4 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #d32f2f;
-  margin: 0 0 20px 0;
-  padding-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.doctor-alert-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.doctor-alert-list li {
-  padding: 12px 14px;
-  background: white;
-  border-left: 4px solid #d32f2f;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: #333;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease;
-}
-
-.doctor-alert-list li:hover {
-  transform: translateX(2px);
-}
-
-/* ============================================
-   EXERCISE DETAIL MODAL
-   ============================================ */
-
+/* Exercise Detail Modal */
 .exercise-modal-overlay {
   position: fixed;
   top: 0;
@@ -1146,7 +1208,7 @@
   justify-content: center;
   transition: all 0.3s ease;
   z-index: 10;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .modal-close-btn:hover {
@@ -1165,14 +1227,12 @@
 
 .modal-exercise-emoji {
   font-size: 4rem;
-  line-height: 1;
 }
 
 .modal-header h2 {
   font-size: 2rem;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
-  line-height: 1.2;
 }
 
 .modal-body {
@@ -1219,7 +1279,7 @@
   align-items: center;
   justify-content: center;
   padding: 80px 20px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .placeholder-icon-large {
@@ -1236,7 +1296,7 @@
 
 .modal-section h3 {
   font-size: 1.3rem;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 16px;
   display: flex;
   align-items: center;
@@ -1253,7 +1313,7 @@
   background: linear-gradient(135deg, #f8f9ff, white);
   padding: 16px 20px;
   border-radius: 12px;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid var(--primary-color);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1262,7 +1322,7 @@
 
 .spec-label {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1271,17 +1331,35 @@
 .spec-value {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #007bff;
+  color: var(--primary-color);
 }
 
 .modal-description {
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #666;
+  color: var(--text-secondary);
   background: #f9f9f9;
   padding: 20px 24px;
   border-radius: 12px;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid var(--primary-color);
+}
+
+.modal-description .description-line {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.modal-description .description-line:first-child {
+  margin-top: 0;
+}
+
+.modal-description .description-line:last-child {
+  margin-bottom: 0;
+}
+
+/* Bullet points from description */
+.modal-description .description-line:empty {
+  display: none;
 }
 
 .equipment-list {
@@ -1298,7 +1376,7 @@
   padding: 10px 20px;
   border-radius: 20px;
   font-weight: 600;
-  color: #007bff;
+  color: var(--primary-color);
   border: 2px solid #90caf9;
 }
 
@@ -1347,7 +1425,7 @@
 .modal-complete-btn {
   flex: 2;
   padding: 16px 32px;
-  background: linear-gradient(135deg, #007bff, #667eea);
+  background: linear-gradient(135deg, var(--primary-color), #667eea);
   color: white;
   border: none;
   border-radius: 12px;
@@ -1376,7 +1454,7 @@
   flex: 1;
   padding: 16px 32px;
   background: white;
-  color: #333;
+  color: var(--text-primary);
   border: 2px solid #e0e0e0;
   border-radius: 12px;
   font-weight: 700;
@@ -1391,99 +1469,8 @@
   transform: translateY(-2px);
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-
-/* Large Desktop */
-@media (max-width: 1400px) {
-  .rehab-content {
-    grid-template-columns: 220px 1fr 280px;
-    gap: 20px;
-  }
-}
-
-/* Medium Desktop */
-@media (max-width: 1200px) {
-  .rehab-content {
-    grid-template-columns: 200px 1fr 260px;
-    gap: 16px;
-  }
-  
-  .phase-content {
-    padding: 24px;
-  }
-  
-  .guidelines-sidebar {
-    padding: 20px;
-  }
-}
-
-/* Tablet */
-@media (max-width: 1024px) {
-  .rehab-content {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .phases-sidebar,
-  .guidelines-sidebar {
-    position: static;
-    max-width: 100%;
-    max-height: none;
-  }
-  
-  .phases-sidebar {
-    order: -1;
-  }
-  
-  .phase-content {
-    order: 0;
-  }
-  
-  .guidelines-sidebar {
-    order: 1;
-  }
-}
-
-/* Mobile */
+/* Modal Responsive */
 @media (max-width: 768px) {
-  .injury-rehab-program {
-    padding: 12px;
-  }
-
-  .rehab-title h1 {
-    font-size: 1.8rem;
-  }
-
-  .injury-icon-large {
-    font-size: 3rem;
-  }
-
-  .rehab-stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .phase-header {
-    flex-direction: column;
-  }
-
-  .phase-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .progress-phase-btn {
-    width: 100%;
-  }
-
-  .phase-content {
-    padding: 20px;
-  }
-
-  .exercise-card {
-    padding: 20px;
-  }
-
   .exercise-modal-content {
     max-width: 100%;
     max-height: 95vh;
@@ -1528,149 +1515,20 @@
   }
 }
 
-/* Small Mobile */
-@media (max-width: 480px) {
-  .rehab-title {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .injury-icon-large {
-    font-size: 2.5rem;
-  }
-
-  .rehab-title h1 {
-    font-size: 1.5rem;
-  }
-
-  .phase-section h3 {
-    font-size: 1.2rem;
-  }
+/* CRITICAL: Force exercises to always display one per row - Override all other rules */
+.injury-rehab-program .exercises-grid,
+.phase-content .exercises-grid,
+.phase-section .exercises-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: unset !important;
 }
 
-/* ============================================
-   PROGRESS PHASE MODAL
-   ============================================ */
-
-.progress-modal-content {
-  background: white;
-  border-radius: 20px;
-  max-width: 600px;
-  width: 100%;
-  position: relative;
-  animation: slideUp 0.3s ease;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-}
-
-.progress-modal-header {
-  background: linear-gradient(135deg, #FF9800, #ffa726);
-  padding: 32px 24px;
-  text-align: center;
-  color: white;
-}
-
-.progress-modal-icon {
-  font-size: 4rem;
-  margin-bottom: 12px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-.progress-modal-header h2 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-.progress-modal-body {
-  padding: 32px 28px;
-}
-
-.progress-modal-warning {
-  font-size: 1.05rem;
-  color: #333;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.progress-checklist {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px 0;
-}
-
-.progress-checklist li {
-  padding: 14px 18px;
-  background: linear-gradient(to right, #f0f8ff, white);
-  border-left: 4px solid #2196F3;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  color: #333;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.progress-modal-note {
-  background: linear-gradient(to bottom, #fff8f0, white);
-  border: 2px solid #FFE0B2;
-  border-radius: 12px;
-  padding: 18px;
-  font-size: 0.9rem;
-  color: #555;
-  line-height: 1.6;
-}
-
-.progress-modal-note strong {
-  color: #FF9800;
-}
-
-.progress-modal-footer {
-  padding: 20px 28px;
-  background: #f8f9fa;
-  display: flex;
-  gap: 12px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.progress-confirm-btn,
-.progress-cancel-btn {
-  flex: 1;
-  padding: 14px 24px;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.progress-confirm-btn {
-  background: linear-gradient(135deg, #4CAF50, #66BB6A);
-  color: white;
-  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
-}
-
-.progress-confirm-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
-}
-
-.progress-cancel-btn {
-  background: white;
-  color: #666;
-  border: 2px solid #e0e0e0;
-}
-
-.progress-cancel-btn:hover {
-  background: #f5f5f5;
-  border-color: #bdbdbd;
+.injury-rehab-program .exercise-card,
+.phase-content .exercise-card,
+.phase-section .exercise-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  flex: 0 0 100% !important;
 }
