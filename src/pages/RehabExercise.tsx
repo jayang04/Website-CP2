@@ -31,8 +31,8 @@ export default function RehabExercise() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1600px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '20px' }}>Rehabilitation Exercise Tracker</h1>
+    <div style={{ padding: '100px 20px 20px 20px', maxWidth: '1600px', margin: '0 auto', backgroundColor: '#f8f9fa' }}>
+      <h1 style={{ marginBottom: '30px', color: '#1976d2', fontSize: '2.5rem', fontWeight: '700' }}>Rehabilitation Exercise Tracker</h1>
       
       <div style={{ 
         display: 'grid', 
@@ -58,7 +58,7 @@ export default function RehabExercise() {
             <h2 style={{ marginTop: 0, color: '#1976d2' }}>📋 Setup Instructions</h2>
             <ol style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
               <li><strong>Click "Start Camera"</strong> below</li>
-              <li><strong>Use zoom slider</strong> to see full body (try 60-70%)</li>
+              <li><strong>Use Field of View slider</strong> to widen the view until you see your full body (50-100% wider)</li>
               <li><strong>Stand 3-5 feet back</strong> from camera</li>
               <li><strong>Turn sideways (90°)</strong> to camera for best results</li>
               <li><strong>Ensure good lighting</strong> - face the light source</li>

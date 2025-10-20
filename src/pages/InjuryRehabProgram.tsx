@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { injuryRehabService } from '../services/dataService';
 import { type InjuryRehabPlan, type RehabPhase } from '../types/injuries';
 import '../styles/InjuryRehabProgram.css';
@@ -18,6 +18,70 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
   const [selectedExercise, setSelectedExercise] = useState<any>(null);
   const [showExerciseModal, setShowExerciseModal] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
+  
+  // Track all video elements for auto-pause functionality
+  const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
+
+  // Function to register video element with proper cleanup
+  const registerVideo = (video: HTMLVideoElement | null) => {
+    // Cleanup previous video if exists
+    if (video === null) return;
+
+    // Check if already registered
+    if (videoRefs.current.has(video)) return;
+
+    console.log('🎥 Registering video:', video.currentSrc || 'modal video');
+
+    // Add play event listener to pause other videos
+    const handlePlay = () => {
+      console.log('▶️ Video started playing, pausing others...');
+      pauseAllVideosExcept(video);
+    };
+    
+    video.addEventListener('play', handlePlay);
+    
+    // Store cleanup function
+    const cleanup = () => {
+      video.removeEventListener('play', handlePlay);
+      videoRefs.current.delete(video);
+    };
+    
+    videoRefs.current.set(video, cleanup);
+  };
+
+  // Function to pause all videos except the one currently playing
+  const pauseAllVideosExcept = (currentVideo: HTMLVideoElement) => {
+    let pausedCount = 0;
+    videoRefs.current.forEach((_cleanup, video) => {
+      if (video !== currentVideo && !video.paused) {
+        video.pause();
+        pausedCount++;
+        console.log('⏸️ Auto-paused video:', video.currentSrc || 'a video');
+      }
+    });
+    console.log(`✅ Auto-pause complete: ${pausedCount} video(s) paused, ${videoRefs.current.size} total videos tracked`);
+  };
+
+  // Function to pause ALL videos (used when opening modals)
+  const pauseAllVideos = () => {
+    let pausedCount = 0;
+    videoRefs.current.forEach((_cleanup, video) => {
+      if (!video.paused) {
+        video.pause();
+        pausedCount++;
+        console.log('⏸️ Paused video due to modal open:', video.currentSrc || 'a video');
+      }
+    });
+    console.log(`✅ All videos paused: ${pausedCount} video(s) stopped`);
+  };
+
+  // Cleanup all videos on unmount
+  useEffect(() => {
+    return () => {
+      videoRefs.current.forEach((cleanup) => cleanup());
+      videoRefs.current.clear();
+    };
+  }, []);
 
   useEffect(() => {
     loadData();
@@ -52,6 +116,7 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
   };
 
   const handleOpenExerciseModal = (exercise: any) => {
+    pauseAllVideos(); // Pause all playing videos when modal opens
     setSelectedExercise(exercise);
     setShowExerciseModal(true);
   };
@@ -62,6 +127,7 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
   };
 
   const handleProgressPhase = () => {
+    pauseAllVideos(); // Pause all playing videos when modal opens
     setShowProgressModal(true);
   };
 
@@ -225,6 +291,7 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
                         {exercise.media.videoUrl ? (
                           <div className="video-container">
                             <video 
+                              ref={registerVideo}
                               controls 
                               poster={exercise.media.thumbnail}
                               preload="metadata"
@@ -393,8 +460,8 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
                 {selectedExercise.media?.videoUrl ? (
                   <div className="modal-video-container">
                     <video 
+                      ref={registerVideo}
                       controls 
-                      autoPlay
                       poster={selectedExercise.media.thumbnail}
                       className="modal-exercise-video"
                     >

@@ -97,6 +97,9 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Tighten quadriceps by pressing knee toward floor',
           description: '• Lie or sit with the injured leg straight (other leg bent or straight)\n• Tighten the quadriceps by pressing the back of the knee toward the floor\n• Hold for 5–10 seconds\n• Frequency: 3–5 sets × 10 repetitions daily',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/ACL/Quad Set.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Should be pain-free'
         },
@@ -108,6 +111,9 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Slide heel toward buttocks to bend knee',
           description: '• Lie down or sit with both legs straight\n• Slide the heel of the injured leg toward the buttocks, stopping before pain\n• Frequency: 3 sets × 10 repetitions daily',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/ACL/Heel Slide.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Stop before pain'
         },
@@ -119,6 +125,9 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Flex and extend ankle to improve circulation',
           description: '• Place a rolled towel under the ankle\n• Flex and extend the ankle (pull toes toward you, then point away)\n• Frequency: 3 sets × 20–30 repetitions daily or for 2–3 minutes continuously',
           image: '👣',
+          media: {
+            videoUrl: '/exercise-demo-videos/ACL/Ankle Pumps.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Should be pain-free'
         }
@@ -149,6 +158,9 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Lift lower leg by contracting quadriceps',
           description: '• Place a foam roller or rolled towel (10–15 cm high) under the knee\n• Lift the lower leg by contracting the quadriceps, keeping the knee in contact with the support\n• Hold for 3 seconds, then lower slowly\n• Frequency: 3 sets × 15–20 repetitions daily\n• Discontinue if pain occurs',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/ACL/Short Arc Quad.mp4'
+          },
           difficulty: 'beginner',
           requiredEquipment: ['Foam roller or towel'],
           painThreshold: 'Stop if pain occurs'
@@ -162,6 +174,9 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Lift straight leg to strengthen quadriceps',
           description: '• Keep injured leg straight and the other leg bent\n• Pull your ankle up for a bit, then lift the straight leg until it\'s parallel with the bent leg\n• Hold briefly, then lower slowly\n• Frequency: 3 sets × 10–20 repetitions daily',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/ACL/Straight Leg Raises.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Muscle fatigue OK, joint pain not OK'
         }
@@ -191,6 +206,9 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Lift hips to strengthen glutes and hamstrings',
           description: '• Lie on your back with both knees bent and arms by your sides\n• Push through your heels to lift your hips, forming a straight line from shoulders to knees\n• Hold briefly, then lower slowly\n• Frequency: 3 sets × 10–20 repetitions daily',
           image: '🏋️',
+          media: {
+            videoUrl: '/exercise-demo-videos/ACL/Bridges.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Muscle burn OK'
         }
@@ -262,6 +280,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Slide heel towards buttocks to restore knee flexion',
           description: '• Start with the knee as straight as possible\n• Use both arms as support\n• Slowly slide the heel towards the buttock until a gentle stretch is felt\n• Stop before pain, then return to start\n• Goal: Regain knee flexion up to 135–145° pain-free',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Heel Slide.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Stop before pain, gentle stretch OK'
         },
@@ -274,6 +295,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Slide foot down wall for gentle knee stretch',
           description: '• Lie on the floor with hips close to a wall, both feet resting on it\n• Allow the injured foot to slide slowly down the wall until a stretch is felt\n• Hold for 15–30 seconds, then return\n• Keep hips relaxed and flat on the floor',
           image: '🧱',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Wall Heel Slide.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Gentle stretch, no sharp pain'
         }
@@ -304,6 +328,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Press knee into roller to activate quadriceps',
           description: '• Place a foam roller under the injured knee. If unavailable, use a rolled-up towel or blanket (10–15 cm high)\n• Push the back of the knee down into the roller and hold for 6 seconds\n• 3–5 sessions per day × 8–12 repetitions',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Quad Set.mp4'
+          },
           difficulty: 'beginner',
           requiredEquipment: ['Foam roller or towel'],
           painThreshold: 'Muscle contraction, no joint pain'
@@ -317,6 +344,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Straighten leg while keeping knee on roller',
           description: '• Lie on your back with the roller (or rolled towel) under the knee\n• Straighten the lower leg by lifting the heel while keeping the knee in contact with the roller\n• Hold for 6 seconds, then lower slowly\n• Continue for 1–2 weeks as tolerated',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Short Arc Quad.mp4'
+          },
           difficulty: 'beginner',
           requiredEquipment: ['Foam roller or towel'],
           painThreshold: 'Mild discomfort OK'
@@ -347,6 +377,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Move leg outward against resistance band',
           description: '• Use a loop band placed just above the knees\n• Stand on the injured leg with hands on hips\n• Move the uninjured leg outward (abduction) and return\n• Perform on both sides\n• 3 sets × 10–15 repetitions daily',
           image: '🏋️',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4'
+          },
           difficulty: 'intermediate',
           requiredEquipment: ['Resistance loop band'],
           painThreshold: 'Hip muscle fatigue expected'
@@ -360,6 +393,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Lift straight leg to strengthen hip flexors',
           description: '• Lie on your back with the injured leg straight\n• Press the back of the knee gently into the floor\n• Lift the leg about 30 cm off the floor\n• Hold for 6 seconds, then lower slowly\n• 3 sets × 8–12 repetitions daily',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Hip Flexion with Straight Leg Raise.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Hip flexor and quad fatigue OK'
         },
@@ -372,6 +408,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Squeeze pillow between knees',
           description: '• Sit with knees bent and a pillow or folded towel between them\n• Squeeze gently, hold for 6 seconds, then relax\n• 8–12 repetitions daily',
           image: '💺',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Hip Adduction (Seated Pillow:Towel Squeeze).mp4'
+          },
           difficulty: 'beginner',
           requiredEquipment: ['Pillow or towel'],
           painThreshold: 'Inner thigh activation'
@@ -384,6 +423,9 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Step up sideways onto platform',
           description: '• Stand sideways on a low step with the injured leg on the step\n• Lean slightly forward and step up\n• Slowly lower back down\n• 8–12 repetitions daily\n• Progress by increasing step height as tolerated',
           image: '📦',
+          media: {
+            videoUrl: '/exercise-demo-videos/MCL/Lateral Step-Up.mp4'
+          },
           difficulty: 'intermediate',
           requiredEquipment: ['Step or platform (start 4-6 inches)'],
           painThreshold: 'Muscle fatigue OK, no sharp pain'
@@ -452,6 +494,9 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Slide heel towards buttocks for gentle knee flexion',
           description: '• Start with knee as straight as possible\n• Slowly slide heel towards buttock\n• Use both arms for support\n• Stop before pain, return to start\n• Goal: Regain knee flexion up to 135-145° pain-free',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Heel Slide.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Stop before pain'
         },
@@ -464,18 +509,23 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Tighten quad by pressing knee down',
           description: '• Sit or lie with injured leg straight\n• Tighten quadriceps by pressing knee toward floor\n• Place towel under knee if needed\n• Hold for 10 seconds, rest 10 seconds\n• Goal: Strengthen quadriceps and improve stability',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Quad Set.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Muscle contraction, no joint pain'
         },
         {
           id: 'men-1-3',
           name: 'Ankle Pumps',
-          sets: 1,
-          reps: 1,
-          hold: '3-5 minutes',
-          summary: 'Point toes up and down rhythmically',
-          description: '• Sit or lie with injured leg straight\n• Move foot up and down\n• Flex and extend ankle rhythmically\n• Continue for 3-5 minutes\n• Perform several times daily to reduce swelling',
+          sets: 3,
+          reps: 30,
+          summary: 'Flex and extend ankle to improve circulation',
+          description: '• Place a rolled towel under the ankle\n• Flex and extend the ankle (pull toes toward you, then point away)\n• Frequency: 3 sets × 20–30 repetitions daily or for 2–3 minutes continuously',
           image: '👣',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Ankle Pumps.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Should be pain-free'
         }
@@ -505,6 +555,9 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Lift straight leg to strengthen quadriceps',
           description: '• Lie flat with injured leg straight, other leg bent\n• Pull ankle up slightly\n• Lift straight leg until parallel with bent leg\n• Hold briefly at top\n• Lower slowly with control',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Straight Leg Raise.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Quad fatigue OK, no knee pain'
         },
@@ -516,6 +569,9 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Raise leg sideways to strengthen hip',
           description: '• Lie on side with uninjured leg bent, injured leg straight\n• Raise heel toward ceiling (2 sec up, 2 sec down)\n• Keep hip pushed forward, avoid rolling backward\n• Keep toes facing forward, not upward\n• Can do against wall for better form',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Hip Abduction.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Hip muscle burn expected'
         },
@@ -527,6 +583,9 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Raise bottom leg to strengthen inner thigh',
           description: '• Lie on side with injured leg on bottom (straight)\n• Cross other leg in front\n• Raise injured leg toward ceiling\n• Use 2 seconds up, 2 seconds down timing\n• Strengthens inner thigh muscles',
           image: '🦵',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Hip Adduction.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Inner thigh activation'
         },
@@ -538,6 +597,9 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Bridge exercise to strengthen hamstrings and glutes',
           description: '• Lie on back with knees bent, toes facing up\n• Push heels down into floor\n• Lift hips toward ceiling (2 sec up, 2 sec down)\n• Hold briefly at top\n• Strengthens hamstrings and glutes',
           image: '🏋️',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Isometric Hamstring Curl (Glute Bridge).mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Glute and hamstring fatigue'
         }
@@ -567,6 +629,9 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Partial squat with 60 degree knee bend',
           description: '• Stand with feet shoulder-width apart\n• Drop into squat with 60° knee bend (quarter squat)\n• Keep knees behind toes\n• Keep knees aligned with toes (no collapse inward/outward)\n• Return to standing with control',
           image: '🧍',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Muscle burn OK, no sharp pain'
         },
@@ -578,6 +643,9 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           summary: 'Step up sideways onto platform',
           description: '• Stand sideways on low step with injured leg on top\n• Lean slightly forward\n• Use top leg to step up\n• Bring other foot to meet it\n• Lower slowly back down\n• Progress: Gradually increase step height',
           image: '📦',
+          media: {
+            videoUrl: '/exercise-demo-videos/Meniscus Tear/Lateral Step-Up.mp4'
+          },
           difficulty: 'intermediate',
           requiredEquipment: ['Step or platform (start 4-6 inches)'],
           painThreshold: 'Muscle fatigue OK'
@@ -644,6 +712,9 @@ export const LATERAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Knee-to-wall test for ankle dorsiflexion',
           description: '• Find a wall and face it\n• Measure how far your toes can go from wall\n• Keep knee touching wall without lifting heel\n• Compare both legs, work near your limit (pain-free)\n• Hold or oscillate to mobilize joint and restore dorsiflexion',
           image: '🧱',
+          media: {
+            videoUrl: '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Dorsiflexion Mobility.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Gentle stretch, no sharp pain'
         },
@@ -655,6 +726,9 @@ export const LATERAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Pull ankle outward against resistance band',
           description: '• Loop elastic band around your foot\n• Slowly pull ankle outward (eversion) against band\n• Return slowly with control\n• Keep motion pain-free\n• Gradually increase to 20-25 reps as tolerated',
           image: '🏋️',
+          media: {
+            videoUrl: '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4'
+          },
           difficulty: 'beginner',
           requiredEquipment: ['Resistance band'],
           painThreshold: 'Mild resistance, no pain'
@@ -685,6 +759,9 @@ export const LATERAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Single-leg calf raises for strength',
           description: '• Hold stable object for balance\n• Stand on injured leg only, other leg lifted\n• Rise slowly onto ball of big toe\n• Lower down with control\n• Focus on smooth, controlled movement',
           image: '🦶',
+          media: {
+            videoUrl: '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Calf fatigue expected'
         },
@@ -696,6 +773,9 @@ export const LATERAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Balance on one leg reaching in different directions',
           description: '• Stand on injured leg only\n• Reach free leg toward 12, 9, and 6 o\'clock directions\n• Keep balance without wobbling\n• Focus on ankle stability and control\n• Perform each direction smoothly',
           image: '🕐',
+          media: {
+            videoUrl: '/exercise-demo-videos/Lateral Ankle Sprain/Proprioceptive Control (Clock Reaches).mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Should be pain-free'
         }
@@ -724,6 +804,9 @@ export const LATERAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Squat on one leg with control',
           description: '• Stand on injured leg only\n• Sit back as if sitting on a chair\n• Squat as deep as comfortable\n• Avoid knee collapse inward\n• Return to standing with control',
           image: '🧍',
+          media: {
+            videoUrl: '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4'
+          },
           difficulty: 'advanced',
           painThreshold: 'Muscle fatigue OK, no ankle pain'
         },
@@ -735,6 +818,9 @@ export const LATERAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Step forward into lunge position',
           description: '• Step forward with injured leg\n• Land softly on forefoot\n• Lower into lunge position\n• Keep ankle stable (avoid rolling)\n• Push back to standing',
           image: '🏃',
+          media: {
+            videoUrl: '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4'
+          },
           difficulty: 'advanced',
           painThreshold: 'Should be controlled'
         }
@@ -763,9 +849,12 @@ export const LATERAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           reps: 10,
           summary: 'Jump and land on injured leg',
           description: '• Start with both feet on ground\n• Jump with both legs\n• Land on injured leg only\n• Maintain balance and control on landing\n• Progressively increase jump height as tolerated',
-          image: '🏃',
+          image: '🦘',
+          media: {
+            videoUrl: '/exercise-demo-videos/Lateral Ankle Sprain/Hop to Landing.mp4'
+          },
           difficulty: 'advanced',
-          painThreshold: 'Should be pain-free'
+          painThreshold: 'Should be stable'
         }
       ]
     }
@@ -829,6 +918,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Move ankle up and down to reduce swelling',
           description: '• Sit or lie with injured leg straight\n• Move ankle up (dorsiflexion)\n• Move ankle down (plantarflexion)\n• Repeat rhythmically\n• Promotes blood circulation and reduces swelling',
           image: '👣',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Ankle Pumps.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Should be pain-free'
         },
@@ -840,6 +932,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Circle ankle in both directions',
           description: '• Sit or lie with injured leg straight\n• Move ankle in circular motions clockwise\n• Then move counterclockwise\n• Use full range of movement\n• Only perform if ankle pumps are pain-free',
           image: '🔄',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Ankle Circles.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Gentle stretch OK'
         }
@@ -870,6 +965,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Balance on one leg for stability',
           description: '• Stand on injured leg only\n• Lift other leg off floor\n• Maintain tripod foot position (big toe, little toe, heel)\n• Use back leg for light support if needed\n• Progress to no support when able',
           image: '🧍',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Should be stable and pain-free'
         },
@@ -881,6 +979,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Pull foot inward with resistance band',
           description: '• Loop resistance band around injured foot\n• Anchor with opposite leg or stable object\n• Pull foot inward towards midline\n• Move slowly through full range\n• Avoid pain during movement',
           image: '🏋️',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Ankle Inversion – Band.mp4'
+          },
           difficulty: 'intermediate',
           requiredEquipment: ['Resistance band'],
           painThreshold: 'Mild resistance, no pain'
@@ -893,6 +994,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Push foot outward with resistance band',
           description: '• Loop band around injured foot\n• Step on band with opposite leg\n• Move foot outward away from midline\n• Keep entire leg stable\n• Avoid inner ankle discomfort',
           image: '🏋️',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Ankle Eversion – Band.mp4'
+          },
           difficulty: 'intermediate',
           requiredEquipment: ['Resistance band'],
           painThreshold: 'Mild resistance OK'
@@ -905,6 +1009,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Raise heel on step edge',
           description: '• Stand on step edge with injured leg straight\n• Keep other leg bent\n• Lift heel up as high as possible\n• Lower slowly through full range below step level\n• Use wall or rail for balance support',
           image: '📦',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Heel Raise – Off Step.mp4'
+          },
           difficulty: 'intermediate',
           requiredEquipment: ['Step or platform'],
           painThreshold: 'Calf fatigue expected'
@@ -917,6 +1024,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Lift toes against wall for ankle strength',
           description: '• Stand with back against wall\n• Step feet slightly forward\n• Lift both toes up toward you\n• Keep knees straight\n• Further feet position makes exercise harder',
           image: '🧱',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Ankle Dorsiflexion – Wall Support.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Shin muscle activation'
         }
@@ -946,6 +1056,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Jump and land on both legs',
           description: '• Perform small squat to prepare\n• Jump slightly upward\n• Land softly on both legs\n• Focus on controlled landing with even weight\n• Use mirror to check symmetry',
           image: '🏃',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Double-Leg Jump.mp4'
+          },
           difficulty: 'advanced',
           painThreshold: 'Should be controlled and pain-free'
         },
@@ -957,6 +1070,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Jump side to side between legs',
           description: '• Jump laterally from one leg to other\n• Push off powerfully\n• Land softly on opposite leg\n• Maintain balance before returning\n• Gradually increase distance and height',
           image: '🏃',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Lateral Bound.mp4'
+          },
           difficulty: 'advanced',
           painThreshold: 'Controlled landing essential'
         },
@@ -968,6 +1084,9 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Hop in place on injured leg',
           description: '• Stand on injured leg only\n• Bend knee slightly to prepare\n• Hop upward in place\n• Land gently with control\n• Maintain balance on each landing',
           image: '🏃',
+          media: {
+            videoUrl: '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Hops.mp4'
+          },
           difficulty: 'advanced',
           painThreshold: 'Should be pain-free'
         }
@@ -1034,6 +1153,9 @@ export const HIGH_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Pump ankle while elevated to reduce swelling',
           description: '• Lie down with injured foot elevated on couch or pillows\n• Move ankle up and down by flexing and extending\n• Keep foot elevated for 10-15 minutes\n• Perform pumping motion for 1-2 minutes\n• Reduces swelling and improves circulation',
           image: '👣',
+          media: {
+            videoUrl: '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Should be pain-free'
         },
@@ -1045,6 +1167,9 @@ export const HIGH_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Circle ankle through pain-free range',
           description: '• Sit or lie with injured leg straight\n• Move ankle in circular motions clockwise\n• Then move counterclockwise\n• Use full pain-free range of motion\n• Only perform if ankle pumps are pain-free',
           image: '🔄',
+          media: {
+            videoUrl: '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Gentle movement, no pain'
         }
@@ -1075,6 +1200,9 @@ export const HIGH_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Gradually increase weight on injured leg',
           description: '• Stand near wall or counter for support\n• Slowly shift weight from uninjured to injured leg\n• Start with 5-10% body weight on injured leg\n• Gradually increase weight as tolerated to full weight\n• Try standing fully on injured leg when ready',
           image: '🧍',
+          media: {
+            videoUrl: '/exercise-demo-videos/High Ankle Sprain/Progressive Weight Bearing.mp4'
+          },
           difficulty: 'beginner',
           painThreshold: 'Mild discomfort OK, no sharp pain'
         },
@@ -1086,6 +1214,9 @@ export const HIGH_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Raise heels with weight on both legs',
           description: '• Stand on both legs with hands on wall or chair\n• Raise heels off ground with equal weight on both legs (50-50)\n• Rise as high as comfortable\n• Lower slowly with control\n• Stop before pain, work through comfortable range',
           image: '🦶',
+          media: {
+            videoUrl: '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Calf fatigue OK'
         }
@@ -1115,6 +1246,9 @@ export const HIGH_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Balance on one leg with reaching movements',
           description: '• Stand on injured leg only\n• Reach free leg toward 12 o\'clock position\n• Then reach toward 9 o\'clock\n• Then reach toward 6 o\'clock\n• Maintain balance and control throughout',
           image: '🕐',
+          media: {
+            videoUrl: '/exercise-demo-videos/High Ankle Sprain/Proprioceptive Control (Clock Reaches).mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Should be stable and controlled'
         },
@@ -1126,6 +1260,9 @@ export const HIGH_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
           summary: 'Lift hips off ground in bridge position',
           description: '• Lie on back with knees bent and feet flat\n• Press feet into floor\n• Lift hips toward ceiling\n• Hold briefly at top\n• Lower slowly with control\n• Progress by slightly lifting heels after raising hips',
           image: '🏋️',
+          media: {
+            videoUrl: '/exercise-demo-videos/High Ankle Sprain/Glute Bridge.mp4'
+          },
           difficulty: 'intermediate',
           painThreshold: 'Glute activation, no ankle pain'
         }

@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Exercise demo videos (large files)
+public/exercise-demo-videos/
+public/thumbnails/
+
+# Video files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm

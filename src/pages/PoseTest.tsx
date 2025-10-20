@@ -8,7 +8,7 @@ export default function PoseTestPage() {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ padding: '80px 20px 20px 20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>🧪 Pose Detection Debug Page</h1>
       <p style={{ color: '#666', marginBottom: '20px' }}>
         Use this page to test and debug the pose detection system

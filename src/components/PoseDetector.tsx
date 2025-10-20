@@ -20,7 +20,7 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
-  const [videoZoom, setVideoZoom] = useState(1); // Zoom level (0.5 to 1)
+  const [videoZoom, setVideoZoom] = useState(1.5); // Zoom level (1 = normal, higher = zoomed out)
   const [mirrorMode, setMirrorMode] = useState(true); // Mirror the video
   const [detectionStatus, setDetectionStatus] = useState<string>('Waiting...');
   const [poseDetectedCount, setPoseDetectedCount] = useState(0);
@@ -187,16 +187,15 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
       return;
     }
 
-    // Set canvas size to match video (only log on first frame or when size changes)
-    if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      console.log('📐 Canvas resized to:', canvas.width, 'x', canvas.height);
+    // Set canvas size to match video dimensions
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    
+    if (canvas.width !== videoWidth || canvas.height !== videoHeight) {
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
+      console.log('📐 Canvas resized to match video:', canvas.width, 'x', canvas.height);
     }
-
-    // Draw a test indicator to prove canvas is working
-    ctx.fillStyle = '#00FF00';
-    ctx.fillRect(10, 10, 20, 20); // Green square in top-left
 
     let results;
     try {
@@ -425,22 +424,28 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
         </div>
       )}
 
-      <div className="video-container" style={{ 
+      <div style={{ 
         position: 'relative', 
-        maxWidth: '100%',
-        overflow: 'hidden',
+        width: '100%',
         backgroundColor: '#000',
-        borderRadius: '8px'
+        borderRadius: '8px',
+        aspectRatio: '16/9',
+        overflow: 'hidden',
+        display: isDetecting ? 'block' : 'none'
       }}>
         <video
           ref={videoRef}
           autoPlay
           playsInline
           style={{
-            width: '100%',
-            maxWidth: '1280px',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: `${videoZoom * 100}%`,
+            height: `${videoZoom * 100}%`,
+            objectFit: 'contain',
             display: isDetecting ? 'block' : 'none',
-            transform: `scaleX(${mirrorMode ? -1 : 1}) scale(${1 / videoZoom})`,
+            transform: `translate(-50%, -50%) scaleX(${mirrorMode ? -1 : 1})`,
             transformOrigin: 'center center'
           }}
         />
@@ -448,11 +453,12 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
           ref={canvasRef}
           style={{
             position: 'absolute',
-            top: 0,
-            left: 0,
+            top: '50%',
+            left: '50%',
             width: '100%',
-            maxWidth: '1280px',
-            transform: `scaleX(${mirrorMode ? -1 : 1})`,
+            height: '100%',
+            objectFit: 'contain',
+            transform: `translate(-50%, -50%) scaleX(${mirrorMode ? -1 : 1})`,
             transformOrigin: 'center center',
             pointerEvents: 'none'
           }}
@@ -510,17 +516,17 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
                 borderRadius: '8px'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <label style={{ fontWeight: 'bold' }}>🔍 Zoom Out:</label>
+                  <label style={{ fontWeight: 'bold' }}>🔍 Field of View:</label>
                   <input
                     type="range"
-                    min="0.5"
-                    max="1"
-                    step="0.05"
+                    min="1"
+                    max="2.5"
+                    step="0.1"
                     value={videoZoom}
                     onChange={(e) => setVideoZoom(parseFloat(e.target.value))}
-                    style={{ width: '150px' }}
+                    style={{ width: '200px' }}
                   />
-                  <span>{Math.round(videoZoom * 100)}%</span>
+                  <span style={{ minWidth: '80px' }}>{Math.round((videoZoom - 1) * 100)}% wider</span>
                 </div>
 
                 <button
@@ -542,9 +548,11 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
                   padding: '8px 12px',
                   backgroundColor: '#fff3cd',
                   borderRadius: '4px',
-                  fontSize: '14px'
+                  fontSize: '14px',
+                  flex: 1,
+                  minWidth: '200px'
                 }}>
-                  💡 Zoom out to 60-70% to see full body
+                  💡 Slide right to widen view - aim for 50-100% wider
                 </div>
               </div>
             )}
