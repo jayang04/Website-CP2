@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { PoseLandmarker, FilesetResolver, DrawingUtils } from '@mediapipe/tasks-vision';
-import { calculateKneeAngle, calculateAnkleAngle, PoseLandmarks } from '../utils/angleCalculations';
+import { calculateKneeAngle, calculateAnkleAngle, calculateAngle, PoseLandmarks } from '../utils/angleCalculations';
 
 interface PoseDetectorProps {
   onAnglesUpdate?: (angles: JointAngles) => void;
@@ -11,6 +11,8 @@ export interface JointAngles {
   rightKnee: number;
   leftAnkle: number;
   rightAnkle: number;
+  leftHip: number;
+  rightHip: number;
 }
 
 export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
@@ -20,13 +22,13 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
-  const [videoZoom, setVideoZoom] = useState(1.5); // Zoom level (1 = normal, higher = zoomed out)
-  const [mirrorMode, setMirrorMode] = useState(true); // Mirror the video
+  const [videoZoom, setVideoZoom] = useState(1); // Start at normal view (1 = 0% wider, most zoomed in)
+  const [mirrorMode, setMirrorMode] = useState(false); // Mirror off by default for better angle detection
   const [detectionStatus, setDetectionStatus] = useState<string>('Waiting...');
   const [poseDetectedCount, setPoseDetectedCount] = useState(0);
   const animationFrameRef = useRef<number | undefined>(undefined);
   const isDetectingRef = useRef(false); // Use ref to track detection state for immediate access
-  const previousAnglesRef = useRef<JointAngles>({ leftKnee: 0, rightKnee: 0, leftAnkle: 0, rightAnkle: 0 });
+  const previousAnglesRef = useRef<JointAngles>({ leftKnee: 0, rightKnee: 0, leftAnkle: 0, rightAnkle: 0, leftHip: 0, rightHip: 0 });
   const noDetectionFramesRef = useRef(0); // Track consecutive frames without detection
   const previousLandmarksRef = useRef<any>(null); // Store previous landmarks for smoothing
 
@@ -265,6 +267,8 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
       });
 
       // Get landmarks with visibility check
+      const leftShoulder = landmarks[PoseLandmarks.LEFT_SHOULDER];
+      const rightShoulder = landmarks[PoseLandmarks.RIGHT_SHOULDER];
       const leftHip = landmarks[PoseLandmarks.LEFT_HIP];
       const rightHip = landmarks[PoseLandmarks.RIGHT_HIP];
       const leftKnee = landmarks[PoseLandmarks.LEFT_KNEE];
@@ -299,7 +303,11 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
         leftAnkle: leftLegVisible && leftFootIndex?.visibility > minVisibility 
           ? calculateAnkleAngle(leftKnee, leftAnkle, leftFootIndex) : 0,
         rightAnkle: rightLegVisible && rightFootIndex?.visibility > minVisibility 
-          ? calculateAnkleAngle(rightKnee, rightAnkle, rightFootIndex) : 0
+          ? calculateAnkleAngle(rightKnee, rightAnkle, rightFootIndex) : 0,
+        leftHip: leftLegVisible && leftShoulder?.visibility > minVisibility
+          ? calculateAngle(leftShoulder, leftHip, leftKnee) : 0,
+        rightHip: rightLegVisible && rightShoulder?.visibility > minVisibility
+          ? calculateAngle(rightShoulder, rightHip, rightKnee) : 0
       };
 
       // Smooth angles to reduce jitter (exponential moving average)
@@ -316,6 +324,12 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
           : 0,
         rightAnkle: newAngles.rightAnkle > 0 
           ? previousAnglesRef.current.rightAnkle * (1 - smoothingFactor) + newAngles.rightAnkle * smoothingFactor
+          : 0,
+        leftHip: newAngles.leftHip > 0 
+          ? previousAnglesRef.current.leftHip * (1 - smoothingFactor) + newAngles.leftHip * smoothingFactor
+          : 0,
+        rightHip: newAngles.rightHip > 0 
+          ? previousAnglesRef.current.rightHip * (1 - smoothingFactor) + newAngles.rightHip * smoothingFactor
           : 0
       };
 
@@ -368,7 +382,7 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
       
       // After 10 frames of no detection, reset angles to prevent ghost values
       if (noDetectionFramesRef.current > 10) {
-        const zeroAngles: JointAngles = { leftKnee: 0, rightKnee: 0, leftAnkle: 0, rightAnkle: 0 };
+        const zeroAngles: JointAngles = { leftKnee: 0, rightKnee: 0, leftAnkle: 0, rightAnkle: 0, leftHip: 0, rightHip: 0 };
         previousAnglesRef.current = zeroAngles;
         previousLandmarksRef.current = null; // Reset landmarks smoothing
         onAnglesUpdate?.(zeroAngles);
@@ -520,13 +534,13 @@ export default function PoseDetector({ onAnglesUpdate }: PoseDetectorProps) {
                   <input
                     type="range"
                     min="1"
-                    max="2.5"
+                    max="3"
                     step="0.1"
                     value={videoZoom}
                     onChange={(e) => setVideoZoom(parseFloat(e.target.value))}
                     style={{ width: '200px' }}
                   />
-                  <span style={{ minWidth: '80px' }}>{Math.round((videoZoom - 1) * 100)}% wider</span>
+                  <span style={{ minWidth: '100px' }}>{Math.round((videoZoom - 1) * 100)}% wider</span>
                 </div>
 
                 <button

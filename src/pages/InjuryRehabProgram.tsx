@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { injuryRehabService } from '../services/dataService';
 import { type InjuryRehabPlan, type RehabPhase } from '../types/injuries';
+import { requiresAngleDetection } from '../data/exerciseAngleConfig';
+import ExerciseAngleTracker from '../components/ExerciseAngleTracker';
 import '../styles/InjuryRehabProgram.css';
+import '../styles/AngleDetector.css';
 
 interface InjuryRehabProgramProps {
   userId: string;
@@ -18,6 +21,8 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
   const [selectedExercise, setSelectedExercise] = useState<any>(null);
   const [showExerciseModal, setShowExerciseModal] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
+  const [showAngleDetector, setShowAngleDetector] = useState(false);
+  const [exerciseForAngleDetection, setExerciseForAngleDetection] = useState<any>(null);
   
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
@@ -135,6 +140,16 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
     injuryRehabService.progressToNextPhase(userId);
     loadData();
     setShowProgressModal(false);
+  };
+
+  const handleOpenAngleDetector = (exercise: any) => {
+    setExerciseForAngleDetection(exercise);
+    setShowAngleDetector(true);
+  };
+
+  const handleCloseAngleDetector = () => {
+    setShowAngleDetector(false);
+    setExerciseForAngleDetection(null);
   };
 
   if (!plan || !progress) {
@@ -362,6 +377,15 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
                       >
                         {isCompleted ? '✓ Completed' : 'Mark as Complete'}
                       </button>
+
+                      {requiresAngleDetection(exercise.name) && (
+                        <button
+                          className="ai-form-check-btn"
+                          onClick={() => handleOpenAngleDetector(exercise)}
+                        >
+                          📐 Live Form Tracker
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -605,6 +629,22 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
                 Not Yet
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Angle Detection Modal */}
+      {showAngleDetector && exerciseForAngleDetection && (
+        <div className="angle-detector-overlay" onClick={handleCloseAngleDetector}>
+          <div className="angle-detector-content-full" onClick={(e) => e.stopPropagation()}>
+            <ExerciseAngleTracker 
+              exerciseName={exerciseForAngleDetection.name}
+              onComplete={(reps: number, duration: number) => {
+                console.log(`Exercise completed: ${reps} reps in ${duration}s`);
+                // Could save this to user's progress here
+              }}
+              onClose={handleCloseAngleDetector}
+            />
           </div>
         </div>
       )}
