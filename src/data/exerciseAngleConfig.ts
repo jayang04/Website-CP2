@@ -522,12 +522,22 @@ export function validateAngles(
       currentAngle = req.joint === 'knee' ? currentAngles.rightKnee : 
                      req.joint === 'ankle' ? currentAngles.rightAnkle : currentAngles.rightHip;
     } else {
-      // 'both' - use the average
+      // 'both' - use the average, but only if both are detected
       const left = req.joint === 'knee' ? currentAngles.leftKnee : 
                    req.joint === 'ankle' ? currentAngles.leftAnkle : currentAngles.leftHip;
       const right = req.joint === 'knee' ? currentAngles.rightKnee : 
                     req.joint === 'ankle' ? currentAngles.rightAnkle : currentAngles.rightHip;
-      currentAngle = (left + right) / 2;
+      
+      // Smart fallback: if one side isn't detected (0°), use the other side
+      if (left > 0 && right > 0) {
+        currentAngle = (left + right) / 2; // Average when both detected
+      } else if (left > 0) {
+        currentAngle = left; // Use left if right not detected
+      } else if (right > 0) {
+        currentAngle = right; // Use right if left not detected
+      } else {
+        currentAngle = 0; // Neither detected
+      }
     }
     
     // Check if angle is within requirements

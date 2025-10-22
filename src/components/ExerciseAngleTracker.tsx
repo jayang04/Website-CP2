@@ -15,6 +15,8 @@ interface RepState {
   isInStartPosition: boolean;
   hasReachedEndPosition: boolean;
   repTimestamp: number;
+  startPositionFrames: number; // Count frames in start position
+  endPositionFrames: number; // Count frames in end position
 }
 
 export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose }: ExerciseAngleTrackerProps) {
@@ -25,18 +27,27 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
     currentRep: 0,
     isInStartPosition: false,
     hasReachedEndPosition: false,
-    repTimestamp: Date.now()
+    repTimestamp: Date.now(),
+    startPositionFrames: 0,
+    endPositionFrames: 0
   });
   const [sessionStartTime] = useState(Date.now());
   const [isTracking, setIsTracking] = useState(false);
+  const isTrackingRef = useRef(false); // Use ref to avoid closure issues
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    console.log('🔍 Looking for config for exercise:', exerciseName);
     const exerciseConfig = getExerciseAngleConfig(exerciseName);
+    console.log('📋 Config found:', exerciseConfig);
     setConfig(exerciseConfig);
     
     if (!exerciseConfig) {
       setFeedback(`⚠️ No angle tracking available for "${exerciseName}"`);
+    } else {
+      console.log('✅ Exercise config loaded:', exerciseConfig.exerciseName);
+      console.log('📐 Angle requirements:', exerciseConfig.angleRequirements);
+      console.log('🔁 Rep counting config:', exerciseConfig.repCounting);
     }
   }, [exerciseName]);
 
@@ -46,13 +57,24 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
   }, []);
 
   const handleAnglesUpdate = (angles: JointAngles) => {
-    if (!config || !isTracking) return;
-    
-    // Use angles directly from PoseDetector (includes real hip angles now)
+    // Always update currentAngles for display, even when not tracking
     setCurrentAngles(angles);
-
+    
+    if (!config) {
+      console.log('⏸️ No config loaded');
+      return;
+    }
+    
+    if (!isTrackingRef.current) {
+      console.log('⏸️ Tracker not active (tracking not started)', isTrackingRef.current);
+      return;
+    }
+    
+    console.log('📊 Angles received:', angles);
+    
     // Validate angles against exercise requirements
     const validation = validateAngles(config, angles);
+    console.log('✅ Validation result:', validation);
     setFeedback(validation.feedback);
 
     // Track angle history for the primary joint
@@ -62,15 +84,32 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
       
       let currentAngle: number;
       if (side === 'left') {
-        currentAngle = primaryJoint === 'knee' ? angles.leftKnee : angles.leftAnkle;
+        currentAngle = primaryJoint === 'knee' ? angles.leftKnee : 
+                       primaryJoint === 'ankle' ? angles.leftAnkle : angles.leftHip;
       } else if (side === 'right') {
-        currentAngle = primaryJoint === 'knee' ? angles.rightKnee : angles.rightAnkle;
+        currentAngle = primaryJoint === 'knee' ? angles.rightKnee : 
+                       primaryJoint === 'ankle' ? angles.rightAnkle : angles.rightHip;
       } else {
-        const left = primaryJoint === 'knee' ? angles.leftKnee : angles.leftAnkle;
-        const right = primaryJoint === 'knee' ? angles.rightKnee : angles.rightAnkle;
-        currentAngle = (left + right) / 2;
+        // 'both' side - use average, but only if both are detected
+        const left = primaryJoint === 'knee' ? angles.leftKnee : 
+                     primaryJoint === 'ankle' ? angles.leftAnkle : angles.leftHip;
+        const right = primaryJoint === 'knee' ? angles.rightKnee : 
+                      primaryJoint === 'ankle' ? angles.rightAnkle : angles.rightHip;
+        
+        // Smart fallback: if one side isn't detected (0°), use the other side
+        if (left > 0 && right > 0) {
+          currentAngle = (left + right) / 2; // Average when both detected
+        } else if (left > 0) {
+          currentAngle = left; // Use left if right not detected
+        } else if (right > 0) {
+          currentAngle = right; // Use right if left not detected
+        } else {
+          currentAngle = 0; // Neither detected
+        }
       }
 
+      console.log('🎯 Current angle for rep counting:', currentAngle, `(${primaryJoint}, ${side})`);
+      
       // Rep counting logic
       handleRepCounting(currentAngle);
     }
@@ -80,60 +119,75 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
     if (!config || !config.repCounting) return;
 
     const { startCondition, endCondition } = config.repCounting;
+    
+    // Require at least 5 consecutive frames in position to confirm (about 0.15s at 30fps)
+    const REQUIRED_FRAMES = 5;
+    // Require at least 500ms between reps to prevent double-counting
+    const MIN_REP_COOLDOWN = 500; // milliseconds
 
     setRepState(prev => {
       let newState = { ...prev };
+      const now = Date.now();
+      const timeSinceLastRep = now - prev.repTimestamp;
 
       // Check if in start position
-      if (startCondition.direction === 'above' && currentAngle > startCondition.angleThreshold) {
-        if (!prev.isInStartPosition && prev.hasReachedEndPosition) {
-          // Completed a full rep!
-          newState.currentRep = prev.currentRep + 1;
+      const inStartPosition = 
+        (startCondition.direction === 'above' && currentAngle > startCondition.angleThreshold) ||
+        (startCondition.direction === 'below' && currentAngle < startCondition.angleThreshold);
+
+      // Check if in end position
+      const inEndPosition = 
+        (endCondition.direction === 'above' && currentAngle > endCondition.angleThreshold) ||
+        (endCondition.direction === 'below' && currentAngle < endCondition.angleThreshold);
+
+      // Update start position tracking
+      if (inStartPosition) {
+        newState.startPositionFrames = prev.startPositionFrames + 1;
+        
+        // Confirm start position only after holding it for REQUIRED_FRAMES
+        if (newState.startPositionFrames >= REQUIRED_FRAMES && !prev.isInStartPosition) {
           newState.isInStartPosition = true;
-          newState.hasReachedEndPosition = false;
-          newState.repTimestamp = Date.now();
-          
-          // Play sound
-          if (audioRef.current) {
-            audioRef.current.currentTime = 0;
-            audioRef.current.play().catch(e => console.log('Audio play failed:', e));
-          }
-          
-          setFeedback(`🎉 Rep ${newState.currentRep} complete!`);
-        } else if (!prev.hasReachedEndPosition) {
-          newState.isInStartPosition = true;
-        }
-      } else if (startCondition.direction === 'below' && currentAngle < startCondition.angleThreshold) {
-        if (!prev.isInStartPosition && prev.hasReachedEndPosition) {
-          // Completed a full rep!
-          newState.currentRep = prev.currentRep + 1;
-          newState.isInStartPosition = true;
-          newState.hasReachedEndPosition = false;
-          newState.repTimestamp = Date.now();
-          
-          // Play sound
-          if (audioRef.current) {
-            audioRef.current.currentTime = 0;
-            audioRef.current.play().catch(e => console.log('Audio play failed:', e));
-          }
-          
-          setFeedback(`🎉 Rep ${newState.currentRep} complete!`);
-        } else if (!prev.hasReachedEndPosition) {
-          newState.isInStartPosition = true;
+          console.log('✅ Start position confirmed!');
         }
       } else {
+        newState.startPositionFrames = 0;
         newState.isInStartPosition = false;
       }
 
-      // Check if reached end position
-      if (endCondition.direction === 'above' && currentAngle > endCondition.angleThreshold) {
-        if (prev.isInStartPosition) {
+      // Update end position tracking
+      if (inEndPosition && prev.isInStartPosition) {
+        newState.endPositionFrames = prev.endPositionFrames + 1;
+        
+        // Confirm end position only after holding it for REQUIRED_FRAMES
+        if (newState.endPositionFrames >= REQUIRED_FRAMES && !prev.hasReachedEndPosition) {
           newState.hasReachedEndPosition = true;
+          console.log('✅ End position confirmed!');
         }
-      } else if (endCondition.direction === 'below' && currentAngle < endCondition.angleThreshold) {
-        if (prev.isInStartPosition) {
-          newState.hasReachedEndPosition = true;
+      } else {
+        newState.endPositionFrames = 0;
+        if (!inStartPosition) {
+          newState.hasReachedEndPosition = false;
         }
+      }
+
+      // Count rep only when returning to start position after reaching end position
+      // AND enough time has passed since last rep (cooldown)
+      if (newState.isInStartPosition && prev.hasReachedEndPosition && 
+          !prev.isInStartPosition && timeSinceLastRep > MIN_REP_COOLDOWN) {
+        // REP COMPLETED!
+        newState.currentRep = prev.currentRep + 1;
+        newState.hasReachedEndPosition = false;
+        newState.endPositionFrames = 0;
+        newState.repTimestamp = now;
+        
+        // Play sound
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play().catch(e => console.log('Audio play failed:', e));
+        }
+        
+        setFeedback(`🎉 Rep ${newState.currentRep} complete!`);
+        console.log('🎉 REP COUNTED! Total:', newState.currentRep);
       }
 
       return newState;
@@ -141,18 +195,26 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
   };
 
   const handleStartTracking = () => {
+    console.log('▶️ START TRACKING clicked!');
+    console.log('Has config:', !!config);
+    console.log('Config:', config);
     setIsTracking(true);
+    isTrackingRef.current = true; // Set ref immediately for callbacks
     setRepState({
       currentRep: 0,
       isInStartPosition: false,
       hasReachedEndPosition: false,
-      repTimestamp: Date.now()
+      repTimestamp: Date.now(),
+      startPositionFrames: 0,
+      endPositionFrames: 0
     });
     setFeedback('🚀 Tracking started! Get into position...');
+    console.log('✅ Tracking state set to TRUE, ref:', isTrackingRef.current);
   };
 
   const handleStopTracking = () => {
     setIsTracking(false);
+    isTrackingRef.current = false; // Set ref immediately for callbacks
     const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
     if (onComplete) {
       onComplete(repState.currentRep, duration);
@@ -244,6 +306,13 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
               </div>
             ))}
           </div>
+          {config.repCounting && (
+            <div style={{ marginTop: '15px', fontSize: '13px', backgroundColor: '#fff9c4', padding: '10px', borderRadius: '4px' }}>
+              <strong>🔁 Rep Counting:</strong><br/>
+              Start: {config.repCounting.startCondition.joint} {config.repCounting.startCondition.direction} {config.repCounting.startCondition.angleThreshold}°<br/>
+              End: {config.repCounting.endCondition.joint} {config.repCounting.endCondition.direction} {config.repCounting.endCondition.angleThreshold}°
+            </div>
+          )}
         </div>
 
         {/* Rep Counter */}
@@ -257,6 +326,31 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
             {repState.currentRep}
           </h2>
           <p style={{ margin: 0, color: '#666' }}>Reps Completed</p>
+          
+          {/* Rep State Indicator */}
+          {isTracking && (
+            <div style={{ marginTop: '10px', fontSize: '14px' }}>
+              <div style={{ 
+                display: 'inline-block',
+                padding: '5px 10px',
+                borderRadius: '4px',
+                backgroundColor: repState.isInStartPosition ? '#4caf50' : '#e0e0e0',
+                color: repState.isInStartPosition ? 'white' : '#666',
+                marginRight: '5px'
+              }}>
+                Start: {repState.isInStartPosition ? '✓' : '○'}
+              </div>
+              <div style={{ 
+                display: 'inline-block',
+                padding: '5px 10px',
+                borderRadius: '4px',
+                backgroundColor: repState.hasReachedEndPosition ? '#2196f3' : '#e0e0e0',
+                color: repState.hasReachedEndPosition ? 'white' : '#666'
+              }}>
+                End: {repState.hasReachedEndPosition ? '✓' : '○'}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Live Feedback */}
@@ -281,6 +375,40 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
         </div>
 
         {/* Current Angles Display */}
+        {currentAngles && (
+          <div style={{ 
+            padding: '10px', 
+            backgroundColor: '#f0f0f0',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontFamily: 'monospace',
+            marginBottom: '10px'
+          }}>
+            <strong>🔍 Debug - Raw Angles:</strong><br/>
+            L Knee: {Math.round(currentAngles.leftKnee)}° | 
+            R Knee: {Math.round(currentAngles.rightKnee)}° | 
+            L Hip: {Math.round(currentAngles.leftHip)}° | 
+            R Hip: {Math.round(currentAngles.rightHip)}°<br/>
+            <span style={{ color: isTracking ? 'green' : 'red', fontWeight: 'bold' }}>
+              Tracking: {isTracking ? 'YES ✅' : 'NO ❌'}
+            </span>
+          </div>
+        )}
+        
+        {!currentAngles && isTracking && (
+          <div style={{ 
+            padding: '10px', 
+            backgroundColor: '#ffcccc',
+            borderRadius: '8px',
+            fontSize: '14px',
+            marginBottom: '10px',
+            color: '#cc0000',
+            fontWeight: 'bold'
+          }}>
+            ⚠️ No angles received yet! Check camera detection.
+          </div>
+        )}
+        
         {currentAngles && config.angleRequirements.map((req, idx) => {
           let currentAngle: number = 0;
           let label = '';
@@ -293,8 +421,22 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
               currentAngle = currentAngles.rightKnee;
               label = 'Right Knee';
             } else {
-              currentAngle = (currentAngles.leftKnee + currentAngles.rightKnee) / 2;
-              label = 'Knee (Avg)';
+              // 'both' - smart fallback for single-side detection
+              const left = currentAngles.leftKnee;
+              const right = currentAngles.rightKnee;
+              if (left > 0 && right > 0) {
+                currentAngle = (left + right) / 2;
+                label = 'Knee (Avg)';
+              } else if (left > 0) {
+                currentAngle = left;
+                label = 'Left Knee (only detected)';
+              } else if (right > 0) {
+                currentAngle = right;
+                label = 'Right Knee (only detected)';
+              } else {
+                currentAngle = 0;
+                label = 'Knee (not detected)';
+              }
             }
           } else if (req.joint === 'ankle') {
             if (req.side === 'left') {
@@ -304,8 +446,22 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
               currentAngle = currentAngles.rightAnkle;
               label = 'Right Ankle';
             } else {
-              currentAngle = (currentAngles.leftAnkle + currentAngles.rightAnkle) / 2;
-              label = 'Ankle (Avg)';
+              // 'both' - smart fallback for single-side detection
+              const left = currentAngles.leftAnkle;
+              const right = currentAngles.rightAnkle;
+              if (left > 0 && right > 0) {
+                currentAngle = (left + right) / 2;
+                label = 'Ankle (Avg)';
+              } else if (left > 0) {
+                currentAngle = left;
+                label = 'Left Ankle (only detected)';
+              } else if (right > 0) {
+                currentAngle = right;
+                label = 'Right Ankle (only detected)';
+              } else {
+                currentAngle = 0;
+                label = 'Ankle (not detected)';
+              }
             }
           } else if (req.joint === 'hip') {
             if (req.side === 'left') {
@@ -315,8 +471,22 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
               currentAngle = currentAngles.rightHip;
               label = 'Right Hip';
             } else {
-              currentAngle = (currentAngles.leftHip + currentAngles.rightHip) / 2;
-              label = 'Hip (Avg)';
+              // 'both' - smart fallback for single-side detection
+              const left = currentAngles.leftHip;
+              const right = currentAngles.rightHip;
+              if (left > 0 && right > 0) {
+                currentAngle = (left + right) / 2;
+                label = 'Hip (Avg)';
+              } else if (left > 0) {
+                currentAngle = left;
+                label = 'Left Hip (only detected)';
+              } else if (right > 0) {
+                currentAngle = right;
+                label = 'Right Hip (only detected)';
+              } else {
+                currentAngle = 0;
+                label = 'Hip (not detected)';
+              }
             }
           }
 
