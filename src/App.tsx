@@ -9,6 +9,10 @@ import InjurySelection from './pages/InjurySelection'
 import InjuryRehabProgram from './pages/InjuryRehabProgram'
 import { injuryRehabService } from './services/dataService'
 import { type InjuryType } from './types/injuries'
+import PersonalizedPlanView from './components/PersonalizedPlanView'
+import SmartIntakeForm from './components/SmartIntakeForm'
+import { PersonalizationService } from './services/personalizationService'
+import type { PersonalizedPlan } from './types/personalization'
 
 // Types
 interface User {
@@ -48,6 +52,10 @@ function App() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showIntakeForm, setShowIntakeForm] = useState(false);
+  const [personalizedPlan, setPersonalizedPlan] = useState<PersonalizedPlan | null>(null);
+  const [hasCompletedIntake, setHasCompletedIntake] = useState(false);
+  const [intakeData, setIntakeData] = useState<any>(null);
 
   // Handle hash-based routing (for easy debug access)
   useEffect(() => {
@@ -128,6 +136,79 @@ function App() {
       setUser({ ...user, photoURL });
     }
   };
+
+  // Handle intake form completion
+  const handleIntakeComplete = (data: any) => {
+    console.log('📝 Intake data received:', data);
+    
+    // Save to localStorage
+    localStorage.setItem(`intake_data_${user?.uid}`, JSON.stringify(data));
+    setHasCompletedIntake(true);
+    setIntakeData(data);
+    
+    // Generate personalized plan automatically
+    if (user) {
+      console.log('🤖 Generating personalized rehab plan...');
+      const plan = PersonalizationService.generatePlan(
+        user.uid,
+        {
+          type: data.injuryType,
+          date: data.injuryDate,
+          painLevel: data.currentPainLevel,
+          fitnessLevel: data.fitnessLevel,
+          age: data.age,
+          goals: data.goals,
+          limitations: [],
+          sessionDuration: data.preferredSessionDuration,
+          availableDays: data.availableDays,
+          previousInjuries: []
+        },
+        [] // Empty session history initially - will populate as user exercises
+      );
+      
+      setPersonalizedPlan(plan);
+      console.log('✅ Plan generated successfully:', plan.phase, `- Week ${plan.weekNumber}`);
+    }
+    
+    setShowIntakeForm(false);
+  };
+
+  const handleIntakeSkip = () => {
+    setShowIntakeForm(false);
+    // Mark as skipped so we don't show again immediately
+    localStorage.setItem(`intake_skipped_${user?.uid}`, 'true');
+  };
+
+  // Check if user should see intake form on dashboard load
+  useEffect(() => {
+    if (user && currentPage === 'dashboard') {
+      const hasIntakeData = localStorage.getItem(`intake_data_${user.uid}`);
+      const hasSkipped = localStorage.getItem(`intake_skipped_${user.uid}`);
+      
+      if (!hasIntakeData && !hasSkipped) {
+        // Show intake form after a short delay for better UX
+        const timer = setTimeout(() => {
+          setShowIntakeForm(true);
+        }, 1000);
+        return () => clearTimeout(timer);
+      } else if (hasIntakeData) {
+        setHasCompletedIntake(true);
+        // Load saved intake data
+        try {
+          const savedData = JSON.parse(hasIntakeData);
+          setIntakeData(savedData);
+          const plan = PersonalizationService.generatePlan(
+            user.uid,
+            savedData,
+            [] // Load from localStorage/backend if available
+          );
+          setPersonalizedPlan(plan);
+        } catch (error) {
+          console.error('Error loading intake data:', error);
+        }
+      }
+    }
+  }, [user, currentPage]);
 
   if (loading) {
     return (
@@ -322,7 +403,15 @@ function App() {
 
       {/* Main Content */}
       {currentPage === 'home' && <HomePage />}
-      {currentPage === 'dashboard' && <DashboardPage user={user} navigateTo={navigateTo} />}
+      {currentPage === 'dashboard' && (
+        <DashboardPage 
+          user={user} 
+          navigateTo={navigateTo}
+          personalizedPlan={personalizedPlan}
+          intakeData={intakeData}
+          onShowIntakeForm={() => setShowIntakeForm(true)}
+        />
+      )}
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} navigateTo={navigateTo} />}
       {currentPage === 'signup' && <SignupPage onSignup={handleSignup} navigateTo={navigateTo} />}
       {currentPage === 'profile' && <ProfilePage user={user} onProfilePictureUpload={handleProfilePictureUpload} />}
@@ -344,6 +433,15 @@ function App() {
         />
       )}
       {currentPage === 'debug' && <PoseTestPage />}
+
+      {/* Intake Form Modal */}
+      {showIntakeForm && user && (
+        <SmartIntakeForm
+          userId={user.uid}
+          onComplete={handleIntakeComplete}
+          onSkip={handleIntakeSkip}
+        />
+      )}
 
       {/* Footer */}
       <footer className="site-footer">
@@ -447,7 +545,19 @@ function HomePage() {
 }
 
 // Dashboard Page Component
-function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (page: Page) => void }) {
+function DashboardPage({ 
+  user, 
+  navigateTo, 
+  personalizedPlan,
+  intakeData,
+  onShowIntakeForm 
+}: { 
+  user: User | null; 
+  navigateTo: (page: Page) => void;
+  personalizedPlan: PersonalizedPlan | null;
+  intakeData: any;
+  onShowIntakeForm: () => void;
+}) {
   const [dashboardData, setDashboardData] = useState<any>(null);
 
   useEffect(() => {
@@ -544,6 +654,79 @@ function DashboardPage({ user, navigateTo }: { user: User | null; navigateTo: (p
                 <p>Week 3 of 8 - You're doing great! Keep up the excellent work.</p>
               </div>
             </div>
+          </div>
+
+          {/* Personalized Weekly Plan */}
+          <div className="dashboard-section" style={{ gridColumn: '1 / -1' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h2>🎯 Your Personalized Plan</h2>
+              <button 
+                onClick={onShowIntakeForm}
+                style={{
+                  padding: '10px 20px',
+                  background: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '14px'
+                }}
+              >
+                {personalizedPlan ? '⚙️ Update Plan' : '✨ Create Personalized Plan'}
+              </button>
+            </div>
+            
+            {personalizedPlan && intakeData ? (
+              <PersonalizedPlanView
+                userId={user?.uid || 'demo-user'}
+                injuryData={{
+                  type: intakeData.injuryType,
+                  date: intakeData.injuryDate,
+                  painLevel: intakeData.currentPainLevel,
+                  fitnessLevel: intakeData.fitnessLevel,
+                  age: intakeData.age,
+                  goals: intakeData.goals,
+                  limitations: intakeData.limitations,
+                  sessionDuration: intakeData.preferredSessionDuration,
+                  availableDays: intakeData.availableDays
+                }}
+                sessionHistory={[]}
+                onStartExercise={(exerciseId) => {
+                  console.log('Starting exercise:', exerciseId);
+                  navigateTo('exercises');
+                }}
+              />
+            ) : (
+              <div style={{
+                padding: '40px',
+                background: '#f8f9fa',
+                borderRadius: '12px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '20px' }}>🎯</div>
+                <h3 style={{ marginBottom: '10px', color: '#333' }}>Get Your Personalized Rehab Plan</h3>
+                <p style={{ color: '#666', marginBottom: '20px' }}>
+                  Answer a few quick questions to receive a customized rehabilitation program
+                  tailored to your injury, fitness level, and goals.
+                </p>
+                <button
+                  onClick={onShowIntakeForm}
+                  style={{
+                    padding: '14px 28px',
+                    background: '#4CAF50',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '16px'
+                  }}
+                >
+                  Get Started
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Recent Activity */}
