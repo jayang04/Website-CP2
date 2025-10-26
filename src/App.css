@@ -815,6 +815,9 @@ main {
   transition: var(--transition);
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex items to shrink below content size */
 }
 
 .dashboard-section:hover {
@@ -945,6 +948,48 @@ main {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  position: relative;
+}
+
+/* Scroll fade indicator at bottom */
+.activity-list::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.activity-list:hover::after {
+  opacity: 1;
+}
+
+/* Custom scrollbar for activity list */
+.activity-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.activity-list::-webkit-scrollbar-track {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.activity-list::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
 }
 
 .activity-item {
@@ -1276,6 +1321,11 @@ main {
 
   .action-icon {
     margin: 0 auto;
+  }
+
+  /* Activity List Mobile */
+  .activity-list {
+    max-height: 400px;
   }
 }
 

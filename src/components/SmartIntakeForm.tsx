@@ -16,6 +16,7 @@ interface SmartIntakeFormProps {
   onComplete: (data: SmartIntakeData) => void;
   onSkip: () => void;
   userId: string;
+  existingData?: SmartIntakeData | null;
 }
 
 const INJURY_TYPES = [
@@ -27,8 +28,8 @@ const INJURY_TYPES = [
   { id: 'high-ankle', name: 'High Ankle Sprain', icon: '🦶', common: true },
 ];
 
-const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, userId }) => {
-  const [formData, setFormData] = useState<SmartIntakeData>({
+const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, userId, existingData }) => {
+  const [formData, setFormData] = useState<SmartIntakeData>(existingData || {
     injuryType: '',
     injuryDate: '',
     currentPainLevel: 5,
@@ -39,7 +40,7 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
     preferredSessionDuration: 20
   });
 
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(!!existingData);
 
   // Auto-infer goals based on injury and pain level
   const inferGoals = (injuryType: string, painLevel: number): string[] => {
@@ -132,15 +133,17 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
 
   // Quick Start View (Default)
   if (!showDetails) {
+    const isUpdateMode = !!existingData;
+    
     return (
       <div className="smart-intake-overlay">
         <div className="smart-intake-modal quick-setup">
           <button className="close-btn" onClick={onSkip}>×</button>
           
           <div className="quick-setup-header">
-            <div className="pulse-icon">🎯</div>
-            <h2>Let's Personalize Your Recovery</h2>
-            <p>Select your injury and we'll create an optimal rehab plan</p>
+            <div className="pulse-icon">{isUpdateMode ? '⚙️' : '🎯'}</div>
+            <h2>{isUpdateMode ? 'Update Your Recovery Plan' : 'Let\'s Personalize Your Recovery'}</h2>
+            <p>{isUpdateMode ? 'Modify your injury details to update your plan' : 'Select your injury and we\'ll create an optimal rehab plan'}</p>
           </div>
 
           <div className="injury-grid">
@@ -161,20 +164,30 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
               <div className="detail-row">
                 <label>When did it happen?</label>
                 <select 
-                  value={formData.injuryDate ? 'custom' : '2weeks'}
+                  value={(() => {
+                    if (!formData.injuryDate) return '2weeks';
+                    
+                    // Calculate days ago from the injury date
+                    const injuryDateObj = new Date(formData.injuryDate);
+                    const now = new Date();
+                    const daysAgo = Math.floor((now.getTime() - injuryDateObj.getTime()) / (1000 * 60 * 60 * 24));
+                    
+                    // Match to closest option
+                    if (daysAgo <= 10) return '1week';
+                    if (daysAgo <= 21) return '2weeks';
+                    if (daysAgo <= 45) return '1month';
+                    return '2months';
+                  })()}
                   onChange={(e) => {
                     const daysAgo = {
                       '1week': 7,
                       '2weeks': 14,
                       '1month': 30,
-                      '2months': 60,
-                      'custom': 0
+                      '2months': 60
                     }[e.target.value] || 14;
                     
-                    if (daysAgo > 0) {
-                      const date = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
-                      setFormData({ ...formData, injuryDate: date.toISOString().split('T')[0] });
-                    }
+                    const date = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+                    setFormData({ ...formData, injuryDate: date.toISOString().split('T')[0] });
                   }}
                 >
                   <option value="1week">About 1 week ago</option>
@@ -235,7 +248,7 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
               onClick={handleQuickStart}
               disabled={!formData.injuryType}
             >
-              Generate My Plan →
+              {isUpdateMode ? 'Update My Plan →' : 'Generate My Plan →'}
             </button>
           </div>
 
@@ -248,6 +261,8 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
   }
 
   // Detailed Setup View
+  const isUpdateMode = !!existingData;
+  
   return (
     <div className="smart-intake-overlay">
       <div className="smart-intake-modal detailed-setup">
@@ -255,7 +270,7 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
         
         <div className="detailed-header">
           <button className="back-btn" onClick={() => setShowDetails(false)}>← Back</button>
-          <h2>Customize Your Plan</h2>
+          <h2>{isUpdateMode ? 'Update Your Plan' : 'Customize Your Plan'}</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="detailed-form">
@@ -393,7 +408,7 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
 
           <div className="form-actions">
             <button type="submit" className="btn-primary-large">
-              Generate Personalized Plan →
+              {isUpdateMode ? 'Update Personalized Plan →' : 'Generate Personalized Plan →'}
             </button>
           </div>
         </form>

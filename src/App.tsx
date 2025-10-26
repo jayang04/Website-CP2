@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { authService } from './firebase/auth'
 import { type User as FirebaseUser } from 'firebase/auth'
-import RehabExercise from './pages/RehabExercise'
 import RehabProgram from './pages/RehabProgram'
 import PoseTestPage from './pages/PoseTest'
 import InjurySelection from './pages/InjurySelection'
@@ -23,7 +22,7 @@ interface User {
   uid: string;
 }
 
-type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'exercises' | 'debug' | 'rehab-program' | 'injury-selection' | 'injury-rehab';
+type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'debug' | 'rehab-program' | 'injury-selection' | 'injury-rehab';
 
 // Helper function to extract first name
 function getFirstName(fullName: string): string {
@@ -47,7 +46,12 @@ function formatTimestamp(timestamp: Date): string {
 }
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  // Load saved page from localStorage or default to 'home'
+  const [currentPage, setCurrentPage] = useState<Page>(() => {
+    const saved = localStorage.getItem('rehabmotion_current_page');
+    console.log('🔍 Loading saved page:', saved);
+    return (saved as Page) || 'home';
+  });
   const [user, setUser] = useState<User | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -56,6 +60,21 @@ function App() {
   const [personalizedPlan, setPersonalizedPlan] = useState<PersonalizedPlan | null>(null);
   const [hasCompletedIntake, setHasCompletedIntake] = useState(false);
   const [intakeData, setIntakeData] = useState<any>(null);
+  const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
+  
+  // Track if this is the initial mount to prevent redirect on page load
+  const hasCompletedInitialAuth = useRef(false);
+
+  // Save current page to localStorage when it changes
+  useEffect(() => {
+    console.log('💾 Saving page to localStorage:', currentPage);
+    localStorage.setItem('rehabmotion_current_page', currentPage);
+  }, [currentPage]);
+
+  // Function to refresh dashboard data
+  const refreshDashboard = () => {
+    setDashboardRefreshKey(prev => prev + 1);
+  };
 
   // Handle hash-based routing (for easy debug access)
   useEffect(() => {
@@ -77,6 +96,7 @@ function App() {
   // Listen for auth state changes
   useEffect(() => {
     const handleAuthStateChange = (firebaseUser: FirebaseUser | null) => {
+      console.log('🔐 Auth state changed:', firebaseUser ? `User: ${firebaseUser.email}` : 'No user');
       if (firebaseUser) {
         const fullName = firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User';
         setUser({
@@ -86,10 +106,17 @@ function App() {
           photoURL: firebaseUser.photoURL,
           uid: firebaseUser.uid
         });
+        setLoading(false);
+        hasCompletedInitialAuth.current = true; // Auth complete with user
       } else {
         setUser(null);
+        setLoading(false);
+        // Only mark auth as complete if this is a real "no user" state
+        // Not the initial "no user yet" state during session restoration
+        setTimeout(() => {
+          hasCompletedInitialAuth.current = true;
+        }, 500); // Wait 500ms to allow Firebase to restore session
       }
-      setLoading(false);
     };
 
     authService.addAuthStateListener(handleAuthStateChange);
@@ -102,6 +129,29 @@ function App() {
       authService.removeAuthStateListener(handleAuthStateChange);
     };
   }, []);
+
+  // Protect dashboard/profile pages after auth is loaded
+  // IMPORTANT: Only redirect if we're SURE the user is not authenticated
+  // Don't redirect during the initial loading phase
+  useEffect(() => {
+    console.log('🛡️ Protection check - loading:', loading, 'user:', !!user, 'currentPage:', currentPage, 'hasCompletedInitialAuth:', hasCompletedInitialAuth.current);
+    
+    // Only check protection AFTER initial auth check is complete
+    if (hasCompletedInitialAuth.current && !loading) {
+      // Small delay to ensure auth state is fully propagated
+      const timeoutId = setTimeout(() => {
+        // If no user and trying to access protected page, redirect
+        if (!user && (currentPage === 'dashboard' || currentPage === 'profile')) {
+          console.log('⚠️ Redirecting to home - user not authenticated');
+          setCurrentPage('home');
+        } else if (user) {
+          console.log('✅ User authenticated - access granted to:', currentPage);
+        }
+      }, 100); // 100ms delay
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [loading, user, currentPage]); // Now safe to include currentPage
 
   // Auth handlers
   const handleLogin = async (email: string, password: string) => {
@@ -177,6 +227,29 @@ function App() {
     setShowIntakeForm(false);
     // Mark as skipped so we don't show again immediately
     localStorage.setItem(`intake_skipped_${user?.uid}`, 'true');
+  };
+
+  // Handle reset plan (for testing)
+  const handleResetPlan = () => {
+    if (!user) return;
+    
+    if (window.confirm('Are you sure you want to reset your personalized plan? This will clear all your intake data and progress.')) {
+      console.log('🗑️ Resetting personalized plan for user:', user.uid);
+      
+      // Clear localStorage with user-specific keys
+      localStorage.removeItem(`intake_data_${user.uid}`);
+      localStorage.removeItem(`intake_skipped_${user.uid}`);
+      
+      // Clear React state
+      setPersonalizedPlan(null);
+      setIntakeData(null);
+      setHasCompletedIntake(false);
+      
+      // Trigger dashboard refresh
+      refreshDashboard();
+      
+      console.log('✅ Plan reset complete');
+    }
   };
 
   // Check if user should see intake form on dashboard load
@@ -255,7 +328,6 @@ function App() {
               <>
                 <a onClick={() => navigateTo('dashboard')} className={currentPage === 'dashboard' ? 'active' : ''}>Dashboard</a>
                 <a onClick={() => navigateTo('injury-selection')} className={currentPage === 'injury-selection' || currentPage === 'injury-rehab' ? 'active' : ''}>Rehab Programs</a>
-                <a onClick={() => navigateTo('exercises')} className={currentPage === 'exercises' ? 'active' : ''}>Exercises</a>
               </>
             )}
             
@@ -410,12 +482,14 @@ function App() {
           personalizedPlan={personalizedPlan}
           intakeData={intakeData}
           onShowIntakeForm={() => setShowIntakeForm(true)}
+          refreshKey={dashboardRefreshKey}
+          onRefreshDashboard={refreshDashboard}
+          onResetPlan={handleResetPlan}
         />
       )}
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} navigateTo={navigateTo} />}
       {currentPage === 'signup' && <SignupPage onSignup={handleSignup} navigateTo={navigateTo} />}
       {currentPage === 'profile' && <ProfilePage user={user} onProfilePictureUpload={handleProfilePictureUpload} />}
-      {currentPage === 'exercises' && <RehabExercise />}
       {currentPage === 'rehab-program' && <RehabProgram user={user} />}
       {currentPage === 'injury-selection' && user && (
         <InjurySelection 
@@ -440,6 +514,7 @@ function App() {
           userId={user.uid}
           onComplete={handleIntakeComplete}
           onSkip={handleIntakeSkip}
+          existingData={intakeData}
         />
       )}
 
@@ -550,25 +625,61 @@ function DashboardPage({
   navigateTo, 
   personalizedPlan,
   intakeData,
-  onShowIntakeForm 
+  onShowIntakeForm,
+  refreshKey,
+  onRefreshDashboard,
+  onResetPlan
 }: { 
   user: User | null; 
   navigateTo: (page: Page) => void;
   personalizedPlan: PersonalizedPlan | null;
   intakeData: any;
   onShowIntakeForm: () => void;
+  refreshKey: number;
+  onRefreshDashboard: () => void;
+  onResetPlan: () => void;
 }) {
   const [dashboardData, setDashboardData] = useState<any>(null);
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
-      // Import and load dashboard data
-      import('./services/dataService').then(({ dashboardService }) => {
-        const data = dashboardService.getDashboardData(user.uid);
+      setIsLoadingDashboard(true);
+      setDashboardError(null);
+      
+      // Import and load dashboard data from cloud
+      import('./services/cloudDataService').then(({ cloudDashboardService, migrateToCloud }) => {
+        console.log('📊 Loading dashboard for user:', user.uid);
+        
+        // First, migrate any existing localStorage data to cloud (runs once)
+        return migrateToCloud(user.uid).then(() => {
+          console.log('🔄 Migration complete, loading data...');
+          // Then load data from cloud
+          return cloudDashboardService.getDashboardData(user.uid);
+        });
+      }).then(data => {
+        console.log('✅ Dashboard data loaded:', data);
         setDashboardData(data);
+        setIsLoadingDashboard(false);
+      }).catch(error => {
+        console.error('❌ Error loading dashboard data:', error);
+        setDashboardError(error.message);
+        
+        // Fallback to localStorage if cloud fails
+        console.log('⚠️ Falling back to localStorage...');
+        import('./services/dataService').then(({ dashboardService }) => {
+          const localData = dashboardService.getDashboardData(user.uid);
+          console.log('📦 Loaded from localStorage:', localData);
+          setDashboardData(localData);
+          setIsLoadingDashboard(false);
+        }).catch(fallbackError => {
+          console.error('❌ Fallback also failed:', fallbackError);
+          setIsLoadingDashboard(false);
+        });
       });
     }
-  }, [user]);
+  }, [user, refreshKey]); // Re-run when refreshKey changes
 
   if (!user) {
     return (
@@ -584,8 +695,51 @@ function DashboardPage({
     );
   }
 
+  if (isLoadingDashboard) {
+    return (
+      <div className="dashboard-fullscreen" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔄</div>
+          <p style={{ color: 'var(--text-secondary)' }}>Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (dashboardError) {
+    return (
+      <div className="dashboard-fullscreen" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+          <h3 style={{ marginBottom: '1rem' }}>Error Loading Dashboard</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>{dashboardError}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            style={{ 
+              padding: '10px 20px', 
+              background: 'var(--primary-color)', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!dashboardData) {
-    return <div className="dashboard-fullscreen"><p>Loading...</p></div>;
+    return (
+      <div className="dashboard-fullscreen" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
+          <p style={{ color: 'var(--text-secondary)' }}>No dashboard data available</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -637,7 +791,7 @@ function DashboardPage({
 
           {/* Progress Overview */}
           <div className="dashboard-section">
-            <h2>� Progress Overview</h2>
+            <h2>📊 Progress Overview</h2>
             <div className="progress-widget">
               <div className="progress-chart">
                 <img 
@@ -656,25 +810,67 @@ function DashboardPage({
             </div>
           </div>
 
-          {/* Personalized Weekly Plan */}
+          {/* Recent Activity - Moved to top row */}
+          <div className="dashboard-section">
+            <h2>🏃‍♀️ Recent Activity</h2>
+            <div className="activity-list">
+              {dashboardData.activities.length > 0 ? (
+                dashboardData.activities.map((activity: any) => (
+                  <div key={activity.id} className="activity-item">
+                    <div className={`activity-icon ${activity.type}`}>{activity.icon}</div>
+                    <div className="activity-content">
+                      <h4>{activity.title}</h4>
+                      <p>{formatTimestamp(activity.timestamp)}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p style={{ textAlign: 'center', color: '#666', padding: '20px' }}>
+                  No recent activities. Start exercising to see your progress here!
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Personalized Weekly Plan - Full width below */}
           <div className="dashboard-section" style={{ gridColumn: '1 / -1' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', gap: '10px' }}>
               <h2>🎯 Your Personalized Plan</h2>
-              <button 
-                onClick={onShowIntakeForm}
-                style={{
-                  padding: '10px 20px',
-                  background: '#4CAF50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '14px'
-                }}
-              >
-                {personalizedPlan ? '⚙️ Update Plan' : '✨ Create Personalized Plan'}
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button 
+                  onClick={onShowIntakeForm}
+                  style={{
+                    padding: '10px 20px',
+                    background: '#4CAF50',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '14px'
+                  }}
+                >
+                  {personalizedPlan ? '⚙️ Update Plan' : '✨ Create Personalized Plan'}
+                </button>
+                {personalizedPlan && (
+                  <button 
+                    onClick={onResetPlan}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#f44336',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}
+                    title="Reset your personalized plan (for testing)"
+                  >
+                    🗑️ Reset Plan
+                  </button>
+                )}
+              </div>
             </div>
             
             {personalizedPlan && intakeData ? (
@@ -692,10 +888,7 @@ function DashboardPage({
                   availableDays: intakeData.availableDays
                 }}
                 sessionHistory={[]}
-                onStartExercise={(exerciseId) => {
-                  console.log('Starting exercise:', exerciseId);
-                  navigateTo('exercises');
-                }}
+                onDashboardRefresh={onRefreshDashboard}
               />
             ) : (
               <div style={{
@@ -727,28 +920,6 @@ function DashboardPage({
                 </button>
               </div>
             )}
-          </div>
-
-          {/* Recent Activity */}
-          <div className="dashboard-section">
-            <h2>🏃‍♀️ Recent Activity</h2>
-            <div className="activity-list">
-              {dashboardData.activities.length > 0 ? (
-                dashboardData.activities.map((activity: any) => (
-                  <div key={activity.id} className="activity-item">
-                    <div className={`activity-icon ${activity.type}`}>{activity.icon}</div>
-                    <div className="activity-content">
-                      <h4>{activity.title}</h4>
-                      <p>{formatTimestamp(activity.timestamp)}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p style={{ textAlign: 'center', color: '#666', padding: '20px' }}>
-                  No recent activities. Start exercising to see your progress here!
-                </p>
-              )}
-            </div>
           </div>
         </div>
       </div>

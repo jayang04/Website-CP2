@@ -48,7 +48,7 @@ export class RehabRecommendationEngine {
     
     const plan: PersonalizedPlan = {
       phase,
-      weekNumber: metrics.weeksSinceInjury,
+      weekNumber: this.calculateProgramWeek(sessionHistory), // Program week starts at 1
       exercises,
       estimatedDuration: this.estimateDuration(exercises),
       sessionsPerWeek,
@@ -1230,6 +1230,29 @@ export class RehabRecommendationEngine {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
   }
   
+  /**
+   * Calculate program week number (starts at 1 when user begins rehab)
+   * This is different from weeksSinceInjury - it tracks rehab program progress
+   */
+  private calculateProgramWeek(sessionHistory: SessionHistory[]): number {
+    if (sessionHistory.length === 0) {
+      return 1; // First week of program
+    }
+    
+    // Find the first session date
+    const firstSessionDate = new Date(
+      Math.min(...sessionHistory.map(s => new Date(s.date).getTime()))
+    );
+    
+    // Calculate weeks since first session
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - firstSessionDate.getTime());
+    const weeksSinceStart = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+    
+    // Ensure it's at least week 1
+    return Math.max(1, weeksSinceStart);
+  }
+
   private getRecentSessions(sessions: SessionHistory[], days: number): SessionHistory[] {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - days);
