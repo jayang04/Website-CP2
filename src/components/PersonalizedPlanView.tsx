@@ -536,15 +536,15 @@ export default function PersonalizedPlanView({
       <div className="plan-stats">
         <div className="stat-item">
           <div className="stat-value">{plan.difficultyLevel}/10</div>
-          <div className="stat-label">Overall Difficulty</div>
+          <div className="plan-stat-label">Overall Difficulty</div>
         </div>
         <div className="stat-item">
           <div className="stat-value">{plan.exercises.length}</div>
-          <div className="stat-label">Exercises</div>
+          <div className="plan-stat-label">Exercises</div>
         </div>
         <div className="stat-item">
           <div className="stat-value">{plan.sessionsPerWeek}x</div>
-          <div className="stat-label">Per Week</div>
+          <div className="plan-stat-label">Per Week</div>
         </div>
       </div>
 
