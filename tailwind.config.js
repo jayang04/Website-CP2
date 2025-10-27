@@ -23,7 +23,7 @@ export default {
         },
         // Status colors
         danger: '#f44336',
-        warning: '#FFC107',
+        warning: '#fbbf24', // Golden yellow
         success: '#4CAF50',
         // Text colors
         text: {

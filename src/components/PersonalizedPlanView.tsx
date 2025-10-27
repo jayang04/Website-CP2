@@ -77,7 +77,6 @@ export default function PersonalizedPlanView({
 
   // Cleanup all videos on unmount
   useEffect(() => {
-    // Function to register video element with proper cleanup (for future use)
     const registerVideo = (video: HTMLVideoElement | null) => {
       if (video === null) return;
       if (videoRefs.current.has(video)) return;
@@ -96,7 +95,6 @@ export default function PersonalizedPlanView({
       videoRefs.current.set(video, cleanup);
     };
 
-    // Store for potential future use
     (window as any).__registerVideo = registerVideo;
 
     return () => {
@@ -106,13 +104,12 @@ export default function PersonalizedPlanView({
     };
   }, []);
 
-  // Load completed exercises from localStorage on mount
+  // Load completed exercises on mount
   useEffect(() => {
     loadCompletedExercises();
-    // Check every minute if we've crossed midnight
     const midnightCheck = setInterval(() => {
       checkAndResetCompletions();
-    }, 60000); // Check every minute
+    }, 60000);
 
     return () => clearInterval(midnightCheck);
   }, [userId]);
@@ -127,28 +124,23 @@ export default function PersonalizedPlanView({
   // Log to dashboard when new exercise is completed
   useEffect(() => {
     if (lastCompletedExercise) {
-      // Add to activity feed (async cloud call)
       cloudDashboardService.addActivity(userId, {
         type: 'completed',
         title: `Completed "${lastCompletedExercise.name}" exercise`,
         timestamp: new Date(),
         icon: '✅'
       }).then(() => {
-        // Update stats with current completion count
         return cloudDashboardService.updateStats(userId, { 
           exercisesCompleted: completedExercises.length 
         });
       }).then(() => {
-        // Trigger dashboard refresh for instant sync
         if (onDashboardRefresh) {
           onDashboardRefresh();
         }
-        console.log('📊 Dashboard updated and refreshed (cloud)');
       }).catch(error => {
-        console.error('❌ Error updating dashboard:', error);
+        console.error('Error updating dashboard:', error);
       });
       
-      // Reset the trigger
       setLastCompletedExercise(null);
     }
   }, [lastCompletedExercise, userId, completedExercises.length, onDashboardRefresh]);
@@ -163,9 +155,8 @@ export default function PersonalizedPlanView({
       const today = getTodayDateString();
       const exercises = await cloudCompletionsService.getCompletions(userId, today);
       setCompletedExercises(exercises);
-      console.log('✅ Loaded completions from cloud:', exercises.length, 'exercises');
     } catch (error) {
-      console.error('❌ Error loading completions from cloud:', error);
+      console.error('Error loading completions:', error);
       setCompletedExercises([]);
     }
   };
@@ -175,9 +166,8 @@ export default function PersonalizedPlanView({
     try {
       const today = getTodayDateString();
       await cloudCompletionsService.saveCompletions(userId, today, exercises);
-      console.log('💾 Saved completions to cloud:', exercises.length, 'exercises');
     } catch (error) {
-      console.error('❌ Error saving completions to cloud:', error);
+      console.error('Error saving completions:', error);
     }
   };
 
@@ -188,11 +178,10 @@ export default function PersonalizedPlanView({
       const exercises = await cloudCompletionsService.getCompletions(userId, today);
       
       if (exercises.length === 0 && completedExercises.length > 0) {
-        console.log('🌅 Midnight passed - resetting completions');
         setCompletedExercises([]);
       }
     } catch (error) {
-      console.error('❌ Error checking midnight reset:', error);
+      console.error('Error checking midnight reset:', error);
     }
   };
 
@@ -206,10 +195,15 @@ export default function PersonalizedPlanView({
       );
       setPlan(personalizedPlan);
     } catch (error) {
-      console.error('❌ Error generating plan:', error);
+      console.error('Error generating plan:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetCompletions = async () => {
+    setCompletedExercises([]);
+    await saveCompletedExercises([]);
   };
 
   const handleToggleExercise = (exerciseId: string) => {
@@ -219,21 +213,13 @@ export default function PersonalizedPlanView({
       let newCompletions: string[];
       
       if (prev.includes(exerciseId)) {
-        // Uncomplete
         newCompletions = prev.filter(id => id !== exerciseId);
-        console.log(`❌ Unmarked: ${exerciseName}`);
       } else {
-        // Complete - trigger dashboard update via useEffect
         newCompletions = [...prev, exerciseId];
-        console.log(`✅ Completed: ${exerciseName}`);
-        
-        // Set trigger for dashboard logging (useEffect will handle it)
         setLastCompletedExercise({ id: exerciseId, name: exerciseName });
       }
       
-      // Save to localStorage
       saveCompletedExercises(newCompletions);
-      
       return newCompletions;
     });
   };
@@ -282,7 +268,7 @@ export default function PersonalizedPlanView({
       {/* Header Section */}
       <div className="plan-header">
         <div className="phase-badge" data-phase={plan.phase}>
-          📍 {plan.phase.replace('_', ' ')} PHASE
+          📋 {plan.phase.replace('_', ' ')} PHASE
         </div>
         <h2>Your Week {currentWeek} Plan</h2>
         <p className="plan-subtitle">
@@ -317,7 +303,7 @@ export default function PersonalizedPlanView({
         </div>
       </div>
 
-      {/* Exercises Section - Matching InjuryRehabProgram Format */}
+      {/* Exercises Section */}
       <div className="phase-section">
         <h3>💪 Your Personalized Exercises</h3>
         
@@ -327,33 +313,53 @@ export default function PersonalizedPlanView({
             <p>Please try regenerating your plan or contact support.</p>
             <button onClick={generatePlan}>🔄 Regenerate Plan</button>
           </div>
-        ) : completedExercises.length === plan.exercises.length ? (
-          // Show completion celebration when all exercises are done - Using Tailwind CSS
-          <div className="bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-2xl p-12 text-center shadow-2xl animate-fadeIn">
-            <div className="max-w-2xl mx-auto flex flex-col items-center justify-center">
-              <div className="text-8xl mb-5 animate-bounce">🎉</div>
-              <h2 className="text-5xl font-extrabold !text-[#fbbf24] mb-4 text-center drop-shadow-lg">
+        ) : completedExercises.length === plan.exercises.length && plan.exercises.length > 0 ? (
+          // Completion celebration with Tailwind
+          <div className="bg-gradient-to-br from-[#667eea] via-[#764ba2] to-[#f093fb] rounded-2xl p-8 md:p-12 text-center shadow-heavy animate-fadeIn">
+            <div className="max-w-2xl mx-auto flex flex-col items-center">
+              {/* Celebration Icon */}
+              <div className="text-7xl md:text-8xl mb-6 animate-bounce">🎉</div>
+              
+              {/* Title */}
+              <h2 
+                className="text-4xl md:text-5xl font-extrabold !text-[#fbbf24] mb-6 drop-shadow-lg text-center"
+              >
                 Amazing Work!
               </h2>
-              <p className="text-xl font-medium text-white leading-relaxed mb-7 drop-shadow-sm">
-                You've completed all exercises for this session today. Your body needs time to recover and rebuild.
+              
+              {/* Personalized Motivational Message */}
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl px-6 py-4 mb-6 border-2 border-white/30">
+                <p className="text-lg md:text-xl font-semibold text-white leading-relaxed">
+                  💪 {plan.motivationalMessage}
+                </p>
+              </div>
+              
+              {/* Description */}
+              <p className="text-base md:text-lg font-medium text-white/95 leading-relaxed mb-8 px-4">
+                You've completed all exercises for this session. Your body needs time to recover and rebuild stronger.
               </p>
-              <div className="inline-flex items-center gap-3 bg-white/25 backdrop-blur-md px-8 py-4 rounded-full mb-6 border-2 border-white/30">
-                <span className="text-3xl text-white bg-green-500/90 w-10 h-10 rounded-full flex items-center justify-center font-bold">
+              
+              {/* Completion Badge */}
+              <div className="inline-flex items-center gap-3 bg-white/25 backdrop-blur-md px-6 md:px-8 py-3 md:py-4 rounded-full mb-8 border-2 border-white/40 shadow-lg">
+                <span className="text-2xl md:text-3xl bg-success/90 text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold shadow-md">
                   ✓
                 </span>
-                <span className="text-xl font-bold text-white drop-shadow-sm">
+                <span className="text-lg md:text-xl font-bold text-white">
                   {plan.exercises.length}/{plan.exercises.length} Exercises Complete
                 </span>
               </div>
-              <p className="text-lg font-semibold text-white mb-0 drop-shadow-sm">
+              
+              {/* Comeback Message */}
+              <p className="text-base md:text-lg font-semibold text-white mb-6">
                 💪 Come back for the next session to continue your recovery journey!
               </p>
+              
+              {/* Reset Button */}
               <button 
-                className="mt-5 px-8 py-3 bg-white/95 text-gray-800 border-2 border-gray-200 rounded-lg font-semibold text-base cursor-pointer transition-all duration-300 hover:bg-gray-100 hover:border-gray-300 hover:shadow-lg active:scale-95"
-                onClick={generatePlan}
+                onClick={resetCompletions}
+                className="mt-2 px-8 py-3 bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200 hover:border-gray-300 rounded-lg font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95"
               >
-                🔄 View Plan Details
+                🔄 Reset & View Plan
               </button>
             </div>
           </div>
@@ -373,109 +379,105 @@ export default function PersonalizedPlanView({
                   <h4>{exercise.name}</h4>
                   
                   {/* Exercise Video */}
-                  {(() => {                      // Map exercise names to video paths
-                      const getVideoPath = (exerciseName: string): string | null => {
-                        // Normalize exercise name for matching
-                        const normalizedName = exerciseName.trim();
+                  {(() => {
+                    const getVideoPath = (exerciseName: string): string | null => {
+                      const normalizedName = exerciseName.trim();
+                      
+                      const videoMap: Record<string, string> = {
+                        // ACL exercises
+                        'Quad Set': '/exercise-demo-videos/ACL/Quad Set.mp4',
+                        'Quad Sets': '/exercise-demo-videos/ACL/Quad Set.mp4',
+                        'Straight Leg Raises': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
+                        'Straight Leg Raise': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
+                        'Ankle Pumps': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
+                        'Ankle Pump': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
+                        'Heel Slide': '/exercise-demo-videos/ACL/Heel Slide.mp4',
+                        'Heel Slides': '/exercise-demo-videos/ACL/Heel Slide.mp4',
+                        'Short Arc Quad': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
+                        'Short Arc Quads': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
+                        'Short Arc Quad Activation': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
+                        'Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
+                        'Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
+                        'Glute Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
+                        'Glute Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
                         
-                        const videoMap: Record<string, string> = {
-                          // ACL exercises
-                          'Quad Set': '/exercise-demo-videos/ACL/Quad Set.mp4',
-                          'Quad Sets': '/exercise-demo-videos/ACL/Quad Set.mp4',
-                          'Straight Leg Raises': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
-                          'Straight Leg Raise': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
-                          'Ankle Pumps': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
-                          'Ankle Pump': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
-                          'Heel Slide': '/exercise-demo-videos/ACL/Heel Slide.mp4',
-                          'Heel Slides': '/exercise-demo-videos/ACL/Heel Slide.mp4',
-                          'Short Arc Quad': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                          'Short Arc Quads': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                          'Short Arc Quad Activation': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                          'Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
-                          'Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
-                          'Glute Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
-                          'Glute Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
-                          
-                          // MCL exercises
-                          'Hip Flexion with Straight Leg Raise': '/exercise-demo-videos/MCL/Hip Flexion with Straight Leg Raise.mp4',
-                          'Hip Adduction (Seated Pillow/Towel Squeeze)': '/exercise-demo-videos/MCL/Hip Adduction (Seated Pillow:Towel Squeeze).mp4',
-                          'Banded Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
-                          'Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
-                          'Lateral Step-Up': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
-                          'Lateral Step-Ups': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
-                          
-                          // Meniscus Tear exercises
-                          'Mini Squats': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
-                          'Mini Squat': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
-                          'Wall Sit': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
-                          'Wall Sits': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
-                          'Step-Ups': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
-                          'Step-Up': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
-                          'Terminal Knee Extension': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
-                          'Terminal Knee Extensions': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
-                          
-                          // Lateral Ankle Sprain exercises
-                          'Ankle Dorsiflexion Mobility': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Dorsiflexion Mobility.mp4',
-                          'Ankle Strengthening (Isometric/Eversion Band Work)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                          'Ankle Strengthening (Isometric Eversion)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                          'Calf Raise Exercise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                          'Calf Raises': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                          'Calf Raise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                          'Proprioceptive Control (Clock Reaches)': '/exercise-demo-videos/Lateral Ankle Sprain/Proprioceptive Control (Clock Reaches).mp4',
-                          'Single-Leg Squat': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
-                          'Single-Leg Squats': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
-                          'Forward Lunge': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
-                          'Forward Lunges': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
-                          'Hop to Landing': '/exercise-demo-videos/Lateral Ankle Sprain/Hop to Landing.mp4',
-                          
-                          // High Ankle Sprain exercises
-                          'Elevated Ankle Pumps': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
-                          'Elevated Ankle Pump': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
-                          'Ankle Circles': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
-                          'Ankle Circle': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
-                          'Double-Leg Calf Raises': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
-                          'Double-Leg Calf Raise': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
-                          'Progressive Weight Bearing': '/exercise-demo-videos/High Ankle Sprain/Progressive Weight Bearing.mp4',
-                          
-                          // Medial Ankle Sprain exercises
-                          'Ankle Inversion Mobility': '/exercise-demo-videos/Medial Ankle Sprain/Ankle Inversion Mobility.mp4',
-                          'Isometric Ankle Inversion': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
-                          'Tibialis Posterior Strengthening': '/exercise-demo-videos/Medial Ankle Sprain/Tibialis Posterior Strengthening.mp4',
-                          'Single-Leg Balance': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                          
-                          // Aliases and variations
-                          'Balance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                          'Balance Maintenance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                          'Ankle Eversion – Band': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                          'Ankle Inversion – Band': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
-                          'Heel Raise – Off Step': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                        };
+                        // MCL exercises
+                        'Hip Flexion with Straight Leg Raise': '/exercise-demo-videos/MCL/Hip Flexion with Straight Leg Raise.mp4',
+                        'Hip Adduction (Seated Pillow/Towel Squeeze)': '/exercise-demo-videos/MCL/Hip Adduction (Seated Pillow:Towel Squeeze).mp4',
+                        'Banded Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
+                        'Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
+                        'Lateral Step-Up': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
+                        'Lateral Step-Ups': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
                         
-                        // Try exact match first
-                        if (videoMap[normalizedName]) {
-                          return videoMap[normalizedName];
-                        }
+                        // Meniscus Tear exercises
+                        'Mini Squats': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
+                        'Mini Squat': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
+                        'Wall Sit': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
+                        'Wall Sits': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
+                        'Step-Ups': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
+                        'Step-Up': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
+                        'Terminal Knee Extension': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
+                        'Terminal Knee Extensions': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
                         
-                        // Try case-insensitive match
-                        const caseInsensitiveMatch = Object.keys(videoMap).find(
-                          key => key.toLowerCase() === normalizedName.toLowerCase()
-                        );
-                        if (caseInsensitiveMatch) {
-                          return videoMap[caseInsensitiveMatch];
-                        }
+                        // Lateral Ankle Sprain exercises
+                        'Ankle Dorsiflexion Mobility': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Dorsiflexion Mobility.mp4',
+                        'Ankle Strengthening (Isometric/Eversion Band Work)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
+                        'Ankle Strengthening (Isometric Eversion)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
+                        'Calf Raise Exercise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
+                        'Calf Raises': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
+                        'Calf Raise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
+                        'Proprioceptive Control (Clock Reaches)': '/exercise-demo-videos/Lateral Ankle Sprain/Proprioceptive Control (Clock Reaches).mp4',
+                        'Single-Leg Squat': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
+                        'Single-Leg Squats': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
+                        'Forward Lunge': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
+                        'Forward Lunges': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
+                        'Hop to Landing': '/exercise-demo-videos/Lateral Ankle Sprain/Hop to Landing.mp4',
                         
-                        // Try partial match (contains)
-                        const partialMatch = Object.keys(videoMap).find(
-                          key => normalizedName.toLowerCase().includes(key.toLowerCase()) ||
-                                 key.toLowerCase().includes(normalizedName.toLowerCase())
-                        );
-                        if (partialMatch) {
-                          return videoMap[partialMatch];
-                        }
+                        // High Ankle Sprain exercises
+                        'Elevated Ankle Pumps': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
+                        'Elevated Ankle Pump': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
+                        'Ankle Circles': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
+                        'Ankle Circle': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
+                        'Double-Leg Calf Raises': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
+                        'Double-Leg Calf Raise': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
+                        'Progressive Weight Bearing': '/exercise-demo-videos/High Ankle Sprain/Progressive Weight Bearing.mp4',
                         
-                        return null;
+                        // Medial Ankle Sprain exercises
+                        'Ankle Inversion Mobility': '/exercise-demo-videos/Medial Ankle Sprain/Ankle Inversion Mobility.mp4',
+                        'Isometric Ankle Inversion': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
+                        'Tibialis Posterior Strengthening': '/exercise-demo-videos/Medial Ankle Sprain/Tibialis Posterior Strengthening.mp4',
+                        'Single-Leg Balance': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
+                        
+                        // Aliases and variations
+                        'Balance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
+                        'Balance Maintenance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
+                        'Ankle Eversion – Band': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
+                        'Ankle Inversion – Band': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
+                        'Heel Raise – Off Step': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
                       };
-                    
+                      
+                      if (videoMap[normalizedName]) {
+                        return videoMap[normalizedName];
+                      }
+                      
+                      const caseInsensitiveMatch = Object.keys(videoMap).find(
+                        key => key.toLowerCase() === normalizedName.toLowerCase()
+                      );
+                      if (caseInsensitiveMatch) {
+                        return videoMap[caseInsensitiveMatch];
+                      }
+                      
+                      const partialMatch = Object.keys(videoMap).find(
+                        key => normalizedName.toLowerCase().includes(key.toLowerCase()) ||
+                               key.toLowerCase().includes(normalizedName.toLowerCase())
+                      );
+                      if (partialMatch) {
+                        return videoMap[partialMatch];
+                      }
+                      
+                      return null;
+                    };
+                  
                     const videoPath = getVideoPath(exercise.name);
                     
                     return videoPath ? (
@@ -542,7 +544,7 @@ export default function PersonalizedPlanView({
                         className="ai-form-check-btn"
                         onClick={() => handleOpenAngleDetector(exercise)}
                       >
-                        📐 Live Form Tracker
+                        📹 Live Form Tracker
                       </button>
                     )}
                   </div>
@@ -583,6 +585,13 @@ export default function PersonalizedPlanView({
         <button className="regenerate-btn" onClick={generatePlan}>
           🔄 Regenerate Plan
         </button>
+        <button 
+          className="regenerate-btn" 
+          onClick={resetCompletions}
+          style={{ marginLeft: '10px', background: '#f44336', color: 'white', borderColor: '#f44336' }}
+        >
+          🔄 Reset All Completions
+        </button>
       </div>
 
       {/* Exercise Details Modal */}
@@ -601,7 +610,6 @@ export default function PersonalizedPlanView({
                 </span>
               </div>
 
-              {/* Detailed Information */}
               <div className="modal-info-section">
                 <div className="modal-section">
                   <h3>📋 Exercise Details</h3>
@@ -693,7 +701,6 @@ export default function PersonalizedPlanView({
               exerciseName={exerciseForAngleDetection.name}
               onComplete={(reps: number, duration: number) => {
                 console.log(`Exercise completed: ${reps} reps in ${duration}s`);
-                // Could save this to user's progress here
               }}
               onClose={handleCloseAngleDetector}
             />
