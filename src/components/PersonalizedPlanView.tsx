@@ -327,6 +327,36 @@ export default function PersonalizedPlanView({
             <p>Please try regenerating your plan or contact support.</p>
             <button onClick={generatePlan}>🔄 Regenerate Plan</button>
           </div>
+        ) : completedExercises.length === plan.exercises.length ? (
+          // Show completion celebration when all exercises are done - Using Tailwind CSS
+          <div className="bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-2xl p-12 text-center shadow-2xl animate-fadeIn">
+            <div className="max-w-2xl mx-auto flex flex-col items-center justify-center">
+              <div className="text-8xl mb-5 animate-bounce">🎉</div>
+              <h2 className="text-5xl font-extrabold !text-[#fbbf24] mb-4 text-center drop-shadow-lg">
+                Amazing Work!
+              </h2>
+              <p className="text-xl font-medium text-white leading-relaxed mb-7 drop-shadow-sm">
+                You've completed all exercises for this session today. Your body needs time to recover and rebuild.
+              </p>
+              <div className="inline-flex items-center gap-3 bg-white/25 backdrop-blur-md px-8 py-4 rounded-full mb-6 border-2 border-white/30">
+                <span className="text-3xl text-white bg-green-500/90 w-10 h-10 rounded-full flex items-center justify-center font-bold">
+                  ✓
+                </span>
+                <span className="text-xl font-bold text-white drop-shadow-sm">
+                  {plan.exercises.length}/{plan.exercises.length} Exercises Complete
+                </span>
+              </div>
+              <p className="text-lg font-semibold text-white mb-0 drop-shadow-sm">
+                💪 Come back for the next session to continue your recovery journey!
+              </p>
+              <button 
+                className="mt-5 px-8 py-3 bg-white/95 text-gray-800 border-2 border-gray-200 rounded-lg font-semibold text-base cursor-pointer transition-all duration-300 hover:bg-gray-100 hover:border-gray-300 hover:shadow-lg active:scale-95"
+                onClick={generatePlan}
+              >
+                🔄 View Plan Details
+              </button>
+            </div>
+          </div>
         ) : (
           <div className="exercises-grid">
             {plan.exercises.map((exercise) => {
