@@ -1112,7 +1112,8 @@
    EXERCISE DETAIL MODAL
    ============================================ */
 
-.exercise-modal-overlay {
+.exercise-modal-overlay,
+.angle-detector-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -1127,7 +1128,8 @@
   overflow-y: auto;
 }
 
-.exercise-modal-content {
+.exercise-modal-content,
+.angle-detector-content-full {
   background: white;
   border-radius: 20px;
   max-width: 1000px;
@@ -1135,8 +1137,7 @@
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  animation: slideUp 0.3s ease;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  margin: auto;
 }
 
 @keyframes slideUp {

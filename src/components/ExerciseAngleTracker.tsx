@@ -320,9 +320,13 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
           padding: '20px', 
           backgroundColor: '#f5f5f5', 
           borderRadius: '8px',
-          textAlign: 'center'
+          display: 'flex',         // Add flexbox
+          flexDirection: 'column', // Stack items vertically
+          alignItems: 'center',    // Center horizontally in flex context
+          justifyContent: 'center', // Center vertically in flex context
+          minHeight: '150px' // Ensure container has enough height to center vertically
         }}>
-          <h2 style={{ marginTop: 0, fontSize: '48px', color: '#2196f3' }}>
+          <h2 style={{ marginTop: 0, marginBottom: '0.5rem', fontSize: '48px', color: '#2196f3' }}>
             {repState.currentRep}
           </h2>
           <p style={{ margin: 0, color: '#666' }}>Reps Completed</p>

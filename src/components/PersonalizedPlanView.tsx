@@ -6,8 +6,8 @@ import type { PersonalizedPlan } from '../types/personalization';
 import { requiresAngleDetection } from '../data/exerciseAngleConfig';
 import ExerciseAngleTracker from './ExerciseAngleTracker';
 import { cloudDashboardService, cloudCompletionsService } from '../services/cloudDataService';
-import '../styles/PersonalizedPlan.css';
 import '../styles/InjuryRehabProgram.css';
+import '../styles/PersonalizedPlan.css';
 import '../styles/AngleDetector.css';
 
 interface PersonalizedPlanViewProps {

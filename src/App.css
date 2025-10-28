@@ -89,7 +89,7 @@ main {
   box-shadow: var(--shadow-light);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 100;
   border-bottom: 1px solid var(--border-color);
   overflow: visible;
 }
@@ -244,7 +244,7 @@ main {
   visibility: hidden;
   transform: translateY(-10px) scale(0.95);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
+  z-index: 1;
   overflow: hidden;
 }
 
@@ -378,7 +378,7 @@ main {
   bottom: 0;
   background: rgba(13, 71, 161, 0.98);
   backdrop-filter: blur(10px);
-  z-index: 9999;
+  z-index: 1;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
@@ -822,7 +822,6 @@ main {
 
 .dashboard-section:hover {
   box-shadow: var(--shadow-medium);
-  transform: translateY(-2px);
 }
 
 .dashboard-section h2 {
