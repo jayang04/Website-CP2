@@ -118,6 +118,10 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
   const handleRepCounting = (currentAngle: number) => {
     if (!config || !config.repCounting) return;
 
+    if (currentAngle === 0) {
+      return;
+    } 
+
     const { startCondition, endCondition } = config.repCounting;
     
     // Require at least 5 consecutive frames in position to confirm (about 0.15s at 30fps)
@@ -147,6 +151,7 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
         // Confirm start position only after holding it for REQUIRED_FRAMES
         if (newState.startPositionFrames >= REQUIRED_FRAMES && !prev.isInStartPosition) {
           newState.isInStartPosition = true;
+          newState.hasReachedEndPosition = false; // Reset end position flag
           console.log('✅ Start position confirmed!');
         }
       } else {
@@ -155,7 +160,7 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
       }
 
       // Update end position tracking
-      if (inEndPosition && prev.isInStartPosition) {
+      if (inEndPosition && !inStartPosition) {
         newState.endPositionFrames = prev.endPositionFrames + 1;
         
         // Confirm end position only after holding it for REQUIRED_FRAMES
@@ -165,9 +170,6 @@ export default function ExerciseAngleTracker({ exerciseName, onComplete, onClose
         }
       } else {
         newState.endPositionFrames = 0;
-        if (!inStartPosition) {
-          newState.hasReachedEndPosition = false;
-        }
       }
 
       // Count rep only when returning to start position after reaching end position
