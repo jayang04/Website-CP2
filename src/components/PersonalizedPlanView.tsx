@@ -834,6 +834,24 @@ export default function PersonalizedPlanView({
               exerciseName={exerciseForAngleDetection.name}
               onComplete={(reps: number, duration: number) => {
                 console.log(`Exercise completed: ${reps} reps in ${duration}s`);
+                
+                // Automatically mark exercise as complete after tracking
+                if (reps > 0 && exerciseForAngleDetection?.exerciseId) {
+                  handleToggleExercise(exerciseForAngleDetection.exerciseId);
+                  
+                  // Add activity to cloud dashboard
+                  cloudDashboardService.addActivity(userId, {
+                    type: 'completed',
+                    title: `Completed "${exerciseForAngleDetection.name}" - ${reps} reps in ${duration}s`,
+                    timestamp: new Date(),
+                    icon: '✅'
+                  }).catch(err => console.error('Error saving activity:', err));
+                  
+                  // Update stats
+                  cloudDashboardService.updateStats(userId, {
+                    exercisesCompleted: completedExercises.length + 1
+                  }).catch(err => console.error('Error updating stats:', err));
+                }
               }}
               onClose={handleCloseAngleDetector}
             />

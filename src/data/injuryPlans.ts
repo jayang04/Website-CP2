@@ -46,7 +46,7 @@ export const INJURIES: Record<InjuryType, InjuryInfo> = {
   },
   'medial-ankle-sprain': {
     id: 'medial-ankle-sprain',
-    name: 'Medial Ankle Sprain (Deltoid Ligament)',
+    name: 'Medial Ankle Sprain',
     category: 'ankle',
     description: '• Deltoid ligament injury on inner ankle - less common but often takes longer to heal',
     icon: '🦶',

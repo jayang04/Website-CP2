@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { authService } from './firebase/auth'
 import { type User as FirebaseUser } from 'firebase/auth'
-import RehabProgram from './pages/RehabProgram'
 import PoseTestPage from './pages/PoseTest'
 import InjurySelection from './pages/InjurySelection'
 import InjuryRehabProgram from './pages/InjuryRehabProgram'
@@ -61,9 +60,34 @@ function App() {
   const [hasCompletedIntake, setHasCompletedIntake] = useState(false);
   const [intakeData, setIntakeData] = useState<any>(null);
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
+  const [activePlanType, setActivePlanType] = useState<'personalized' | 'general' | null>(null);
   
   // Track if this is the initial mount to prevent redirect on page load
   const hasCompletedInitialAuth = useRef(false);
+
+  // Detect which plan type the user has active
+  useEffect(() => {
+    if (!user) {
+      setActivePlanType(null);
+      return;
+    }
+    
+    // Check if user has a general rehab program (injury-based)
+    const hasGeneralProgram = injuryRehabService.getUserInjury(user.uid) !== null;
+    
+    // Check if user has personalized plan
+    const savedIntakeData = localStorage.getItem(`intake_data_${user.uid}`);
+    const hasPersonalizedPlan = savedIntakeData !== null;
+    
+    // Set active plan type (prioritize personalized if both exist)
+    if (hasPersonalizedPlan) {
+      setActivePlanType('personalized');
+    } else if (hasGeneralProgram) {
+      setActivePlanType('general');
+    } else {
+      setActivePlanType(null);
+    }
+  }, [user, dashboardRefreshKey]);
 
   // Save current page to localStorage when it changes
   useEffect(() => {
@@ -195,6 +219,7 @@ function App() {
     localStorage.setItem(`intake_data_${user?.uid}`, JSON.stringify(data));
     setHasCompletedIntake(true);
     setIntakeData(data);
+    setActivePlanType('personalized'); // User chose personalized plan
     
     // Generate personalized plan automatically
     if (user) {
@@ -485,16 +510,29 @@ function App() {
           refreshKey={dashboardRefreshKey}
           onRefreshDashboard={refreshDashboard}
           onResetPlan={handleResetPlan}
+          activePlanType={activePlanType}
         />
       )}
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} navigateTo={navigateTo} />}
       {currentPage === 'signup' && <SignupPage onSignup={handleSignup} navigateTo={navigateTo} />}
       {currentPage === 'profile' && <ProfilePage user={user} onProfilePictureUpload={handleProfilePictureUpload} />}
-      {currentPage === 'rehab-program' && <RehabProgram user={user} />}
+      {currentPage === 'rehab-program' && user && (
+        <InjuryRehabProgram 
+          userId={user.uid}
+          onBack={() => navigateTo('dashboard')}
+          onProgramSelected={() => {
+            setActivePlanType('general');
+            refreshDashboard();
+            navigateTo('dashboard');
+          }}
+          onDashboardRefresh={refreshDashboard}
+        />
+      )}
       {currentPage === 'injury-selection' && user && (
         <InjurySelection 
           onSelectInjury={(injuryType: InjuryType) => {
             injuryRehabService.setUserInjury(user.uid, injuryType);
+            setActivePlanType('general'); // User chose general program
             navigateTo('injury-rehab');
           }}
           onBack={() => navigateTo('dashboard')}
@@ -504,6 +542,7 @@ function App() {
         <InjuryRehabProgram 
           userId={user.uid}
           onBack={() => navigateTo('dashboard')}
+          onDashboardRefresh={refreshDashboard}
         />
       )}
       {currentPage === 'debug' && <PoseTestPage />}
@@ -628,7 +667,8 @@ function DashboardPage({
   onShowIntakeForm,
   refreshKey,
   onRefreshDashboard,
-  onResetPlan
+  onResetPlan,
+  activePlanType
 }: { 
   user: User | null; 
   navigateTo: (page: Page) => void;
@@ -638,6 +678,7 @@ function DashboardPage({
   refreshKey: number;
   onRefreshDashboard: () => void;
   onResetPlan: () => void;
+  activePlanType: 'personalized' | 'general' | null;
 }) {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
@@ -835,7 +876,7 @@ function DashboardPage({
           {/* Personalized Weekly Plan - Full width below */}
           <div className="dashboard-section" style={{ gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', gap: '10px' }}>
-              <h2>🎯 Your Personalized Plan</h2>
+              <h2>{activePlanType === 'general' ? '🦵 Your Rehab Program' : '🎯 Your Personalized Plan'}</h2>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button 
                   onClick={onShowIntakeForm}
@@ -873,7 +914,8 @@ function DashboardPage({
               </div>
             </div>
             
-            {personalizedPlan && intakeData ? (
+            {/* Show Personalized Plan if user has one */}
+            {activePlanType === 'personalized' && personalizedPlan && intakeData ? (
               <PersonalizedPlanView
                 userId={user?.uid || 'demo-user'}
                 injuryData={{
@@ -890,7 +932,17 @@ function DashboardPage({
                 sessionHistory={[]}
                 onDashboardRefresh={onRefreshDashboard}
               />
+            ) : activePlanType === 'general' && user ? (
+              /* Show General Rehab Program if user has one */
+              <div style={{ marginTop: '20px' }}>
+                <InjuryRehabProgram 
+                  userId={user.uid}
+                  onBack={() => {}}
+                  onDashboardRefresh={onRefreshDashboard}
+                />
+              </div>
             ) : (
+              /* Show options if no plan is selected */
               <div style={{
                 padding: '40px',
                 background: '#f8f9fa',
@@ -898,26 +950,42 @@ function DashboardPage({
                 textAlign: 'center'
               }}>
                 <div style={{ fontSize: '48px', marginBottom: '20px' }}>🎯</div>
-                <h3 style={{ marginBottom: '10px', color: '#333' }}>Get Your Personalized Rehab Plan</h3>
+                <h3 style={{ marginBottom: '10px', color: '#333' }}>Get Your Rehab Plan</h3>
                 <p style={{ color: '#666', marginBottom: '20px' }}>
-                  Answer a few quick questions to receive a customized rehabilitation program
-                  tailored to your injury, fitness level, and goals.
+                  Choose a personalized plan tailored to your needs, or select a general rehabilitation program.
                 </p>
-                <button
-                  onClick={onShowIntakeForm}
-                  style={{
-                    padding: '14px 28px',
-                    background: '#4CAF50',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    fontSize: '16px'
-                  }}
-                >
-                  Get Started
-                </button>
+                <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+                  <button
+                    onClick={onShowIntakeForm}
+                    style={{
+                      padding: '14px 28px',
+                      background: '#4CAF50',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      fontSize: '16px'
+                    }}
+                  >
+                    ✨ Personalized Plan
+                  </button>
+                  <button
+                    onClick={() => navigateTo('rehab-program')}
+                    style={{
+                      padding: '14px 28px',
+                      background: '#2196F3',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      fontSize: '16px'
+                    }}
+                  >
+                    🦵 General Program
+                  </button>
+                </div>
               </div>
             )}
           </div>

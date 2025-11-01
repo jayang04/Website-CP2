@@ -3,15 +3,18 @@ import { injuryRehabService } from '../services/dataService';
 import { type InjuryRehabPlan, type RehabPhase } from '../types/injuries';
 import { requiresAngleDetection } from '../data/exerciseAngleConfig';
 import ExerciseAngleTracker from '../components/ExerciseAngleTracker';
+import { cloudDashboardService } from '../services/cloudDataService';
 import '../styles/InjuryRehabProgram.css';
 import '../styles/AngleDetector.css';
 
 interface InjuryRehabProgramProps {
   userId: string;
   onBack: () => void;
+  onProgramSelected?: () => void; // Callback when program is selected
+  onDashboardRefresh?: () => void; // Callback to refresh dashboard
 }
 
-export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgramProps) {
+export default function InjuryRehabProgram({ userId, onBack, onProgramSelected, onDashboardRefresh }: InjuryRehabProgramProps) {
   const [plan, setPlan] = useState<InjuryRehabPlan | null>(null);
   const [progress, setProgress] = useState<any>(null);
   const [selectedPhase, setSelectedPhase] = useState(1);
@@ -23,6 +26,8 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [showAngleDetector, setShowAngleDetector] = useState(false);
   const [exerciseForAngleDetection, setExerciseForAngleDetection] = useState<any>(null);
+  const [showProgramSelection, setShowProgramSelection] = useState(false);
+  const [lastCompletedExercise, setLastCompletedExercise] = useState<{id: string, name: string} | null>(null);
   
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
@@ -92,6 +97,30 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
     loadData();
   }, [userId]);
 
+  // Log to dashboard when new exercise is completed
+  useEffect(() => {
+    if (lastCompletedExercise && progress) {
+      cloudDashboardService.addActivity(userId, {
+        type: 'completed',
+        title: `Completed "${lastCompletedExercise.name}" exercise`,
+        timestamp: new Date(),
+        icon: '✅'
+      }).then(() => {
+        return cloudDashboardService.updateStats(userId, { 
+          exercisesCompleted: progress.completedExercises.length 
+        });
+      }).then(() => {
+        if (onDashboardRefresh) {
+          onDashboardRefresh();
+        }
+      }).catch(error => {
+        console.error('Error updating dashboard:', error);
+      });
+      
+      setLastCompletedExercise(null);
+    }
+  }, [lastCompletedExercise, userId, progress, onDashboardRefresh]);
+
   const loadData = () => {
     const rehabPlan = injuryRehabService.getInjuryPlan(userId);
     const userProgress = injuryRehabService.getInjuryProgress(userId);
@@ -100,14 +129,44 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
     if (userProgress) {
       setSelectedPhase(userProgress.currentPhase);
     }
+    
+    // Check if user needs to select a program
+    if (!rehabPlan) {
+      setShowProgramSelection(true);
+    }
+  };
+
+  const handleSelectProgram = (injuryType: 'acl-tear' | 'mcl-tear' | 'meniscus-tear' | 'ankle-sprain' | 'medial-ankle-sprain' | 'high-ankle-sprain') => {
+    injuryRehabService.setUserInjury(userId, injuryType);
+    setShowProgramSelection(false);
+    loadData();
+    
+    // Callback to notify parent (e.g., return to dashboard)
+    if (onProgramSelected) {
+      onProgramSelected();
+    }
   };
 
   const handleToggleExercise = (exerciseId: string) => {
     const isCompleted = injuryRehabService.isExerciseCompleted(userId, exerciseId);
+    
+    // Find the exercise to get its name
+    let exerciseName = 'Exercise';
+    if (plan) {
+      for (const phase of plan.phases) {
+        const exercise = phase.exercises.find(ex => ex.id === exerciseId);
+        if (exercise) {
+          exerciseName = exercise.name;
+          break;
+        }
+      }
+    }
+    
     if (isCompleted) {
       injuryRehabService.uncompleteExercise(userId, exerciseId);
     } else {
       injuryRehabService.completeExercise(userId, exerciseId);
+      setLastCompletedExercise({ id: exerciseId, name: exerciseName });
     }
     loadData();
   };
@@ -152,7 +211,99 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
     setExerciseForAngleDetection(null);
   };
 
-  if (!plan || !progress) {
+  const handleResetProgram = () => {
+    const confirmed = window.confirm(
+      '⚠️ Are you sure you want to reset your program? This will clear your current progress and return to program selection.'
+    );
+    
+    if (confirmed) {
+      // Clear the user's injury selection and progress
+      localStorage.removeItem(`rehabmotion_user_injury_${userId}`);
+      localStorage.removeItem(`rehabmotion_injury_progress_${userId}`);
+      
+      // Reset state
+      setPlan(null);
+      setProgress(null);
+      setShowProgramSelection(true);
+    }
+  };
+
+  // Show program selection if no plan exists
+  if (showProgramSelection || !plan) {
+    return (
+      <div className="rehab-program-container">
+        <div className="program-selection">
+          
+          <h1>Select Your Rehabilitation Program</h1>
+          <p className="subtitle">Choose the program that matches your recovery needs</p>
+          
+          <div className="program-cards">
+            {/* Knee Injuries Card */}
+            <div className="program-card knee-card">
+              <div className="card-icon">🦵</div>
+              <h2>Knee Injury Programs</h2>
+              <p>Comprehensive recovery plans for various knee injuries</p>
+              <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <button 
+                  className="select-btn"
+                  onClick={() => handleSelectProgram('acl-tear')}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem' }}
+                >
+                  ACL Tear Rehabilitation →
+                </button>
+                <button 
+                  className="select-btn"
+                  onClick={() => handleSelectProgram('mcl-tear')}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem' }}
+                >
+                  MCL Tear Rehabilitation →
+                </button>
+                <button 
+                  className="select-btn"
+                  onClick={() => handleSelectProgram('meniscus-tear')}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem' }}
+                >
+                  Meniscus Tear Rehabilitation →
+                </button>
+              </div>
+            </div>
+
+            {/* Ankle Injuries Card */}
+            <div className="program-card ankle-card">
+              <div className="card-icon">🦶</div>
+              <h2>Ankle Injury Programs</h2>
+              <p>Comprehensive recovery plans for various ankle injuries</p>
+              <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <button 
+                  className="select-btn"
+                  onClick={() => handleSelectProgram('ankle-sprain')}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem' }}
+                >
+                  Lateral Ankle Sprain →
+                </button>
+                <button 
+                  className="select-btn"
+                  onClick={() => handleSelectProgram('medial-ankle-sprain')}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem' }}
+                >
+                  Medial Ankle Sprain →
+                </button>
+                <button 
+                  className="select-btn"
+                  onClick={() => handleSelectProgram('high-ankle-sprain')}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem' }}
+                >
+                  High Ankle Sprain →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!progress) {
     return (
       <div className="injury-rehab-loading">
         <p>Loading your rehabilitation plan...</p>
@@ -170,9 +321,38 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
   return (
     <div className="injury-rehab-program">
       {/* Header */}
-      <div className="rehab-header">
-        <button className="back-btn" onClick={onBack}>
-          ← Back to Dashboard
+      <div className="rehab-header" style={{ position: 'relative' }}>
+        <button 
+          className="reset-program-btn"
+          onClick={handleResetProgram}
+          style={{
+            position: 'absolute',
+            right: '0',
+            top: '0',
+            padding: '0.75rem 1.25rem',
+            backgroundColor: '#ff6b6b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '0.9rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(255, 107, 107, 0.3)',
+            zIndex: 10
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = '#ff5252';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 107, 0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = '#ff6b6b';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 107, 107, 0.3)';
+          }}
+        >
+          🔄 Reset Program
         </button>
         <div className="rehab-title">
           <span className="injury-icon-large">{plan.injuryInfo.icon}</span>
@@ -286,8 +466,58 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
           {/* Exercises */}
           <div className="phase-section">
             <h3>💪 Exercises for This Phase</h3>
-            <div className="exercises-grid">
-              {currentPhase.exercises.map((exercise) => {
+            
+            {/* Show celebration message if all exercises in current phase are completed */}
+            {completedInPhase === totalInPhase && totalInPhase > 0 ? (
+              <div className="bg-gradient-to-br from-[#667eea] via-[#764ba2] to-[#f093fb] rounded-2xl p-8 md:p-12 text-center shadow-heavy animate-fadeIn">
+                <div className="max-w-2xl mx-auto flex flex-col items-center">
+                  {/* Celebration Icon */}
+                  <div className="text-7xl md:text-8xl mb-6 animate-bounce">🎉</div>
+                  
+                  {/* Title */}
+                  <h2 
+                    className="text-4xl md:text-5xl font-extrabold !text-[#fbbf24] mb-6 drop-shadow-lg text-center"
+                  >
+                    Phase Complete!
+                  </h2>
+                  
+                  {/* Description */}
+                  <p className="text-base md:text-lg font-medium text-white/95 leading-relaxed mb-8 px-4">
+                    You've completed all exercises for {currentPhase.name}. Great work! Your body needs time to recover and rebuild stronger.
+                  </p>
+                  
+                  {/* Completion Badge */}
+                  <div className="inline-flex items-center gap-3 bg-white/25 backdrop-blur-md px-6 md:px-8 py-3 md:py-4 rounded-full mb-8 border-2 border-white/40 shadow-lg">
+                    <span className="text-2xl md:text-3xl bg-success/90 text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold shadow-md">
+                      ✓
+                    </span>
+                    <span className="text-lg md:text-xl font-bold text-white">
+                      {completedInPhase}/{totalInPhase} Exercises Complete
+                    </span>
+                  </div>
+                  
+                  {/* Next Steps */}
+                  <p className="text-base md:text-lg font-semibold text-white mb-6">
+                    {selectedPhase < plan.phases.length 
+                      ? "💪 When you're ready, advance to the next phase to continue your recovery!" 
+                      : "🎯 You've completed the entire program - congratulations on your recovery!"}
+                  </p>
+                  
+                  {/* Action Buttons */}
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'center', width: '100%' }}>
+                    {selectedPhase < plan.phases.length && (
+                      <button 
+                        onClick={handleProgressPhase}
+                        className="px-8 py-3 bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200 hover:border-gray-300 rounded-lg font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95"
+                      >
+                        ➡️ Advance to Next Phase
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+            <div className="exercises-grid">{currentPhase.exercises.map((exercise) => {
                 const isCompleted = progress.completedExercises.includes(exercise.id);
                 return (
                   <div key={exercise.id} className={`exercise-card ${isCompleted ? 'completed' : ''}`}>
@@ -391,6 +621,7 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
                 );
               })}
             </div>
+            )}
           </div>
         </div>
 
@@ -641,7 +872,19 @@ export default function InjuryRehabProgram({ userId, onBack }: InjuryRehabProgra
               exerciseName={exerciseForAngleDetection.name}
               onComplete={(reps: number, duration: number) => {
                 console.log(`Exercise completed: ${reps} reps in ${duration}s`);
-                // Could save this to user's progress here
+                
+                // Automatically mark exercise as complete after tracking
+                if (reps > 0 && exerciseForAngleDetection?.id) {
+                  // Mark the exercise as completed in the injury rehab service
+                  const isAlreadyCompleted = injuryRehabService.isExerciseCompleted(userId, exerciseForAngleDetection.id);
+                  
+                  if (!isAlreadyCompleted) {
+                    injuryRehabService.completeExercise(userId, exerciseForAngleDetection.id);
+                    loadData(); // Reload data to update the UI
+                  }
+                  
+                  console.log(`✅ Exercise "${exerciseForAngleDetection.name}" marked as complete with ${reps} reps`);
+                }
               }}
               onClose={handleCloseAngleDetector}
             />

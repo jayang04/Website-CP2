@@ -32,23 +32,16 @@ const getDefaultDashboardData = (): DashboardData => ({
   quickActions: [
     {
       id: '1',
-      icon: '🏥',
-      title: 'Start Injury Rehab',
-      description: 'Get a personalized plan for your specific injury',
-      link: 'injury-selection'
-    },
-    {
-      id: '2',
-      icon: '�',
-      title: 'Knee Rehabilitation',
-      description: 'General knee recovery program',
+      icon: '💪',
+      title: 'Rehabilitation Programs',
+      description: 'General knee and ankle recovery programs',
       link: 'rehab-program'
     },
     {
-      id: '3',
-      icon: '📅',
-      title: 'Book Appointment',
-      description: 'Schedule with your therapist',
+      id: '2',
+      icon: '🏆',
+      title: 'Achievements and Badges',
+      description: 'View your achievements and earned badges',
       link: '#'
     }
   ]

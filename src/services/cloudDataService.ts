@@ -29,23 +29,16 @@ const getDefaultDashboardData = (): DashboardData => ({
   quickActions: [
     {
       id: '1',
-      icon: '🏥',
-      title: 'Start Injury Rehab',
-      description: 'Get a personalized plan for your specific injury',
-      link: 'injury-selection'
-    },
-    {
-      id: '2',
       icon: '💪',
-      title: 'Knee Rehabilitation',
-      description: 'General knee recovery program',
+      title: 'Rehabilitation Programs',
+      description: 'General knee and ankle recovery programs',
       link: 'rehab-program'
     },
     {
-      id: '3',
-      icon: '📅',
-      title: 'Book Appointment',
-      description: 'Schedule with your therapist',
+      id: '2',
+      icon: '🏆',
+      title: 'Achievements and Badges',
+      description: 'View your achievements and earned badges',
       link: '#'
     }
   ]
@@ -58,7 +51,9 @@ export const cloudDashboardService = {
     try {
       const docRef = doc(db, 'users', userId, 'dashboard', 'data');
       const docSnap = await getDoc(docRef);
-      
+
+      const defaultData = getDefaultDashboardData();
+
       if (docSnap.exists()) {
         const data = docSnap.data() as DashboardData;
         
@@ -69,12 +64,11 @@ export const cloudDashboardService = {
             timestamp: activity.timestamp?.toDate ? activity.timestamp.toDate() : new Date(activity.timestamp)
           }));
         }
-        
+        data.quickActions = defaultData.quickActions; // Ensure quickActions are always default
         return data;
       }
       
       // First time - create default data
-      const defaultData = getDefaultDashboardData();
       await cloudDashboardService.saveDashboardData(userId, defaultData);
       return defaultData;
     } catch (error: any) {
