@@ -825,11 +825,9 @@ main {
 }
 
 .dashboard-section h2 {
-  color: var(--primary-color);
   margin-bottom: 2rem;
   font-size: 1.5rem;
   font-weight: 700;
-  display: flex;
   align-items: center;
   gap: 0.5rem;
 }

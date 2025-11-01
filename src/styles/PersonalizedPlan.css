@@ -34,7 +34,7 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Header */
+Header
 .plan-header {
   text-align: center;
   margin-bottom: 30px;
@@ -77,9 +77,11 @@
 }
 
 .plan-header h2 {
+  margin: 0;
   font-size: 2rem;
-  color: #333;
-  margin: 10px 0;
+  font-weight: 700;
+  color: #333; /* Sets the text color to dark gray */
+  line-height: 1.2;
 }
 
 .plan-subtitle {
