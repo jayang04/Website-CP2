@@ -312,7 +312,7 @@ Header
 
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1175px) {
   .exercise-card {
     flex-direction: column;
   }

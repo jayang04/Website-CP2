@@ -547,7 +547,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1175px) {
   .smart-intake-modal {
     margin: 10px;
     max-height: calc(100vh - 20px);

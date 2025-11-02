@@ -24,6 +24,7 @@ body {
   --primary-color: #0d47a1;
   --primary-light: #1565c0;
   --primary-dark: #0a3d91;
+  --primary-black: #081c2e;
   --secondary-color: #f8f9fa;
   --accent-color: #e3f2fd;
   --text-primary: #263238;
@@ -352,7 +353,7 @@ main {
   display: block;
   width: 28px;
   height: 3px;
-  background: var(--primary-color);
+  background: var(--primary-black);
   border-radius: 2px;
   transition: all 0.3s ease;
 }
@@ -378,37 +379,25 @@ main {
   bottom: 0;
   background: rgba(13, 71, 161, 0.98);
   backdrop-filter: blur(10px);
-  z-index: 1;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding-top: 80px;
+  padding-top: 110px;
+  padding-bottom: 2rem;
+  overflow-y: auto;
   transform: translateX(-100%);
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
 }
 
 .mobile-menu.active {
   transform: translateX(0);
   opacity: 1;
   visibility: visible;
-  display: flex;
-}
-
-.mobile-menu-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-light);
 }
 
 .mobile-menu .logo-text {
@@ -425,15 +414,19 @@ main {
   padding: 0.25rem;
   line-height: 1;
   font-weight: 300;
+  color: black;
 }
 
 .mobile-nav {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  margin-top: 3rem;
   width: 100%;
   align-items: center;
+  padding: 2rem 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
 }
 
 .mobile-nav a {
@@ -1220,7 +1213,7 @@ main {
    RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 768px) {
+@media (max-width: 1175px) {
   .main-nav {
     display: none;
   }

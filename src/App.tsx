@@ -462,12 +462,6 @@ function App() {
         {/* Mobile Menu */}
         {showMobileMenu && (
           <div className="mobile-menu active">
-            <div className="mobile-menu-header">
-              <a onClick={() => navigateTo('home')} className="logo">
-                <img src="/logo.png" alt="RehabMotion Logo" style={{ width: '150px', height: 'auto' }} />
-              </a>
-              <button className="close-menu" onClick={() => setShowMobileMenu(false)}>&times;</button>
-            </div>
             <nav className="mobile-nav">
               {user && (
                 <div className="mobile-user-profile">
@@ -489,8 +483,15 @@ function App() {
               )}
               <a onClick={() => navigateTo('home')}>Home</a>
               {user && (
-                <a onClick={() => navigateTo('dashboard')}>Dashboard</a>
+                <>
+                  <a onClick={() => navigateTo('dashboard')}>📊 Dashboard</a>
+                  <a onClick={() => navigateTo('rehab-program')}>🏥 Rehab Programs</a>
+                  <a onClick={() => navigateTo('profile')}>👤 Profile</a>
+                  <a onClick={() => navigateTo('settings')}>⚙️ Settings</a>
+                </>
               )}
+              <a onClick={() => navigateTo('about')}>ℹ️ About Us</a>
+              <a onClick={() => navigateTo('help')}>❓ Help</a> 
               {!user ? (
                 <a onClick={() => navigateTo('login')} className="account-nav">Login / Sign Up</a>
               ) : (

@@ -72,7 +72,7 @@ export default function AboutUs() {
         {/* Impact Section */}
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 p-12 mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Impact</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { num: '10,000+', label: 'Active Users' },
               { num: '50,000+', label: 'Exercises Completed' },
