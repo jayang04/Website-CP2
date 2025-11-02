@@ -8,7 +8,6 @@ import type {
   RehabPhase,
   ProgressMetrics,
   DifficultyAdjustment,
-  RecommendationReason
 } from '../types/personalization';
 
 export class RehabRecommendationEngine {
@@ -116,7 +115,7 @@ export class RehabRecommendationEngine {
   /**
    * Determine current rehab phase based on injury timeline and progress
    */
-  determineRehabPhase(userProfile: UserProfile, metrics: ProgressMetrics): RehabPhase {
+  determineRehabPhase(_userProfile: UserProfile, metrics: ProgressMetrics): RehabPhase {
     const { weeksSinceInjury, averagePainLevel, averageCompletionRate } = metrics;
     
     // ACUTE PHASE: First 0-2 weeks OR high pain
@@ -1088,7 +1087,7 @@ export class RehabRecommendationEngine {
   private calculateExercisePriorityScore(
     exercise: PersonalizedExercise,
     userProfile: UserProfile,
-    phase: RehabPhase,
+    _phase: RehabPhase,
     metrics: ProgressMetrics
   ): number {
     let score = 0;
@@ -1141,7 +1140,6 @@ export class RehabRecommendationEngine {
    * Generate motivational message based on progress
    */
   private generateMotivationalMessage(metrics: ProgressMetrics, sessionHistory: SessionHistory[]): string {
-    const recentSessions = this.getRecentSessions(sessionHistory, 7);
     const streak = this.calculateStreak(sessionHistory);
     
     // Struggling
@@ -1182,7 +1180,7 @@ export class RehabRecommendationEngine {
   /**
    * Calculate next milestone
    */
-  private calculateNextMilestone(phase: RehabPhase, metrics: ProgressMetrics): string {
+  private calculateNextMilestone(phase: RehabPhase, _metrics: ProgressMetrics): string {
     if (phase === 'ACUTE') {
       return `Complete 7 days with pain <5 to move to next phase`;
     }
@@ -1201,7 +1199,7 @@ export class RehabRecommendationEngine {
   /**
    * Generate warnings if needed
    */
-  private generateWarnings(metrics: ProgressMetrics, userProfile: UserProfile): string[] {
+  private generateWarnings(metrics: ProgressMetrics, _userProfile: UserProfile): string[] {
     const warnings: string[] = [];
     
     if (metrics.painTrend === 'WORSENING') {
@@ -1305,7 +1303,7 @@ export class RehabRecommendationEngine {
     weeks: number,
     pain: number,
     completion: number,
-    injuryType: string
+    _injuryType: string
   ): number {
     // Simple formula - can be refined
     const timeProgress = Math.min(100, (weeks / 12) * 100);
@@ -1376,7 +1374,7 @@ export class RehabRecommendationEngine {
     return Math.round(avg);
   }
   
-  private determineFocusAreas(phase: RehabPhase, userProfile: UserProfile): string[] {
+  private determineFocusAreas(phase: RehabPhase, _userProfile: UserProfile): string[] {
     const focusMap: Record<RehabPhase, string[]> = {
       'ACUTE': ['Pain Management', 'Swelling Control', 'Gentle Movement'],
       'SUBACUTE': ['Range of Motion', 'Flexibility', 'Light Strengthening'],

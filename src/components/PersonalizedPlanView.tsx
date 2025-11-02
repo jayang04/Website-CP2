@@ -57,6 +57,32 @@ export default function PersonalizedPlanView({
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
 
+  // Helper function to update dashboard progress and days active
+  const updateDashboardProgress = async () => {
+    try {
+      // Track activity and get days active
+      const daysActive = await cloudDashboardService.trackActivity(userId);
+      
+      // Calculate progress percentage for personalized plan
+      const totalExercises = plan?.exercises.length || 0;
+      const progressPercentage = await cloudDashboardService.calculatePersonalizedProgress(
+        userId, 
+        completedExercises.length, 
+        totalExercises
+      );
+      
+      // Update dashboard stats
+      await cloudDashboardService.updateStats(userId, {
+        daysActive,
+        progressPercentage
+      });
+      
+      console.log('✅ Dashboard progress updated:', { daysActive, progressPercentage });
+    } catch (error) {
+      console.error('❌ Error updating dashboard progress:', error);
+    }
+  };
+
   // Function to pause all videos except the one currently playing
   const pauseAllVideosExcept = (currentVideo: HTMLVideoElement) => {
     videoRefs.current.forEach((_cleanup, video) => {
@@ -129,10 +155,14 @@ export default function PersonalizedPlanView({
         title: `Completed "${lastCompletedExercise.name}" exercise`,
         timestamp: new Date(),
         icon: '✅'
-      }).then(() => {
-        return cloudDashboardService.updateStats(userId, { 
+      }).then(async () => {
+        // Update exercises completed count
+        await cloudDashboardService.updateStats(userId, { 
           exercisesCompleted: completedExercises.length 
         });
+        
+        // Update progress percentage and days active
+        await updateDashboardProgress();
       }).then(() => {
         if (onDashboardRefresh) {
           onDashboardRefresh();

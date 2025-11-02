@@ -11,7 +11,55 @@ const STORAGE_KEYS = {
   ANKLE_EXERCISES: 'rehabmotion_ankle_exercises',
   USER_PROGRESS: 'rehabmotion_user_progress',
   USER_INJURY: 'rehabmotion_user_injury',
-  INJURY_PROGRESS: 'rehabmotion_injury_progress'
+  INJURY_PROGRESS: 'rehabmotion_injury_progress',
+  ACTIVITY_DATES: 'rehabmotion_activity_dates'
+};
+
+// Helper function to calculate progress percentage
+export const calculateProgressPercentage = (userId: string): number => {
+  const progress = injuryRehabService.getInjuryProgress(userId);
+  const plan = injuryRehabService.getInjuryPlan(userId);
+  
+  if (!progress || !plan) return 0;
+  
+  // Get total exercises from all phases
+  const totalExercises = plan.phases.reduce((sum, phase) => 
+    sum + phase.exercises.length, 0
+  );
+  
+  // Get completed exercises count
+  const completedCount = progress.completedExercises.length;
+  
+  // Calculate percentage
+  return totalExercises > 0 
+    ? Math.round((completedCount / totalExercises) * 100) 
+    : 0;
+};
+
+// Helper function to track activity dates
+export const trackActivity = (userId: string): number => {
+  const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+  const key = `${STORAGE_KEYS.ACTIVITY_DATES}_${userId}`;
+  
+  // Get existing activity dates
+  const stored = localStorage.getItem(key);
+  const dates: string[] = stored ? JSON.parse(stored) : [];
+  
+  // Add today's date if not already recorded
+  if (!dates.includes(today)) {
+    dates.push(today);
+    localStorage.setItem(key, JSON.stringify(dates));
+  }
+  
+  return dates.length;
+};
+
+// Helper function to get activity days count
+export const getActivityDays = (userId: string): number => {
+  const key = `${STORAGE_KEYS.ACTIVITY_DATES}_${userId}`;
+  const stored = localStorage.getItem(key);
+  const dates: string[] = stored ? JSON.parse(stored) : [];
+  return dates.length;
 };
 
 // Default dashboard data
@@ -349,9 +397,17 @@ export const injuryRehabService = {
       progress.lastUpdated = new Date();
       injuryRehabService.saveInjuryProgress(userId, progress);
       
-      // Update dashboard stats
+      // Track activity for today
+      const daysActive = trackActivity(userId);
+      
+      // Calculate progress percentage
+      const progressPercentage = calculateProgressPercentage(userId);
+      
+      // Update dashboard stats with all metrics
       dashboardService.updateStats(userId, {
-        exercisesCompleted: progress.completedExercises.length
+        exercisesCompleted: progress.completedExercises.length,
+        progressPercentage: progressPercentage,
+        daysActive: daysActive
       });
       
       // Add activity
@@ -382,9 +438,13 @@ export const injuryRehabService = {
     progress.lastUpdated = new Date();
     injuryRehabService.saveInjuryProgress(userId, progress);
     
+    // Recalculate progress percentage
+    const progressPercentage = calculateProgressPercentage(userId);
+    
     // Update dashboard stats
     dashboardService.updateStats(userId, {
-      exercisesCompleted: progress.completedExercises.length
+      exercisesCompleted: progress.completedExercises.length,
+      progressPercentage: progressPercentage
     });
   },
 
@@ -401,6 +461,9 @@ export const injuryRehabService = {
     }
     
     injuryRehabService.saveInjuryProgress(userId, progress);
+    
+    // Track activity for today
+    trackActivity(userId);
     
     // Add activity
     dashboardService.addActivity(userId, {
@@ -453,4 +516,10 @@ export const injuryRehabService = {
     const progress = injuryRehabService.getInjuryProgress(userId);
     return progress?.completedExercises.includes(exerciseId) || false;
   }
+};
+
+// Export activity tracking for use in other modules
+export const activityTracker = {
+  trackActivity,
+  getActivityDays
 };

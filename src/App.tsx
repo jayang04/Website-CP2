@@ -5,6 +5,10 @@ import { type User as FirebaseUser } from 'firebase/auth'
 import PoseTestPage from './pages/PoseTest'
 import InjurySelection from './pages/InjurySelection'
 import InjuryRehabProgram from './pages/InjuryRehabProgram'
+import Profile from './pages/Profile'
+import Settings from './pages/Settings'
+import Help from './pages/Help'
+import AboutUs from './pages/AboutUs'
 import { injuryRehabService } from './services/dataService'
 import { type InjuryType } from './types/injuries'
 import PersonalizedPlanView from './components/PersonalizedPlanView'
@@ -21,7 +25,7 @@ interface User {
   uid: string;
 }
 
-type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'debug' | 'rehab-program' | 'injury-selection' | 'injury-rehab';
+type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'settings' | 'help' | 'about' | 'debug' | 'rehab-program' | 'injury-selection' | 'injury-rehab';
 
 // Helper function to extract first name
 function getFirstName(fullName: string): string {
@@ -57,7 +61,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showIntakeForm, setShowIntakeForm] = useState(false);
   const [personalizedPlan, setPersonalizedPlan] = useState<PersonalizedPlan | null>(null);
-  const [hasCompletedIntake, setHasCompletedIntake] = useState(false);
   const [intakeData, setIntakeData] = useState<any>(null);
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [activePlanType, setActivePlanType] = useState<'personalized' | 'general' | null>(null);
@@ -132,6 +135,20 @@ function App() {
         });
         setLoading(false);
         hasCompletedInitialAuth.current = true; // Auth complete with user
+        
+        // Track activity when user logs in
+        Promise.all([
+          import('./services/dataService').then(({ activityTracker, dashboardService }) => {
+            const daysActive = activityTracker.trackActivity(firebaseUser.uid);
+            // Update dashboard stats with current activity days
+            return dashboardService.updateStats(firebaseUser.uid, { daysActive });
+          }),
+          import('./services/cloudDataService').then(({ cloudDashboardService }) => {
+            return cloudDashboardService.trackActivity(firebaseUser.uid).then(daysActive => {
+              return cloudDashboardService.updateStats(firebaseUser.uid, { daysActive });
+            });
+          })
+        ]).catch(err => console.error('Error tracking activity:', err));
       } else {
         setUser(null);
         setLoading(false);
@@ -165,7 +182,8 @@ function App() {
       // Small delay to ensure auth state is fully propagated
       const timeoutId = setTimeout(() => {
         // If no user and trying to access protected page, redirect
-        if (!user && (currentPage === 'dashboard' || currentPage === 'profile')) {
+        const protectedPages = ['dashboard', 'profile', 'settings', 'rehab-program', 'injury-selection', 'injury-rehab'];
+        if (!user && protectedPages.includes(currentPage)) {
           console.log('⚠️ Redirecting to home - user not authenticated');
           setCurrentPage('home');
         } else if (user) {
@@ -204,12 +222,15 @@ function App() {
     setShowProfileDropdown(false);
   };
 
+  // Profile picture upload handler (currently unused - can be re-enabled if needed)
+  /*
   const handleProfilePictureUpload = async (file: File) => {
     const photoURL = await authService.uploadProfilePicture(file);
     if (photoURL && user) {
       setUser({ ...user, photoURL });
     }
   };
+  */
 
   // Handle intake form completion
   const handleIntakeComplete = (data: any) => {
@@ -217,7 +238,6 @@ function App() {
     
     // Save to localStorage
     localStorage.setItem(`intake_data_${user?.uid}`, JSON.stringify(data));
-    setHasCompletedIntake(true);
     setIntakeData(data);
     setActivePlanType('personalized'); // User chose personalized plan
     
@@ -268,7 +288,6 @@ function App() {
       // Clear React state
       setPersonalizedPlan(null);
       setIntakeData(null);
-      setHasCompletedIntake(false);
       
       // Trigger dashboard refresh
       refreshDashboard();
@@ -290,7 +309,6 @@ function App() {
         }, 1000);
         return () => clearTimeout(timer);
       } else if (hasIntakeData) {
-        setHasCompletedIntake(true);
         // Load saved intake data
         try {
           const savedData = JSON.parse(hasIntakeData);
@@ -355,6 +373,8 @@ function App() {
                 <a onClick={() => navigateTo('injury-selection')} className={currentPage === 'injury-selection' || currentPage === 'injury-rehab' ? 'active' : ''}>Rehab Programs</a>
               </>
             )}
+            <a onClick={() => navigateTo('about')} className={currentPage === 'about' ? 'active' : ''}>About</a>
+            <a onClick={() => navigateTo('help')} className={currentPage === 'help' ? 'active' : ''}>Help</a>
             
             {!user ? (
               <a onClick={() => navigateTo('login')} className="account-nav">Login / Sign Up</a>
@@ -400,15 +420,6 @@ function App() {
                       </div>
                     </div>
                     <div className="dropdown-divider"></div>
-                    <a onClick={() => navigateTo('dashboard')} className="dropdown-link">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                      </svg>
-                      <span>Dashboard</span>
-                    </a>
                     <a onClick={() => { setCurrentPage('profile'); setShowProfileDropdown(false); }} className="dropdown-link">
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -416,20 +427,12 @@ function App() {
                       </svg>
                       <span>Profile</span>
                     </a>
-                    <a onClick={() => { /* Handle settings */ }} className="dropdown-link">
+                    <a onClick={() => { setCurrentPage('settings'); setShowProfileDropdown(false); }} className="dropdown-link">
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.2 4.2l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.2-4.2l4.2-4.2"></path>
                       </svg>
                       <span>Settings</span>
-                    </a>
-                    <a onClick={() => { /* Handle help */ }} className="dropdown-link">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                      </svg>
-                      <span>Help</span>
                     </a>
                     <div className="dropdown-divider"></div>
                     <a onClick={handleLogout} className="dropdown-link logout-link">
@@ -515,7 +518,10 @@ function App() {
       )}
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} navigateTo={navigateTo} />}
       {currentPage === 'signup' && <SignupPage onSignup={handleSignup} navigateTo={navigateTo} />}
-      {currentPage === 'profile' && <ProfilePage user={user} onProfilePictureUpload={handleProfilePictureUpload} />}
+      {currentPage === 'profile' && user && <Profile />}
+      {currentPage === 'settings' && user && <Settings />}
+      {currentPage === 'help' && <Help />}
+      {currentPage === 'about' && <AboutUs />}
       {currentPage === 'rehab-program' && user && (
         <InjuryRehabProgram 
           userId={user.uid}
@@ -580,8 +586,8 @@ function App() {
           <div className="footer-links">
             <h4>Quick Links</h4>
             <a onClick={() => navigateTo('home')}>Home</a>
-            <a onClick={() => navigateTo('signup')}>Sign Up</a>
-            <a onClick={() => navigateTo('login')}>Login</a>
+            <a onClick={() => navigateTo('about')}>About Us</a>
+            <a onClick={() => navigateTo('help')}>Help & Support</a>
             <a onClick={() => navigateTo('dashboard')}>Dashboard</a>
           </div>
         </div>
@@ -1138,7 +1144,8 @@ function SignupPage({ onSignup, navigateTo }: { onSignup: (firstName: string, la
   );
 }
 
-// Profile Page Component
+// Profile Page Component (currently unused - using Profile component from pages/Profile.tsx instead)
+/*
 function ProfilePage({ user, onProfilePictureUpload }: { user: User | null; onProfilePictureUpload: (file: File) => void }) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1321,5 +1328,6 @@ function ProfilePage({ user, onProfilePictureUpload }: { user: User | null; onPr
     </div>
   );
 }
+*/
 
 export default App

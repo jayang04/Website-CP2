@@ -150,6 +150,59 @@ export const cloudDashboardService = {
     } catch (error) {
       console.error('❌ Error updating program progress:', error);
     }
+  },
+
+  // Calculate progress percentage based on completed exercises in personalized plans
+  calculatePersonalizedProgress: async (_userId: string, completedExercises: number, totalExercises: number): Promise<number> => {
+    if (totalExercises === 0) return 0;
+    return Math.round((completedExercises / totalExercises) * 100);
+  },
+
+  // Track activity date in cloud
+  trackActivity: async (userId: string): Promise<number> => {
+    try {
+      const docRef = doc(db, 'users', userId, 'activity', 'dates');
+      const docSnap = await getDoc(docRef);
+      
+      const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+      let dates: string[] = [];
+      
+      if (docSnap.exists()) {
+        dates = docSnap.data().dates || [];
+      }
+      
+      // Add today's date if not already recorded
+      if (!dates.includes(today)) {
+        dates.push(today);
+        await setDoc(docRef, {
+          dates,
+          updatedAt: serverTimestamp()
+        });
+      }
+      
+      return dates.length;
+    } catch (error) {
+      console.error('❌ Error tracking activity:', error);
+      return 0;
+    }
+  },
+
+  // Get activity days count from cloud
+  getActivityDays: async (userId: string): Promise<number> => {
+    try {
+      const docRef = doc(db, 'users', userId, 'activity', 'dates');
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const dates = docSnap.data().dates || [];
+        return dates.length;
+      }
+      
+      return 0;
+    } catch (error) {
+      console.error('❌ Error getting activity days:', error);
+      return 0;
+    }
   }
 };
 

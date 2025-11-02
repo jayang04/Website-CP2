@@ -14,7 +14,7 @@ interface InjuryRehabProgramProps {
   onDashboardRefresh?: () => void; // Callback to refresh dashboard
 }
 
-export default function InjuryRehabProgram({ userId, onBack, onProgramSelected, onDashboardRefresh }: InjuryRehabProgramProps) {
+export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramSelected, onDashboardRefresh }: InjuryRehabProgramProps) {
   const [plan, setPlan] = useState<InjuryRehabPlan | null>(null);
   const [progress, setProgress] = useState<any>(null);
   const [selectedPhase, setSelectedPhase] = useState(1);
@@ -31,6 +31,52 @@ export default function InjuryRehabProgram({ userId, onBack, onProgramSelected, 
   
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
+
+  // Helper function to calculate progress percentage for general program
+  const calculateGeneralProgramProgress = (): number => {
+    if (!plan || !progress) return 0;
+    
+    // Get total exercises from all phases
+    const totalExercises = plan.phases.reduce((sum, phase) => 
+      sum + phase.exercises.length, 0
+    );
+    
+    // Get completed exercises count
+    const completedCount = progress.completedExercises.length;
+    
+    // Calculate percentage
+    return totalExercises > 0 
+      ? Math.round((completedCount / totalExercises) * 100) 
+      : 0;
+  };
+
+  // Helper function to update dashboard progress and days active
+  const updateDashboardProgress = async () => {
+    if (!progress) return;
+    
+    try {
+      // Track activity and get days active
+      const daysActive = await cloudDashboardService.trackActivity(userId);
+      
+      // Calculate progress percentage for general program
+      const progressPercentage = calculateGeneralProgramProgress();
+      
+      // Update dashboard stats
+      await cloudDashboardService.updateStats(userId, {
+        exercisesCompleted: progress.completedExercises.length,
+        progressPercentage,
+        daysActive
+      });
+      
+      console.log('✅ Dashboard progress updated:', { 
+        exercisesCompleted: progress.completedExercises.length,
+        progressPercentage, 
+        daysActive 
+      });
+    } catch (error) {
+      console.error('❌ Error updating dashboard progress:', error);
+    }
+  };
 
   // Function to register video element with proper cleanup
   const registerVideo = (video: HTMLVideoElement | null) => {
@@ -105,10 +151,9 @@ export default function InjuryRehabProgram({ userId, onBack, onProgramSelected, 
         title: `Completed "${lastCompletedExercise.name}" exercise`,
         timestamp: new Date(),
         icon: '✅'
-      }).then(() => {
-        return cloudDashboardService.updateStats(userId, { 
-          exercisesCompleted: progress.completedExercises.length 
-        });
+      }).then(async () => {
+        // Update all dashboard stats including progress percentage and days active
+        await updateDashboardProgress();
       }).then(() => {
         if (onDashboardRefresh) {
           onDashboardRefresh();
@@ -147,7 +192,7 @@ export default function InjuryRehabProgram({ userId, onBack, onProgramSelected, 
     }
   };
 
-  const handleToggleExercise = (exerciseId: string) => {
+  const handleToggleExercise = async (exerciseId: string) => {
     const isCompleted = injuryRehabService.isExerciseCompleted(userId, exerciseId);
     
     // Find the exercise to get its name
@@ -164,11 +209,20 @@ export default function InjuryRehabProgram({ userId, onBack, onProgramSelected, 
     
     if (isCompleted) {
       injuryRehabService.uncompleteExercise(userId, exerciseId);
+      // Update progress when uncompleting an exercise
+      loadData();
+      // Wait for state to update, then recalculate progress
+      setTimeout(async () => {
+        await updateDashboardProgress();
+        if (onDashboardRefresh) {
+          onDashboardRefresh();
+        }
+      }, 100);
     } else {
       injuryRehabService.completeExercise(userId, exerciseId);
       setLastCompletedExercise({ id: exerciseId, name: exerciseName });
+      loadData();
     }
-    loadData();
   };
 
   const handleLogPain = () => {

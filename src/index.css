@@ -1,3 +1,32 @@
+/* CSS Variables for theme support */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --border-color: #e5e7eb;
+  --card-bg: #ffffff;
+  --card-hover: #f9fafb;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+}
+
+.dark-theme {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-tertiary: #0f3460;
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-tertiary: #b0b0b0;
+  --border-color: #2d3748;
+  --card-bg: #16213e;
+  --card-hover: #1e2938;
+  --input-bg: #0f3460;
+  --input-border: #2d3748;
+}
+
 /* Tailwind base styles */
 @tailwind base;
 @tailwind components;

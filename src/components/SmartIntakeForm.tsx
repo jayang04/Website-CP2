@@ -28,7 +28,7 @@ const INJURY_TYPES = [
   { id: 'high-ankle', name: 'High Ankle Sprain', icon: '🦶', common: true },
 ];
 
-const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, userId, existingData }) => {
+const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, userId: _userId, existingData }) => {
   const [formData, setFormData] = useState<SmartIntakeData>(existingData || {
     injuryType: '',
     injuryDate: '',
@@ -73,7 +73,7 @@ const SmartIntakeForm: React.FC<SmartIntakeFormProps> = ({ onComplete, onSkip, u
   };
 
   // Auto-suggest schedule based on injury and fitness
-  const inferSchedule = (injuryType: string, fitnessLevel: string) => {
+  const inferSchedule = (_injuryType: string, fitnessLevel: string) => {
     if (fitnessLevel === 'ADVANCED') {
       return { days: 4, duration: 30 };
     } else if (fitnessLevel === 'INTERMEDIATE') {
