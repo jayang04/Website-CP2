@@ -1,10 +1,10 @@
 /* Personalized Rehab Plan Styles */
 
 .personalized-plan {
-  max-width: 1400px; /* Increased from 1200px */
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 60px; /* Increased padding */
-  width: 100%; /* Take full width up to max-width */
+  padding: 40px 60px;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -303,6 +303,7 @@ Header
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-bottom: 20px;
 }
 
 .regenerate-btn:hover {
@@ -313,7 +314,7 @@ Header
 
 /* Responsive */
 @media (max-width: 1175px) {
-  .exercise-card {
+  /* .exercise-card {
     flex-direction: column;
   }
 
@@ -337,7 +338,7 @@ Header
   
   .plan-stats {
     grid-template-columns: repeat(3, 1fr);
-  }
+  } */
 
   .celebration-title {
     font-size: 2rem;
@@ -358,7 +359,7 @@ Header
 }
 
 @media (max-width: 480px) {
-  .plan-header h2 {
+  /* .plan-header h2 {
     font-size: 1.5rem;
   }
 
@@ -372,7 +373,7 @@ Header
 
   .plan-stats {
     grid-template-columns: 1fr;
-  }
+  } */
 
   .celebration-title {
     font-size: 1.75rem;

@@ -11,25 +11,6 @@
   margin-bottom: 40px;
 }
 
-.back-btn {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  background: none;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.back-btn:hover {
-  background: var(--primary-color);
-  color: white;
-}
-
 .injury-selection-header h1 {
   font-size: 2.5rem;
   color: var(--text-primary);

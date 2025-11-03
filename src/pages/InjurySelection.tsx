@@ -33,9 +33,6 @@ export default function InjurySelection({ onSelectInjury, onBack }: InjurySelect
   return (
     <div className="injury-selection-page">
       <div className="injury-selection-header">
-        <button className="back-btn" onClick={onBack}>
-          ← Back
-        </button>
         <h1>Select Your Injury</h1>
         <p className="subtitle">Choose your specific injury to get a personalized rehabilitation plan</p>
       </div>

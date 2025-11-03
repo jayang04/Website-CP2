@@ -18,6 +18,7 @@ body {
   background: #f8fafc;
   color: #1e293b;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 :root {
@@ -92,14 +93,14 @@ main {
   top: 0;
   z-index: 100;
   border-bottom: 1px solid var(--border-color);
-  overflow: visible;
+  overflow: hidden;
 }
 
 .nav-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1200px;
+  max-width: none;
   margin: 0 auto;
   padding: 0.5rem 2rem;
   overflow: visible;
@@ -398,11 +399,6 @@ main {
   transform: translateX(0);
   opacity: 1;
   visibility: visible;
-}
-
-.mobile-menu .logo-text {
-  font-size: 1.5rem;
-  color: var(--primary-color);
 }
 
 .close-menu {
@@ -704,21 +700,22 @@ main {
 
 /* Full Screen Dashboard Layout */
 .dashboard-fullscreen {
-  width: 100vw !important;
-  min-height: calc(100vh - 80px) !important;
-  background: linear-gradient(135deg, #f8fafc 0%, #e3f2fd 100%) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  max-width: none !important;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #f8fafc 0%, #e3f2fd 100%);
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Dashboard Hero Section */
 .dashboard-hero {
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%) !important;
-  padding: 4rem 2rem !important;
+  padding: 4rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -836,6 +833,8 @@ main {
 .action-card {
   display: flex;
   align-items: center;
+  flex-direction: column;
+  text-align: center;
   gap: 1.5rem;
   padding: 1.5rem;
   border: 2px solid var(--border-color);
@@ -975,7 +974,6 @@ main {
 .activity-list::-webkit-scrollbar-thumb {
   background: var(--border-color);
   border-radius: 4px;
-  transition: background 0.2s ease;
 }
 
 .activity-list::-webkit-scrollbar-thumb:hover {
@@ -1042,16 +1040,6 @@ main {
   font-size: 0.85rem;
   line-height: 1.4;
 }
-
-/* Old Dashboard Styles - Remove */
-.dashboard-main {
-  display: none;
-}
-
-.dashboard-header-content {
-  display: none;
-}
-
 /* ========================================
    FOOTER
    ======================================== */
@@ -1213,7 +1201,7 @@ main {
    RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 1175px) {
+@media (max-width: 1234px) {
   .main-nav {
     display: none;
   }
@@ -1246,11 +1234,6 @@ main {
 
   .dashboard-grid {
     grid-template-columns: 1fr;
-  }
-
-  .login-container, .signup-container {
-    margin: 2rem 1rem;
-    padding: 2rem;
   }
 
   .name-row {
@@ -1303,7 +1286,7 @@ main {
     max-width: 200px;
   }
 
-  /* Action Cards */
+  /* Action Cards Mobile */
   .action-card {
     flex-direction: column;
     text-align: center;
@@ -1319,9 +1302,17 @@ main {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 638px){
+  .dashboard-hero {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 606px) {
   .nav-container {
-    padding: 1rem;
+    width: auto;
+    position: static;
+    display: flex;
   }
 
   .logo-text {
@@ -1342,8 +1333,12 @@ main {
   }
 
   /* Dashboard Hero Mobile */
+  .dashboard-fullscreen {
+    width: auto;
+  }
+
   .dashboard-hero {
-    padding: 2rem 1rem !important;
+    padding: 2rem 1rem;
   }
 
   .hero-content h1 {
@@ -1355,7 +1350,6 @@ main {
   }
 
   .quick-stats {
-    flex-direction: column;
     gap: 1rem;
     width: 100%;
   }
@@ -1363,5 +1357,9 @@ main {
   .stat-card-hero {
     width: 100%;
     max-width: 250px;
+  }
+
+  .logo img {
+    transform: scale(1.2);
   }
 }

@@ -375,39 +375,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
   return (
     <div className="injury-rehab-program">
       {/* Header */}
-      <div className="rehab-header" style={{ position: 'relative' }}>
-        <button 
-          className="reset-program-btn"
-          onClick={handleResetProgram}
-          style={{
-            position: 'absolute',
-            right: '0',
-            top: '0',
-            padding: '0.75rem 1.25rem',
-            backgroundColor: '#ff6b6b',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 2px 8px rgba(255, 107, 107, 0.3)',
-            zIndex: 10
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#ff5252';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 107, 0.4)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#ff6b6b';
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 107, 107, 0.3)';
-          }}
-        >
-          🔄 Reset Program
-        </button>
+      <div className="rehab-header">
         <div className="rehab-title">
           <span className="injury-icon-large">{plan.injuryInfo.icon}</span>
           <div>
@@ -479,11 +447,42 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
               <h2>{currentPhase.name}</h2>
               <p className="phase-duration">{currentPhase.duration}</p>
             </div>
-            {selectedPhase === progress.currentPhase && selectedPhase < plan.phases.length && (
-              <button className="progress-phase-btn" onClick={handleProgressPhase}>
-                Advance to Next Phase →
+            <div className="phase-header-buttons">
+              {selectedPhase === progress.currentPhase && selectedPhase < plan.phases.length && (
+                <button className="progress-phase-btn" onClick={handleProgressPhase}>
+                  Advance to Next Phase →
+                </button>
+              )}
+              <button 
+                className="reset-program-btn"
+                onClick={handleResetProgram}
+                style={{
+                  padding: '12px 20px',
+                  backgroundColor: '#ff6b6b',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: '700',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(255, 107, 107, 0.3)',
+                  transition: 'all 0.3s ease',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ff5252';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 107, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ff6b6b';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 107, 107, 0.3)';
+                }}
+              >
+                🔄 Reset Program
               </button>
-            )}
+            </div>
           </div>
 
           {/* Phase Progress Bar */}

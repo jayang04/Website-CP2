@@ -485,7 +485,7 @@ function App() {
               {user && (
                 <>
                   <a onClick={() => navigateTo('dashboard')}>📊 Dashboard</a>
-                  <a onClick={() => navigateTo('rehab-program')}>🏥 Rehab Programs</a>
+                  <a onClick={() => navigateTo('injury-selection')}>🏥 Rehab Programs</a>
                   <a onClick={() => navigateTo('profile')}>👤 Profile</a>
                   <a onClick={() => navigateTo('settings')}>⚙️ Settings</a>
                 </>
@@ -587,9 +587,21 @@ function App() {
           <div className="footer-links">
             <h4>Quick Links</h4>
             <a onClick={() => navigateTo('home')}>Home</a>
-            <a onClick={() => navigateTo('about')}>About Us</a>
-            <a onClick={() => navigateTo('help')}>Help & Support</a>
-            <a onClick={() => navigateTo('dashboard')}>Dashboard</a>
+            {user && (
+                <>
+                  <a onClick={() => navigateTo('dashboard')}>Dashboard</a>
+                  <a onClick={() => navigateTo('injury-selection')}>Rehab Programs</a>
+                  <a onClick={() => navigateTo('profile')}>Profile</a>
+                  <a onClick={() => navigateTo('settings')}>Settings</a>
+                </>
+              )}
+              <a onClick={() => navigateTo('about')}>About Us</a>
+              <a onClick={() => navigateTo('help')}>Help</a> 
+              {!user ? (
+                <a onClick={() => navigateTo('login')} className="account-nav">Login / Sign Up</a>
+              ) : (
+                <a onClick={handleLogout} className="logout">Logout</a>
+              )}
           </div>
         </div>
         <div className="footer-bottom">
@@ -624,17 +636,14 @@ function HomePage() {
 
         <section className="features">
           <div className="feature-card">
-            <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80&q=80" alt="Guided Rehab" />
             <h3>🏥 Expert-Guided Rehab</h3>
             <p>Step-by-step exercise plans tailored to your specific condition and recovery needs, created by licensed professionals.</p>
           </div>
           <div className="feature-card">
-            <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80&q=80" alt="Progress Tracking" />
             <h3>📈 Smart Progress Tracking</h3>
             <p>Monitor your improvements with easy-to-read graphs, pain level tracking, and milestone achievements.</p>
           </div>
           <div className="feature-card">
-            <img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=80&h=80&q=80" alt="Community Support" />
             <h3>🤝 Community Support</h3>
             <p>Connect with others on a similar recovery journey, share experiences, and get motivated by success stories.</p>
           </div>
