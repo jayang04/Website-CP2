@@ -1953,10 +1953,10 @@
    REHABILITATION PROGRAM STYLES
    ======================================== */
 
-.rehab-program-container {
+/* .rehab-program-container {
   min-height: 100vh;
   background: #f8fafc;
-}
+} */
 
 /* ========================================
    PROGRAM SELECTION PAGE
@@ -1983,7 +1983,6 @@
 
 .program-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
 }

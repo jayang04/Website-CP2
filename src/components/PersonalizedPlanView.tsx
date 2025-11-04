@@ -610,20 +610,6 @@ export default function PersonalizedPlanView({
         </div>
       </div>
 
-      {/* Regenerate Button */}
-      <div className="plan-actions">
-        <button className="regenerate-btn" onClick={generatePlan}>
-          🔄 Regenerate Plan
-        </button>
-        <button 
-          className="regenerate-btn" 
-          onClick={resetCompletions}
-          style={{ marginLeft: '10px', background: '#f44336', color: 'white', borderColor: '#f44336' }}
-        >
-          🔄 Reset All Completions
-        </button>
-      </div>
-
       {/* Exercise Details Modal */}
       {showExerciseModal && selectedExercise && (
         <div className="exercise-modal-overlay" onClick={handleCloseExerciseModal}>

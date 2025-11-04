@@ -705,8 +705,8 @@ main {
   background: linear-gradient(135deg, #f8fafc 0%, #e3f2fd 100%);
   margin: 0;
   padding: 0;
-  max-width: 100%;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* Dashboard Hero Section */
@@ -807,7 +807,7 @@ main {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-height: 0; /* Allow flex items to shrink below content size */
+  min-height: 0;
 }
 
 .dashboard-section:hover {
@@ -1268,7 +1268,7 @@ main {
   }
 
   .dashboard-section {
-    padding: 1.5rem;
+    padding: 0.8rem;
   }
 
   .dashboard-section h2 {
@@ -1361,5 +1361,11 @@ main {
 
   .logo img {
     transform: scale(1.2);
+  }
+}
+
+@media (max-width: 367px) {
+  .dashboard-section {
+    padding: 0.4rem;
   }
 }

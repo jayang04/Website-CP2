@@ -288,30 +288,6 @@ Header
   line-height: 1.4 !important;
 }
 
-/* Actions */
-.plan-actions {
-  text-align: center;
-}
-
-.regenerate-btn {
-  padding: 12px 32px;
-  background: #f5f5f5;
-  color: #333;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 20px;
-}
-
-.regenerate-btn:hover {
-  background: #e0e0e0;
-  border-color: #bdbdbd;
-}
-
-
 /* Responsive */
 @media (max-width: 1175px) {
   /* .exercise-card {

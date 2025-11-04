@@ -894,21 +894,6 @@ function DashboardPage({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', gap: '10px' }}>
               <h2>{activePlanType === 'general' ? '🦵 Your Rehab Program' : '🎯 Your Personalized Plan'}</h2>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button 
-                  onClick={onShowIntakeForm}
-                  style={{
-                    padding: '10px 20px',
-                    background: '#4CAF50',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    fontSize: '14px'
-                  }}
-                >
-                  {personalizedPlan ? '⚙️ Update Plan' : '✨ Create Personalized Plan'}
-                </button>
                 {personalizedPlan && (
                   <button 
                     onClick={onResetPlan}
@@ -960,7 +945,6 @@ function DashboardPage({
             ) : (
               /* Show options if no plan is selected */
               <div style={{
-                padding: '40px',
                 background: '#f8f9fa',
                 borderRadius: '12px',
                 textAlign: 'center'
