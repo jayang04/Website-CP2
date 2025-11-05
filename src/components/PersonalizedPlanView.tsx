@@ -6,6 +6,8 @@ import type { PersonalizedPlan } from '../types/personalization';
 import { requiresAngleDetection } from '../data/exerciseAngleConfig';
 import ExerciseAngleTracker from './ExerciseAngleTracker';
 import { cloudDashboardService, cloudCompletionsService } from '../services/cloudDataService';
+import { useBadges } from '../hooks/useBadges';
+import BadgeNotificationToast from './BadgeNotificationToast';
 import '../styles/InjuryRehabProgram.css';
 import '../styles/PersonalizedPlan.css';
 import '../styles/AngleDetector.css';
@@ -53,6 +55,9 @@ export default function PersonalizedPlanView({
   const [completedExercises, setCompletedExercises] = useState<string[]>([]);
   const [currentWeek, setCurrentWeek] = useState<number>(1);
   const [lastCompletedExercise, setLastCompletedExercise] = useState<{id: string, name: string} | null>(null);
+  
+  // Badge system integration
+  const { notifications, checkBadges, dismissNotification } = useBadges(userId);
   
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
@@ -241,12 +246,41 @@ export default function PersonalizedPlanView({
     
     setCompletedExercises(prev => {
       let newCompletions: string[];
+      const wasCompleted = prev.includes(exerciseId);
       
-      if (prev.includes(exerciseId)) {
+      if (wasCompleted) {
         newCompletions = prev.filter(id => id !== exerciseId);
       } else {
         newCompletions = [...prev, exerciseId];
         setLastCompletedExercise({ id: exerciseId, name: exerciseName });
+        
+        // Check for badge unlocks when exercise is completed
+        setTimeout(async () => {
+          try {
+            const dashboardData = await cloudDashboardService.getDashboardData(userId);
+            const currentHour = new Date().getHours();
+            const currentDay = new Date().getDay();
+            
+            // Get all tracking data from localStorage
+            const phasesCompleted = parseInt(localStorage.getItem(`phases_completed_${userId}`) || '0');
+            const videosWatchedStr = localStorage.getItem(`videos_watched_${userId}`) || '[]';
+            const videosWatched = JSON.parse(videosWatchedStr).length;
+            
+            checkBadges({
+              exercisesCompleted: dashboardData.stats.exercisesCompleted,
+              daysActive: dashboardData.stats.daysActive,
+              currentStreak: 0, // TODO: Track streak
+              progressPercentage: dashboardData.stats.progressPercentage,
+              phasesCompleted,
+              videosWatched,
+              isEarlyMorning: currentHour < 8,
+              isLateNight: currentHour >= 20,
+              isWeekend: currentDay === 0 || currentDay === 6,
+            });
+          } catch (error) {
+            console.error('Error checking badges:', error);
+          }
+        }, 500);
       }
       
       saveCompletedExercises(newCompletions);
@@ -874,6 +908,15 @@ export default function PersonalizedPlanView({
           </div>
         </div>
       )}
+
+      {/* Badge Notifications */}
+      {notifications.map((notification, index) => (
+        <BadgeNotificationToast
+          key={notification.badge.id}
+          notification={notification}
+          onClose={() => dismissNotification(index)}
+        />
+      ))}
     </div>
   );
 }

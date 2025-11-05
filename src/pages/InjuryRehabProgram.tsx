@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { injuryRehabService } from '../services/dataService';
 import { type InjuryRehabPlan, type RehabPhase } from '../types/injuries';
 import { requiresAngleDetection } from '../data/exerciseAngleConfig';
 import ExerciseAngleTracker from '../components/ExerciseAngleTracker';
 import { cloudDashboardService } from '../services/cloudDataService';
+import { useBadges } from '../hooks/useBadges';
+import BadgeNotificationToast from '../components/BadgeNotificationToast';
 import '../styles/InjuryRehabProgram.css';
 import '../styles/AngleDetector.css';
 
@@ -28,6 +30,9 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
   const [exerciseForAngleDetection, setExerciseForAngleDetection] = useState<any>(null);
   const [showProgramSelection, setShowProgramSelection] = useState(false);
   const [lastCompletedExercise, setLastCompletedExercise] = useState<{id: string, name: string} | null>(null);
+  
+  // Badge system integration
+  const { notifications, checkBadges, dismissNotification } = useBadges(userId);
   
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
@@ -92,6 +97,9 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
     const handlePlay = () => {
       console.log('▶️ Video started playing, pausing others...');
       pauseAllVideosExcept(video);
+      
+      // Track video watch for badges (only track once per video)
+      trackVideoWatch(video);
     };
     
     video.addEventListener('play', handlePlay);
@@ -103,6 +111,43 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
     };
     
     videoRefs.current.set(video, cleanup);
+  };
+
+  // Track video watches for badge unlocking
+  const trackVideoWatch = (video: HTMLVideoElement) => {
+    const videoSrc = video.currentSrc || video.src;
+    if (!videoSrc) return;
+    
+    const watchedKey = `videos_watched_${userId}`;
+    const watchedVideos = JSON.parse(localStorage.getItem(watchedKey) || '[]');
+    
+    // Only count if not already watched
+    if (!watchedVideos.includes(videoSrc)) {
+      watchedVideos.push(videoSrc);
+      localStorage.setItem(watchedKey, JSON.stringify(watchedVideos));
+      console.log(`📹 Video watched (${watchedVideos.length} total):`, videoSrc);
+      
+      // Check badges after video watch
+      setTimeout(async () => {
+        try {
+          const dashboardData = await cloudDashboardService.getDashboardData(userId);
+          
+          // Get all tracking data from localStorage
+          const phasesCompleted = parseInt(localStorage.getItem(`phases_completed_${userId}`) || '0');
+          
+          checkBadges({
+            exercisesCompleted: dashboardData.stats.exercisesCompleted,
+            daysActive: dashboardData.stats.daysActive,
+            currentStreak: 0,
+            progressPercentage: dashboardData.stats.progressPercentage,
+            phasesCompleted,
+            videosWatched: watchedVideos.length,
+          });
+        } catch (error) {
+          console.error('Error checking badges after video watch:', error);
+        }
+      }, 500);
+    }
   };
 
   // Function to pause all videos except the one currently playing
@@ -164,9 +209,32 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
       
       setLastCompletedExercise(null);
     }
-  }, [lastCompletedExercise, userId, progress, onDashboardRefresh]);
+  }, [lastCompletedExercise, userId]); // Removed progress and onDashboardRefresh from dependencies
 
-  const loadData = () => {
+  // Check badges when component loads or data updates
+  const checkBadgesOnLoad = useCallback(async () => {
+    try {
+      const dashboardData = await cloudDashboardService.getDashboardData(userId);
+      
+      // Get all tracking data from localStorage
+      const phasesCompleted = parseInt(localStorage.getItem(`phases_completed_${userId}`) || '0');
+      const videosWatchedStr = localStorage.getItem(`videos_watched_${userId}`) || '[]';
+      const videosWatched = JSON.parse(videosWatchedStr).length;
+      
+      checkBadges({
+        exercisesCompleted: dashboardData.stats.exercisesCompleted,
+        daysActive: dashboardData.stats.daysActive,
+        currentStreak: 0, // TODO: Track streak
+        progressPercentage: dashboardData.stats.progressPercentage,
+        phasesCompleted,
+        videosWatched,
+      });
+    } catch (error) {
+      console.error('Error checking badges on load:', error);
+    }
+  }, [userId, checkBadges]);
+
+  const loadData = useCallback(() => {
     const rehabPlan = injuryRehabService.getInjuryPlan(userId);
     const userProgress = injuryRehabService.getInjuryProgress(userId);
     setPlan(rehabPlan);
@@ -179,7 +247,10 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
     if (!rehabPlan) {
       setShowProgramSelection(true);
     }
-  };
+    
+    // Check for badge unlocks when data loads
+    checkBadgesOnLoad();
+  }, [userId, checkBadgesOnLoad]);
 
   const handleSelectProgram = (injuryType: 'acl-tear' | 'mcl-tear' | 'meniscus-tear' | 'ankle-sprain' | 'medial-ankle-sprain' | 'high-ankle-sprain') => {
     injuryRehabService.setUserInjury(userId, injuryType);
@@ -222,6 +293,34 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
       injuryRehabService.completeExercise(userId, exerciseId);
       setLastCompletedExercise({ id: exerciseId, name: exerciseName });
       loadData();
+      
+      // Check for badge unlocks
+      setTimeout(async () => {
+        try {
+          const dashboardData = await cloudDashboardService.getDashboardData(userId);
+          const currentHour = new Date().getHours();
+          const currentDay = new Date().getDay();
+          
+          // Get all tracking data from localStorage
+          const phasesCompleted = parseInt(localStorage.getItem(`phases_completed_${userId}`) || '0');
+          const videosWatchedStr = localStorage.getItem(`videos_watched_${userId}`) || '[]';
+          const videosWatched = JSON.parse(videosWatchedStr).length;
+          
+          checkBadges({
+            exercisesCompleted: dashboardData.stats.exercisesCompleted,
+            daysActive: dashboardData.stats.daysActive,
+            currentStreak: 0, // TODO: Track streak
+            progressPercentage: dashboardData.stats.progressPercentage,
+            phasesCompleted,
+            videosWatched,
+            isEarlyMorning: currentHour < 8,
+            isLateNight: currentHour >= 20,
+            isWeekend: currentDay === 0 || currentDay === 6,
+          });
+        } catch (error) {
+          console.error('Error checking badges:', error);
+        }
+      }, 500);
     }
   };
 
@@ -249,10 +348,37 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
     setShowProgressModal(true);
   };
 
-  const confirmProgressPhase = () => {
+  const confirmProgressPhase = async () => {
     injuryRehabService.progressToNextPhase(userId);
     loadData();
     setShowProgressModal(false);
+    
+    // Track phase completion for badges
+    const phaseKey = `phases_completed_${userId}`;
+    const phasesCompleted = parseInt(localStorage.getItem(phaseKey) || '0') + 1;
+    localStorage.setItem(phaseKey, phasesCompleted.toString());
+    
+    // Check for badge unlocks with phase completion
+    setTimeout(async () => {
+      try {
+        const dashboardData = await cloudDashboardService.getDashboardData(userId);
+        
+        // Get all tracking data from localStorage
+        const videosWatchedStr = localStorage.getItem(`videos_watched_${userId}`) || '[]';
+        const videosWatched = JSON.parse(videosWatchedStr).length;
+        
+        checkBadges({
+          exercisesCompleted: dashboardData.stats.exercisesCompleted,
+          daysActive: dashboardData.stats.daysActive,
+          currentStreak: 0,
+          progressPercentage: dashboardData.stats.progressPercentage,
+          phasesCompleted,
+          videosWatched,
+        });
+      } catch (error) {
+        console.error('Error checking badges after phase completion:', error);
+      }
+    }, 500);
   };
 
   const handleOpenAngleDetector = (exercise: any) => {
@@ -267,7 +393,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
 
   const handleResetProgram = () => {
     const confirmed = window.confirm(
-      '⚠️ Are you sure you want to reset your program? This will clear your current progress and return to program selection.'
+      '⚠️ Are you sure you want to reset your program? This will clear your current progress and let you choose a new rehab path.'
     );
     
     if (confirmed) {
@@ -275,10 +401,13 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
       localStorage.removeItem(`rehabmotion_user_injury_${userId}`);
       localStorage.removeItem(`rehabmotion_injury_progress_${userId}`);
       
-      // Reset state
-      setPlan(null);
-      setProgress(null);
-      setShowProgramSelection(true);
+      // Refresh dashboard to update stats
+      if (onDashboardRefresh) {
+        onDashboardRefresh();
+      }
+      
+      // Navigate back to dashboard where user can choose again
+      _onBack();
     }
   };
 
@@ -933,6 +1062,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
                   
                   if (!isAlreadyCompleted) {
                     injuryRehabService.completeExercise(userId, exerciseForAngleDetection.id);
+                    setLastCompletedExercise({ id: exerciseForAngleDetection.id, name: exerciseForAngleDetection.name });
                     loadData(); // Reload data to update the UI
                   }
                   
@@ -944,6 +1074,15 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
           </div>
         </div>
       )}
+
+      {/* Badge Notifications */}
+      {notifications.map((notification, index) => (
+        <BadgeNotificationToast
+          key={notification.badge.id}
+          notification={notification}
+          onClose={() => dismissNotification(index)}
+        />
+      ))}
     </div>
   );
 }

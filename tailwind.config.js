@@ -67,6 +67,7 @@ export default {
         'slide-up': 'slideUp 0.3s ease-out',
         'pulse-slow': 'pulse 2s ease-in-out infinite',
         'spin-slow': 'spin 2s linear infinite',
+        'shine': 'shine 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -80,6 +81,10 @@ export default {
         slideUp: {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        shine: {
+          '0%': { transform: 'translateX(-100%) skewX(-12deg)' },
+          '100%': { transform: 'translateX(200%) skewX(-12deg)' },
         },
       },
       transitionDuration: {

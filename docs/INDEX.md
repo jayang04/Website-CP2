@@ -1,130 +1,219 @@
-# RehabMotion Documentation Index
+# 📑 RehabMotion Documentation Index
 
-**Last Updated**: October 26, 2025
+**Quick navigation to all documentation files**
 
-## 📚 Main Documentation
-
-### For Users & Developers
-- **[Complete Feature Guide](./COMPLETE_FEATURE_GUIDE.md)** - Comprehensive guide covering all features, updates, and implementations
-- **[Developer Guide](./DEVELOPER_GUIDE.md)** - Setup, development, and deployment instructions
-- **[README](./README.md)** - Quick start and overview
-
-### Technical Guides
-- **[Firebase Firestore Setup](./FIREBASE_FIRESTORE_SETUP.md)** - Database configuration and security rules
-- **[Exercise Media Guide](./EXERCISE_MEDIA_GUIDE.md)** - Video management and naming conventions
-- **[Server README](./SERVER_README.md)** - Backend server documentation
-- **[Angle Detection Guide](./ANGLE_DETECTION_GUIDE.md)** - Pose detection and form tracking
-
-### Specialized Guides
-- **[Complete Rehab Plans](./COMPLETE_REHAB_PLANS.md)** - Pre-built rehabilitation programs
-- **[Logo Guide](./LOGO_GUIDE.md)** - Branding and visual identity
+Last Updated: November 5, 2025
 
 ---
 
-## 🔍 Quick Navigation
+## 🏠 Start Here
 
-### I want to...
-- **Get started quickly** → [README](./README.md)
-- **Learn all features** → [Complete Feature Guide](./COMPLETE_FEATURE_GUIDE.md)
-- **Set up the project** → [Developer Guide](./DEVELOPER_GUIDE.md)
-- **Configure Firebase** → [Firebase Setup](./FIREBASE_FIRESTORE_SETUP.md)
-- **Add exercise videos** → [Exercise Media Guide](./EXERCISE_MEDIA_GUIDE.md)
-- **Understand pose detection** → [Angle Detection Guide](./ANGLE_DETECTION_GUIDE.md)
+| Document | Description |
+|----------|-------------|
+| [README.md](./README.md) | Main documentation hub with organized structure |
+| [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) | Complete setup and development guide |
 
 ---
 
-## 📝 What's in the Complete Feature Guide?
+## 🏆 Badge System (7 documents)
 
-The [Complete Feature Guide](./COMPLETE_FEATURE_GUIDE.md) consolidates information from multiple documentation files and covers:
+| Document | What's Inside | When to Use |
+|----------|---------------|-------------|
+| [📘 BADGE_QUICK_REFERENCE.md](./badges/BADGE_QUICK_REFERENCE.md) | Quick API reference, code examples, usage patterns | **Start here** for badge development |
+| [🔧 BADGE_FIXES.md](./badges/BADGE_FIXES.md) | Bug fixes, updates history, known issues | Troubleshooting badge issues |
+| [☁️ BADGE_CLOUD_MIGRATION_SUMMARY.md](./badges/BADGE_CLOUD_MIGRATION_SUMMARY.md) | Cloud storage migration summary | Understanding cloud migration |
+| [📖 BADGE_SYSTEM_README.md](./badges/BADGE_SYSTEM_README.md) | System overview, architecture, concepts | Learning the badge system |
+| [🔗 BADGES_INTEGRATION_GUIDE.md](./badges/BADGES_INTEGRATION_GUIDE.md) | Step-by-step integration guide | Adding badges to components |
+| [📚 BADGES_SYSTEM_COMPLETE.md](./badges/BADGES_SYSTEM_COMPLETE.md) | Complete system documentation | Deep dive into badge system |
+| [⭐ NEW_EXERCISE_BADGES.md](./badges/NEW_EXERCISE_BADGES.md) | Latest badge additions (Video badges) | See newest features |
 
-1. **Personalized Plan Features**
-   - Smart intake form
-   - Plan generation engine
-   - Exercise display and tracking
-   - Update and reset functionality
-
-2. **Dashboard Features**
-   - Layout and sections
-   - Progress statistics
-   - Activity feed
-   - Instant sync
-
-3. **Cloud Storage & Data Management**
-   - Firestore integration
-   - Data structure
-   - Migration from localStorage
-   - Security rules
-
-4. **Video & Media Features**
-   - Exercise video organization
-   - Video mapping system
-   - Auto-pause functionality
-
-5. **UI/UX Improvements**
-   - Consistent design system
-   - Layout improvements
-   - Text readability
-   - Responsive design
-
-6. **Progress Tracking**
-   - Daily completions
-   - Week progression
-   - Statistics calculation
-   - Activity logging
-
-7. **Technical Implementation**
-   - State management
-   - Page persistence
-   - Data flow
-   - Error handling
+**🎯 Recommended Reading Order:**
+1. BADGE_QUICK_REFERENCE.md (basics)
+2. BADGES_INTEGRATION_GUIDE.md (implementation)
+3. BADGE_FIXES.md (troubleshooting)
 
 ---
 
-## 🗂️ Archived Documentation
+## 🔥 Firebase & Cloud (2 documents)
 
-The following individual update files have been consolidated into the Complete Feature Guide:
+| Document | What's Inside | When to Use |
+|----------|---------------|-------------|
+| [🔥 FIREBASE_FIRESTORE_SETUP.md](./firebase/FIREBASE_FIRESTORE_SETUP.md) | Firebase setup, Firestore config, security rules | **Start here** for Firebase setup |
+| [☁️ CLOUD_STORAGE_MIGRATION.md](./firebase/CLOUD_STORAGE_MIGRATION.md) | Cloud migration details, architecture, testing | Understanding cloud storage |
 
-- ~~PERSONALIZED_PLAN_UI_UPDATE.md~~ → See "Personalized Plan Features"
-- ~~PERSONALIZED_PLAN_FIXES.md~~ → See "Personalized Plan Features"
-- ~~PERSONALIZED_PLAN_VIDEO_TEXT_IMPROVEMENTS.md~~ → See "Video & Media Features"
-- ~~PERSONALIZED_PLAN_LAYOUT_IMPROVEMENTS.md~~ → See "UI/UX Improvements"
-- ~~DASHBOARD_LAYOUT_UPDATE.md~~ → See "Dashboard Features"
-- ~~DASHBOARD_RECENT_ACTIVITY_UPDATE.md~~ → See "Dashboard Features"
-- ~~CLOUD_STORAGE_MIGRATION.md~~ → See "Cloud Storage & Data Management"
-- ~~AUTO_PAUSE_FEATURE.md~~ → See "Video & Media Features"
-- ~~FIX_DUPLICATE_ACTIVITY_NOTIFICATIONS.md~~ → See "Dashboard Features"
-- ~~PROGRESS_TRACKING_FEATURES.md~~ → See "Progress Tracking"
-- ~~UI_CONSISTENCY_UPDATE.md~~ → See "UI/UX Improvements"
-
-These files can be deleted as their content is now in the Complete Feature Guide.
+**🎯 Recommended Reading Order:**
+1. FIREBASE_FIRESTORE_SETUP.md (setup)
+2. CLOUD_STORAGE_MIGRATION.md (migration details)
 
 ---
 
-## 🎯 Core Documentation Files
+## ✨ Features (4 documents)
 
-Keep these essential files:
+| Document | What's Inside | When to Use |
+|----------|---------------|-------------|
+| [📖 COMPLETE_FEATURE_GUIDE.md](./features/COMPLETE_FEATURE_GUIDE.md) | All platform features overview | **Start here** for feature overview |
+| [🏥 COMPLETE_REHAB_PLANS.md](./features/COMPLETE_REHAB_PLANS.md) | All rehab programs, exercises, phases | Understanding rehab programs |
+| [💻 IMPLEMENTATION_SUMMARY.md](./features/IMPLEMENTATION_SUMMARY.md) | Technical implementation notes | Developer reference |
+| [🔄 REFRESH_FIX.md](./features/REFRESH_FIX.md) | Refresh bug fixes, infinite loop solutions | Troubleshooting refresh issues |
 
-1. **COMPLETE_FEATURE_GUIDE.md** - Main comprehensive guide (NEW)
-2. **DEVELOPER_GUIDE.md** - Development setup and workflow
-3. **README.md** - Quick overview and getting started
-4. **FIREBASE_FIRESTORE_SETUP.md** - Database configuration
-5. **EXERCISE_MEDIA_GUIDE.md** - Video management
-6. **SERVER_README.md** - Backend documentation
-7. **ANGLE_DETECTION_GUIDE.md** - Pose detection technical guide
-8. **COMPLETE_REHAB_PLANS.md** - Pre-built program documentation
-9. **LOGO_GUIDE.md** - Branding guidelines
-
-Total: **9 core files** (down from 29 files)
+**🎯 Recommended Reading Order:**
+1. COMPLETE_FEATURE_GUIDE.md (overview)
+2. COMPLETE_REHAB_PLANS.md (rehab details)
+3. REFRESH_FIX.md (if encountering issues)
 
 ---
 
-## 💡 Tips
+## 📖 Technical Guides (5 documents)
 
-- Start with the [Complete Feature Guide](./COMPLETE_FEATURE_GUIDE.md) for a full overview
-- Use this index to quickly find specific topics
-- Check the change log in Complete Feature Guide for recent updates
-- Refer to technical guides for implementation details
+| Document | What's Inside | When to Use |
+|----------|---------------|-------------|
+| [📐 ANGLE_DETECTION_GUIDE.md](./guides/ANGLE_DETECTION_GUIDE.md) | Pose detection setup, TensorFlow.js, angle tracking | Implementing pose detection |
+| [🎬 EXERCISE_MEDIA_GUIDE.md](./guides/EXERCISE_MEDIA_GUIDE.md) | Video management, media guidelines | Adding/managing videos |
+| [🎨 PERSONALIZATION_GUIDE.md](./guides/PERSONALIZATION_GUIDE.md) | Personalization system, user preferences | Customization features |
+| [🎨 LOGO_GUIDE.md](./guides/LOGO_GUIDE.md) | Branding guidelines, logo usage | Design reference |
+| [🖥️ SERVER_README.md](./guides/SERVER_README.md) | Backend server setup, API endpoints | Server development |
+
+**🎯 Use As Needed:** Based on specific feature implementation
 
 ---
 
-**Need help?** Check the Complete Feature Guide first, then refer to specialized guides for deeper technical details.
+## 🔍 Quick Search by Topic
+
+### Authentication & Users
+- [firebase/FIREBASE_FIRESTORE_SETUP.md](./firebase/FIREBASE_FIRESTORE_SETUP.md) - Firebase Auth setup
+- [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - User management
+
+### Badges & Achievements
+- [badges/BADGE_QUICK_REFERENCE.md](./badges/BADGE_QUICK_REFERENCE.md) - Quick reference
+- [badges/BADGE_SYSTEM_README.md](./badges/BADGE_SYSTEM_README.md) - System overview
+- [badges/NEW_EXERCISE_BADGES.md](./badges/NEW_EXERCISE_BADGES.md) - Latest additions
+- [badges/BADGE_FIXES.md](./badges/BADGE_FIXES.md) - Bug fixes
+
+### Cloud Storage
+- [firebase/CLOUD_STORAGE_MIGRATION.md](./firebase/CLOUD_STORAGE_MIGRATION.md) - Migration guide
+- [badges/BADGE_CLOUD_MIGRATION_SUMMARY.md](./badges/BADGE_CLOUD_MIGRATION_SUMMARY.md) - Badge migration
+
+### Database (Firestore)
+- [firebase/FIREBASE_FIRESTORE_SETUP.md](./firebase/FIREBASE_FIRESTORE_SETUP.md) - Setup guide
+- [firebase/CLOUD_STORAGE_MIGRATION.md](./firebase/CLOUD_STORAGE_MIGRATION.md) - Data structure
+
+### Exercise Programs
+- [features/COMPLETE_REHAB_PLANS.md](./features/COMPLETE_REHAB_PLANS.md) - All programs
+- [guides/EXERCISE_MEDIA_GUIDE.md](./guides/EXERCISE_MEDIA_GUIDE.md) - Video setup
+
+### Pose Detection & Angles
+- [guides/ANGLE_DETECTION_GUIDE.md](./guides/ANGLE_DETECTION_GUIDE.md) - Setup & usage
+
+### Personalization
+- [guides/PERSONALIZATION_GUIDE.md](./guides/PERSONALIZATION_GUIDE.md) - Customization system
+
+### Troubleshooting
+- [badges/BADGE_FIXES.md](./badges/BADGE_FIXES.md) - Badge issues
+- [features/REFRESH_FIX.md](./features/REFRESH_FIX.md) - Refresh issues
+- [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) - General setup issues
+
+### UI/UX & Design
+- [guides/LOGO_GUIDE.md](./guides/LOGO_GUIDE.md) - Branding guidelines
+
+### Videos & Media
+- [guides/EXERCISE_MEDIA_GUIDE.md](./guides/EXERCISE_MEDIA_GUIDE.md) - Video management
+
+---
+
+## 📂 Document Count by Category
+
+```
+🏆 Badge System      → 7 documents
+🔥 Firebase & Cloud  → 2 documents
+✨ Features          → 4 documents
+📖 Guides            → 5 documents
+📦 Archive           → 3+ documents
+─────────────────────────────────
+📊 Total Active      → 19 documents
+```
+
+---
+
+## 🎓 Learning Paths
+
+### Path 1: New Developer Setup
+1. [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
+2. [firebase/FIREBASE_FIRESTORE_SETUP.md](./firebase/FIREBASE_FIRESTORE_SETUP.md)
+3. [features/COMPLETE_FEATURE_GUIDE.md](./features/COMPLETE_FEATURE_GUIDE.md)
+
+### Path 2: Badge System Developer
+1. [badges/BADGE_QUICK_REFERENCE.md](./badges/BADGE_QUICK_REFERENCE.md)
+2. [badges/BADGES_INTEGRATION_GUIDE.md](./badges/BADGES_INTEGRATION_GUIDE.md)
+3. [badges/BADGE_CLOUD_MIGRATION_SUMMARY.md](./badges/BADGE_CLOUD_MIGRATION_SUMMARY.md)
+4. [badges/BADGE_FIXES.md](./badges/BADGE_FIXES.md)
+
+### Path 3: Feature Implementation
+1. [features/COMPLETE_FEATURE_GUIDE.md](./features/COMPLETE_FEATURE_GUIDE.md)
+2. [features/COMPLETE_REHAB_PLANS.md](./features/COMPLETE_REHAB_PLANS.md)
+3. Relevant guides based on feature
+
+### Path 4: Backend Developer
+1. [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
+2. [guides/SERVER_README.md](./guides/SERVER_README.md)
+3. [firebase/FIREBASE_FIRESTORE_SETUP.md](./firebase/FIREBASE_FIRESTORE_SETUP.md)
+
+---
+
+## 🔗 External Resources
+
+### Firebase
+- [Firebase Console](https://console.firebase.google.com/project/capstone-project-2-d0caf)
+- [Firestore Documentation](https://firebase.google.com/docs/firestore)
+- [Firebase Auth Documentation](https://firebase.google.com/docs/auth)
+
+### Development Tools
+- [React Documentation](https://react.dev)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs)
+- [Vite Documentation](https://vitejs.dev)
+- [TailwindCSS Documentation](https://tailwindcss.com/docs)
+
+### Pose Detection
+- [TensorFlow.js](https://www.tensorflow.org/js)
+- [MediaPipe](https://developers.google.com/mediapipe)
+
+---
+
+## 📦 Archive
+
+Older or obsolete documentation moved to `archive/` folder:
+
+- OLD_README.md - Previous README version
+- OLD_INDEX.md - Previous INDEX version  
+- MARKDOWN_CLEANUP_PLAN.md - Cleanup planning docs
+- QUICK_CLEANUP_GUIDE.md - Cleanup guide
+
+---
+
+## ✅ Documentation Health
+
+| Metric | Status |
+|--------|--------|
+| **Organization** | ✅ Organized into 4 categories |
+| **Discoverability** | ✅ README + INDEX for navigation |
+| **Completeness** | ✅ 19 active documents |
+| **Up-to-date** | ✅ Last updated Nov 5, 2025 |
+| **Links** | ✅ All internal links working |
+
+---
+
+## 🎯 Quick Actions
+
+**I want to...**
+
+- **Set up development environment** → [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
+- **Add badges to a component** → [badges/BADGE_QUICK_REFERENCE.md](./badges/BADGE_QUICK_REFERENCE.md)
+- **Configure Firebase** → [firebase/FIREBASE_FIRESTORE_SETUP.md](./firebase/FIREBASE_FIRESTORE_SETUP.md)
+- **Understand all features** → [features/COMPLETE_FEATURE_GUIDE.md](./features/COMPLETE_FEATURE_GUIDE.md)
+- **Add exercise videos** → [guides/EXERCISE_MEDIA_GUIDE.md](./guides/EXERCISE_MEDIA_GUIDE.md)
+- **Implement pose detection** → [guides/ANGLE_DETECTION_GUIDE.md](./guides/ANGLE_DETECTION_GUIDE.md)
+- **Fix refresh issues** → [features/REFRESH_FIX.md](./features/REFRESH_FIX.md)
+- **Understand cloud storage** → [firebase/CLOUD_STORAGE_MIGRATION.md](./firebase/CLOUD_STORAGE_MIGRATION.md)
+
+---
+
+**📍 Return to:** [README.md](./README.md) | [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)

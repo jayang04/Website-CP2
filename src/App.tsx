@@ -9,6 +9,7 @@ import Profile from './pages/Profile'
 import Settings from './pages/Settings'
 import Help from './pages/Help'
 import AboutUs from './pages/AboutUs'
+import BadgesPage from './pages/Badges'
 import { injuryRehabService } from './services/dataService'
 import { type InjuryType } from './types/injuries'
 import PersonalizedPlanView from './components/PersonalizedPlanView'
@@ -25,7 +26,7 @@ interface User {
   uid: string;
 }
 
-type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'settings' | 'help' | 'about' | 'debug' | 'rehab-program' | 'injury-selection' | 'injury-rehab';
+type Page = 'home' | 'dashboard' | 'login' | 'signup' | 'profile' | 'settings' | 'help' | 'about' | 'debug' | 'rehab-program' | 'injury-selection' | 'injury-rehab' | 'badges';
 
 // Helper function to extract first name
 function getFirstName(fullName: string): string {
@@ -301,8 +302,10 @@ function App() {
     if (user && currentPage === 'dashboard') {
       const hasIntakeData = localStorage.getItem(`intake_data_${user.uid}`);
       const hasSkipped = localStorage.getItem(`intake_skipped_${user.uid}`);
+      const hasGeneralProgram = injuryRehabService.getUserInjury(user.uid) !== null;
       
-      if (!hasIntakeData && !hasSkipped) {
+      // Only show intake form if user has no intake data, hasn't skipped, AND hasn't chosen a general program
+      if (!hasIntakeData && !hasSkipped && !hasGeneralProgram) {
         // Show intake form after a short delay for better UX
         const timer = setTimeout(() => {
           setShowIntakeForm(true);
@@ -523,6 +526,12 @@ function App() {
       {currentPage === 'settings' && user && <Settings />}
       {currentPage === 'help' && <Help />}
       {currentPage === 'about' && <AboutUs />}
+      {currentPage === 'badges' && user && (
+        <BadgesPage 
+          userId={user.uid}
+          onBack={() => navigateTo('dashboard')}
+        />
+      )}
       {currentPage === 'rehab-program' && user && (
         <InjuryRehabProgram 
           userId={user.uid}

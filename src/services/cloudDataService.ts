@@ -39,7 +39,7 @@ const getDefaultDashboardData = (): DashboardData => ({
       icon: '🏆',
       title: 'Achievements and Badges',
       description: 'View your achievements and earned badges',
-      link: '#'
+      link: 'badges'
     }
   ]
 });
