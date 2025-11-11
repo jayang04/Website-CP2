@@ -442,137 +442,38 @@ export default function PersonalizedPlanView({
                   
                   <h4>{exercise.name}</h4>
                   
-                  {/* Exercise Video */}
-                  {(() => {
-                    const getVideoPath = (exerciseName: string): string | null => {
-                      const normalizedName = exerciseName.trim();
-                      
-                      const videoMap: Record<string, string> = {
-                        // ACL exercises
-                        'Quad Set': '/exercise-demo-videos/ACL/Quad Set.mp4',
-                        'Quad Sets': '/exercise-demo-videos/ACL/Quad Set.mp4',
-                        'Straight Leg Raises': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
-                        'Straight Leg Raise': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
-                        'Ankle Pumps': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
-                        'Ankle Pump': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
-                        'Heel Slide': '/exercise-demo-videos/ACL/Heel Slide.mp4',
-                        'Heel Slides': '/exercise-demo-videos/ACL/Heel Slide.mp4',
-                        'Short Arc Quad': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                        'Short Arc Quads': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                        'Short Arc Quad Activation': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                        'Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
-                        'Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
-                        'Glute Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
-                        'Glute Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
-                        
-                        // MCL exercises
-                        'Hip Flexion with Straight Leg Raise': '/exercise-demo-videos/MCL/Hip Flexion with Straight Leg Raise.mp4',
-                        'Hip Adduction (Seated Pillow/Towel Squeeze)': '/exercise-demo-videos/MCL/Hip Adduction (Seated Pillow:Towel Squeeze).mp4',
-                        'Banded Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
-                        'Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
-                        'Lateral Step-Up': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
-                        'Lateral Step-Ups': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
-                        
-                        // Meniscus Tear exercises
-                        'Mini Squats': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
-                        'Mini Squat': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
-                        'Wall Sit': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
-                        'Wall Sits': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
-                        'Step-Ups': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
-                        'Step-Up': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
-                        'Terminal Knee Extension': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
-                        'Terminal Knee Extensions': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
-                        
-                        // Lateral Ankle Sprain exercises
-                        'Ankle Dorsiflexion Mobility': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Dorsiflexion Mobility.mp4',
-                        'Ankle Strengthening (Isometric/Eversion Band Work)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                        'Ankle Strengthening (Isometric Eversion)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                        'Calf Raise Exercise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                        'Calf Raises': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                        'Calf Raise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                        'Proprioceptive Control (Clock Reaches)': '/exercise-demo-videos/Lateral Ankle Sprain/Proprioceptive Control (Clock Reaches).mp4',
-                        'Single-Leg Squat': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
-                        'Single-Leg Squats': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
-                        'Forward Lunge': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
-                        'Forward Lunges': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
-                        'Hop to Landing': '/exercise-demo-videos/Lateral Ankle Sprain/Hop to Landing.mp4',
-                        
-                        // High Ankle Sprain exercises
-                        'Elevated Ankle Pumps': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
-                        'Elevated Ankle Pump': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
-                        'Ankle Circles': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
-                        'Ankle Circle': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
-                        'Double-Leg Calf Raises': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
-                        'Double-Leg Calf Raise': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
-                        'Progressive Weight Bearing': '/exercise-demo-videos/High Ankle Sprain/Progressive Weight Bearing.mp4',
-                        
-                        // Medial Ankle Sprain exercises
-                        'Ankle Inversion Mobility': '/exercise-demo-videos/Medial Ankle Sprain/Ankle Inversion Mobility.mp4',
-                        'Isometric Ankle Inversion': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
-                        'Tibialis Posterior Strengthening': '/exercise-demo-videos/Medial Ankle Sprain/Tibialis Posterior Strengthening.mp4',
-                        'Single-Leg Balance': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                        
-                        // Aliases and variations
-                        'Balance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                        'Balance Maintenance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                        'Ankle Eversion – Band': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                        'Ankle Inversion – Band': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
-                        'Heel Raise – Off Step': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                      };
-                      
-                      if (videoMap[normalizedName]) {
-                        return videoMap[normalizedName];
-                      }
-                      
-                      const caseInsensitiveMatch = Object.keys(videoMap).find(
-                        key => key.toLowerCase() === normalizedName.toLowerCase()
-                      );
-                      if (caseInsensitiveMatch) {
-                        return videoMap[caseInsensitiveMatch];
-                      }
-                      
-                      const partialMatch = Object.keys(videoMap).find(
-                        key => normalizedName.toLowerCase().includes(key.toLowerCase()) ||
-                               key.toLowerCase().includes(normalizedName.toLowerCase())
-                      );
-                      if (partialMatch) {
-                        return videoMap[partialMatch];
-                      }
-                      
-                      return null;
-                    };
-                  
-                    const videoPath = getVideoPath(exercise.name);
-                    
-                    return videoPath ? (
-                      <div className="exercise-media">
-                        <div className="video-container">
-                          <video 
-                            ref={(video) => {
-                              if (video && (window as any).__registerVideo) {
-                                (window as any).__registerVideo(video);
-                              }
-                            }}
-                            controls 
-                            preload="metadata"
-                            className="exercise-video"
-                          >
-                            <source src={videoPath} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
-                        </div>
+                  {/* Exercise Video - Uses video URL from injuryPlans.ts ONLY */}
+                  {exercise.media?.videoUrl ? (
+                    <div className="exercise-media">
+                      <div className="video-container">
+                        <video 
+                          ref={(video) => {
+                            if (video && (window as any).__registerVideo) {
+                              (window as any).__registerVideo(video);
+                            }
+                          }}
+                          controls 
+                          preload="metadata"
+                          className="exercise-video"
+                        >
+                          <source src={exercise.media.videoUrl} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
                       </div>
-                    ) : (
-                      <div className="exercise-media-placeholder">
-                        <div className="placeholder-content">
-                          <span className="placeholder-icon">🎥</span>
-                          <span className="placeholder-text">Demo Coming Soon</span>
-                        </div>
+                    </div>
+                  ) : (
+                    <div className="exercise-media-placeholder">
+                      <div className="placeholder-content">
+                        <span className="placeholder-icon">🎥</span>
+                        <span className="placeholder-text">Demo Coming Soon</span>
                       </div>
-                    );
-                  })()}
+                    </div>
+                  )}
                   
-                  <p className="exercise-desc">{exercise.reasoning}</p>
+                  {/* Display summary from injury plan */}
+                  <p className="exercise-desc">
+                    {exercise.summary || 'Complete this exercise as prescribed'}
+                  </p>
                   
                   <div className="exercise-details">
                     <div className="detail-row">
@@ -663,131 +564,29 @@ export default function PersonalizedPlanView({
             </div>
 
             <div className="modal-body">
-              {/* Large Video/Media Section */}
+              {/* Large Video/Media Section - Uses video from injuryPlans.ts ONLY */}
               <div className="modal-media-section">
-                {(() => {
-                  const getVideoPath = (exerciseName: string): string | null => {
-                    const normalizedName = exerciseName.trim();
-                    
-                    const videoMap: Record<string, string> = {
-                      // ACL exercises
-                      'Quad Set': '/exercise-demo-videos/ACL/Quad Set.mp4',
-                      'Quad Sets': '/exercise-demo-videos/ACL/Quad Set.mp4',
-                      'Straight Leg Raises': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
-                      'Straight Leg Raise': '/exercise-demo-videos/ACL/Straight Leg Raises.mp4',
-                      'Ankle Pumps': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
-                      'Ankle Pump': '/exercise-demo-videos/ACL/Ankle Pumps.mp4',
-                      'Heel Slide': '/exercise-demo-videos/ACL/Heel Slide.mp4',
-                      'Heel Slides': '/exercise-demo-videos/ACL/Heel Slide.mp4',
-                      'Short Arc Quad': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                      'Short Arc Quads': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                      'Short Arc Quad Activation': '/exercise-demo-videos/ACL/Short Arc Quad.mp4',
-                      'Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
-                      'Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
-                      'Glute Bridges': '/exercise-demo-videos/ACL/Bridges.mp4',
-                      'Glute Bridge': '/exercise-demo-videos/ACL/Bridges.mp4',
-                      
-                      // MCL exercises
-                      'Hip Flexion with Straight Leg Raise': '/exercise-demo-videos/MCL/Hip Flexion with Straight Leg Raise.mp4',
-                      'Hip Adduction (Seated Pillow/Towel Squeeze)': '/exercise-demo-videos/MCL/Hip Adduction (Seated Pillow:Towel Squeeze).mp4',
-                      'Banded Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
-                      'Hip Abduction': '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4',
-                      'Lateral Step-Up': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
-                      'Lateral Step-Ups': '/exercise-demo-videos/MCL/Lateral Step-Up.mp4',
-                      
-                      // Meniscus Tear exercises
-                      'Mini Squats': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
-                      'Mini Squat': '/exercise-demo-videos/Meniscus Tear/Mini Squats.mp4',
-                      'Wall Sit': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
-                      'Wall Sits': '/exercise-demo-videos/Meniscus Tear/Wall Sit.mp4',
-                      'Step-Ups': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
-                      'Step-Up': '/exercise-demo-videos/Meniscus Tear/Step-Ups.mp4',
-                      'Terminal Knee Extension': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
-                      'Terminal Knee Extensions': '/exercise-demo-videos/Meniscus Tear/Terminal Knee Extension.mp4',
-                      
-                      // Lateral Ankle Sprain exercises
-                      'Ankle Dorsiflexion Mobility': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Dorsiflexion Mobility.mp4',
-                      'Ankle Strengthening (Isometric/Eversion Band Work)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                      'Ankle Strengthening (Isometric Eversion)': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                      'Calf Raise Exercise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                      'Calf Raises': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                      'Calf Raise': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                      'Proprioceptive Control (Clock Reaches)': '/exercise-demo-videos/Lateral Ankle Sprain/Proprioceptive Control (Clock Reaches).mp4',
-                      'Single-Leg Squat': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
-                      'Single-Leg Squats': '/exercise-demo-videos/Lateral Ankle Sprain/Single-Leg Squat.mp4',
-                      'Forward Lunge': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
-                      'Forward Lunges': '/exercise-demo-videos/Lateral Ankle Sprain/Forward Lunge.mp4',
-                      'Hop to Landing': '/exercise-demo-videos/Lateral Ankle Sprain/Hop to Landing.mp4',
-                      
-                      // High Ankle Sprain exercises
-                      'Elevated Ankle Pumps': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
-                      'Elevated Ankle Pump': '/exercise-demo-videos/High Ankle Sprain/Elevated Ankle Pumps.mp4',
-                      'Ankle Circles': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
-                      'Ankle Circle': '/exercise-demo-videos/High Ankle Sprain/Ankle Circles.mp4',
-                      'Double-Leg Calf Raises': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
-                      'Double-Leg Calf Raise': '/exercise-demo-videos/High Ankle Sprain/Double-Leg Calf Raises.mp4',
-                      'Progressive Weight Bearing': '/exercise-demo-videos/High Ankle Sprain/Progressive Weight Bearing.mp4',
-                      
-                      // Medial Ankle Sprain exercises
-                      'Ankle Inversion Mobility': '/exercise-demo-videos/Medial Ankle Sprain/Ankle Inversion Mobility.mp4',
-                      'Isometric Ankle Inversion': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
-                      'Tibialis Posterior Strengthening': '/exercise-demo-videos/Medial Ankle Sprain/Tibialis Posterior Strengthening.mp4',
-                      'Single-Leg Balance': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                      
-                      // Aliases and variations
-                      'Balance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                      'Balance Maintenance Exercises': '/exercise-demo-videos/Medial Ankle Sprain/Single-Leg Balance.mp4',
-                      'Ankle Eversion – Band': '/exercise-demo-videos/Lateral Ankle Sprain/Ankle Strengthening (Isometric:Eversion Band Work).mp4',
-                      'Ankle Inversion – Band': '/exercise-demo-videos/Medial Ankle Sprain/Isometric Ankle Inversion.mp4',
-                      'Heel Raise – Off Step': '/exercise-demo-videos/Lateral Ankle Sprain/Calf Raise Exercise.mp4',
-                    };
-                    
-                    if (videoMap[normalizedName]) {
-                      return videoMap[normalizedName];
-                    }
-                    
-                    const caseInsensitiveMatch = Object.keys(videoMap).find(
-                      key => key.toLowerCase() === normalizedName.toLowerCase()
-                    );
-                    if (caseInsensitiveMatch) {
-                      return videoMap[caseInsensitiveMatch];
-                    }
-                    
-                    const partialMatch = Object.keys(videoMap).find(
-                      key => normalizedName.toLowerCase().includes(key.toLowerCase()) ||
-                             key.toLowerCase().includes(normalizedName.toLowerCase())
-                    );
-                    if (partialMatch) {
-                      return videoMap[partialMatch];
-                    }
-                    
-                    return null;
-                  };
-                
-                  const videoPath = getVideoPath(selectedExercise.name);
-                  
-                  return videoPath ? (
-                    <div className="modal-video-container">
-                      <video 
-                        ref={(video) => {
-                          if (video && (window as any).__registerVideo) {
-                            (window as any).__registerVideo(video);
-                          }
-                        }}
-                        controls 
-                        className="modal-exercise-video"
-                      >
-                        <source src={videoPath} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  ) : (
-                    <div className="modal-media-placeholder">
-                      <span className="placeholder-icon-large">🎥</span>
-                      <p>Demo video coming soon</p>
-                    </div>
-                  );
-                })()}
+                {selectedExercise.media?.videoUrl ? (
+                  <div className="modal-video-container">
+                    <video 
+                      ref={(video) => {
+                        if (video && (window as any).__registerVideo) {
+                          (window as any).__registerVideo(video);
+                        }
+                      }}
+                      controls 
+                      className="modal-exercise-video"
+                    >
+                      <source src={selectedExercise.media.videoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                ) : (
+                  <div className="modal-media-placeholder">
+                    <span className="placeholder-icon-large">🎥</span>
+                    <p>Demo video coming soon</p>
+                  </div>
+                )}
               </div>
 
               {/* Detailed Information */}
@@ -818,10 +617,21 @@ export default function PersonalizedPlanView({
                   </div>
                 </div>
 
+                {/* Exercise Summary (from injuryPlans.ts) */}
+                {selectedExercise.summary && (
+                  <div className="modal-section">
+                    <h3>🎯 Why This Exercise</h3>
+                    <div className="personalization-reason">
+                      <p>{selectedExercise.summary}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Full Exercise Description */}
                 <div className="modal-section">
-                  <h3>📝 Why This Exercise?</h3>
+                  <h3>📝 How To Perform</h3>
                   <div className="modal-description">
-                    {selectedExercise.reasoning.split('\n').map((line: string, idx: number) => (
+                    {(selectedExercise.description || selectedExercise.summary || 'No description available').split('\n').map((line: string, idx: number) => (
                       <p key={idx} className="description-line">{line}</p>
                     ))}
                   </div>

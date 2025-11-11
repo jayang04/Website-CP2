@@ -53,8 +53,27 @@ export interface PersonalizedExercise {
   restTime: number; // seconds
   difficulty: number; // 1-10
   modifications: string[];
-  reasoning: string; // Why this exercise was selected
+  reasoning: string; // Why this exercise was selected (personalization reasoning)
   expectedPainLevel: string; // "none", "mild", "moderate"
+  
+  // Enriched fields from injury plans (added during enrichment)
+  id?: string; // Exercise ID from injury plan
+  summary?: string; // Short one-line summary from injury plan
+  description?: string; // Full detailed description from injury plan
+  image?: string; // Emoji icon
+  media?: {
+    images?: string[];
+    videoUrl?: string;
+    thumbnail?: string;
+  };
+  painThreshold?: string; // Pain threshold from injury plan
+  hold?: string; // Hold time description from injury plan
+  requiredEquipment?: string[];
+  personalizationReasoning?: string; // Stored reasoning from personalization
+  originalSets?: number; // Original sets from injury plan
+  originalReps?: number; // Original reps from injury plan
+  personalizedSets?: number; // Personalized sets
+  personalizedReps?: number; // Personalized reps
 }
 
 export interface ProgressMetrics {

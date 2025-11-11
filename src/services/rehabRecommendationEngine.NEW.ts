@@ -223,7 +223,7 @@ export class RehabRecommendationEngine {
     exercise: PhaseExercise,
     difficultyMultiplier: number,
     userProfile: UserProfile,
-    _metrics: ProgressMetrics
+    metrics: ProgressMetrics
   ): PersonalizedExercise {
     // Adjust sets and reps based on difficulty multiplier
     const adjustedSets = Math.max(1, Math.round(exercise.sets * difficultyMultiplier));
@@ -237,7 +237,7 @@ export class RehabRecommendationEngine {
     const reasoning = this.generateExerciseReasoning(
       exercise,
       userProfile,
-      _metrics,
+      metrics,
       difficultyMultiplier
     );
     
@@ -304,12 +304,12 @@ export class RehabRecommendationEngine {
   private prioritizeExercises(
     exercises: PhaseExercise[],
     userProfile: UserProfile,
-    _metrics: ProgressMetrics
+    metrics: ProgressMetrics
   ): PhaseExercise[] {
     // Score each exercise based on relevance
     const scored = exercises.map(ex => ({
       exercise: ex,
-      score: this.calculateExerciseScore(ex, userProfile, _metrics)
+      score: this.calculateExerciseScore(ex, userProfile, metrics)
     }));
     
     // Sort by score (highest first)
@@ -324,7 +324,7 @@ export class RehabRecommendationEngine {
   private calculateExerciseScore(
     exercise: PhaseExercise,
     userProfile: UserProfile,
-    _metrics: ProgressMetrics
+    metrics: ProgressMetrics
   ): number {
     let score = 50; // Base score
     
@@ -369,7 +369,7 @@ export class RehabRecommendationEngine {
   private generateExerciseReasoning(
     exercise: PhaseExercise,
     userProfile: UserProfile,
-    _metrics: ProgressMetrics,
+    metrics: ProgressMetrics,
     difficultyMultiplier: number
   ): string {
     const reasons: string[] = [];
@@ -550,7 +550,7 @@ export class RehabRecommendationEngine {
    */
   calculateDifficultyAdjustment(
     metrics: ProgressMetrics,
-    _sessions: SessionHistory[]
+    sessions: SessionHistory[]
   ): DifficultyAdjustment {
     let score = 0;
     
@@ -644,7 +644,7 @@ export class RehabRecommendationEngine {
   /**
    * Generate motivational message
    */
-  generateMotivationalMessage(metrics: ProgressMetrics, _sessions: SessionHistory[]): string {
+  generateMotivationalMessage(metrics: ProgressMetrics, sessions: SessionHistory[]): string {
     if (metrics.painTrend === 'IMPROVING') {
       return "Great progress! Your pain is decreasing - keep up the excellent work! 💪";
     }
@@ -667,7 +667,7 @@ export class RehabRecommendationEngine {
   /**
    * Calculate next milestone
    */
-  calculateNextMilestone(_currentPhase: any, metrics: ProgressMetrics): string {
+  calculateNextMilestone(currentPhase: any, metrics: ProgressMetrics): string {
     if (metrics.estimatedRecoveryProgress < 25) {
       return "Focus on pain reduction and mobility restoration";
     }
@@ -689,7 +689,7 @@ export class RehabRecommendationEngine {
   generateWarnings(
     metrics: ProgressMetrics, 
     userProfile: UserProfile,
-    _currentPhase: any
+    currentPhase: any
   ): string[] {
     const warnings: string[] = [];
     

@@ -95,7 +95,7 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           reps: 10,
           hold: '5-10 seconds',
           summary: 'Tighten quadriceps by pressing knee toward floor',
-          description: '• Lie or sit with the injured leg straight (other leg bent or straight)\n• Tighten the quadriceps by pressing the back of the knee toward the floor\n• Hold for 5–10 seconds\n• Frequency: 3–5 sets × 10 repetitions daily',
+          description: '• Lie or sit with the injured leg straight (other leg bent or straight)\n• Tighten the quadriceps by pressing the back of the knee toward the floor\n• Hold for 5-10 seconds\n• Frequency: 3-5 sets x 10 repetitions daily',
           image: '🦵',
           media: {
             videoUrl: '/exercise-demo-videos/ACL/Quad Set.mp4'
@@ -109,7 +109,7 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           sets: 3,
           reps: 10,
           summary: 'Slide heel toward buttocks to bend knee',
-          description: '• Lie down or sit with both legs straight\n• Slide the heel of the injured leg toward the buttocks, stopping before pain\n• Frequency: 3 sets × 10 repetitions daily',
+          description: '• Lie down or sit with both legs straight\n• Slide the heel of the injured leg toward the buttocks, stopping before pain\n• Frequency: 3 sets x 10 repetitions daily',
           image: '🦵',
           media: {
             videoUrl: '/exercise-demo-videos/ACL/Heel Slide.mp4'
@@ -123,7 +123,7 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           sets: 3,
           reps: 30,
           summary: 'Flex and extend ankle to improve circulation',
-          description: '• Place a rolled towel under the ankle\n• Flex and extend the ankle (pull toes toward you, then point away)\n• Frequency: 3 sets × 20–30 repetitions daily or for 2–3 minutes continuously',
+          description: '• Place a rolled towel under the ankle\n• Flex and extend the ankle (pull toes toward you, then point away)\n• Frequency: 3 sets x 20-30 repetitions daily or for 2-3 minutes continuously',
           image: '👣',
           media: {
             videoUrl: '/exercise-demo-videos/ACL/Ankle Pumps.mp4'
@@ -156,7 +156,7 @@ export const ACL_REHAB_PLAN: InjuryRehabPlan = {
           reps: 20,
           hold: '3 seconds',
           summary: 'Lift lower leg by contracting quadriceps',
-          description: '• Place a foam roller or rolled towel (10–15 cm high) under the knee\n• Lift the lower leg by contracting the quadriceps, keeping the knee in contact with the support\n• Hold for 3 seconds, then lower slowly\n• Frequency: 3 sets × 15–20 repetitions daily\n• Discontinue if pain occurs',
+          description: '• Place a foam roller or rolled towel (10-15 cm high) under the knee\n• Lift the lower leg by contracting the quadriceps, keeping the knee in contact with the support\n• Hold for 3 seconds, then lower slowly\n• Frequency: 3 sets x 15-20 repetitions daily\n• Discontinue if pain occurs',
           image: '🦵',
           media: {
             videoUrl: '/exercise-demo-videos/ACL/Short Arc Quad.mp4'
@@ -278,7 +278,7 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           sets: 5,
           reps: 15,
           summary: 'Slide heel towards buttocks to restore knee flexion',
-          description: '• Start with the knee as straight as possible\n• Use both arms as support\n• Slowly slide the heel towards the buttock until a gentle stretch is felt\n• Stop before pain, then return to start\n• Goal: Regain knee flexion up to 135–145° pain-free',
+          description: '• Start with the knee as straight as possible\n• Use both arms as support\n• Slowly slide the heel towards the buttock until a gentle stretch is felt\n• Stop before pain, then return to start\n• Goal: Regain knee flexion up to 135-145° pain-free',
           image: '🦵',
           media: {
             videoUrl: '/exercise-demo-videos/MCL/Heel Slide.mp4'
@@ -326,7 +326,7 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           reps: 10,
           hold: '6 seconds',
           summary: 'Press knee into roller to activate quadriceps',
-          description: '• Place a foam roller under the injured knee. If unavailable, use a rolled-up towel or blanket (10–15 cm high)\n• Push the back of the knee down into the roller and hold for 6 seconds\n• 3–5 sessions per day × 8–12 repetitions',
+          description: '• Place a foam roller under the injured knee. If unavailable, use a rolled-up towel or blanket (10-15 cm high)\n• Push the back of the knee down into the roller and hold for 6 seconds\n• 3-5 sessions per day x 8-12 repetitions',
           image: '🦵',
           media: {
             videoUrl: '/exercise-demo-videos/MCL/Quad Set.mp4'
@@ -342,7 +342,7 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           reps: 10,
           hold: '6 seconds',
           summary: 'Straighten leg while keeping knee on roller',
-          description: '• Lie on your back with the roller (or rolled towel) under the knee\n• Straighten the lower leg by lifting the heel while keeping the knee in contact with the roller\n• Hold for 6 seconds, then lower slowly\n• Continue for 1–2 weeks as tolerated',
+          description: '• Lie on your back with the roller (or rolled towel) under the knee\n• Straighten the lower leg by lifting the heel while keeping the knee in contact with the roller\n• Hold for 6 seconds, then lower slowly\n• Continue for 1-2 weeks as tolerated',
           image: '🦵',
           media: {
             videoUrl: '/exercise-demo-videos/MCL/Short Arc Quad.mp4'
@@ -375,7 +375,7 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           sets: 3,
           reps: 12,
           summary: 'Move leg outward against resistance band',
-          description: '• Use a loop band placed just above the knees\n• Stand on the injured leg with hands on hips\n• Move the uninjured leg outward (abduction) and return\n• Perform on both sides\n• 3 sets × 10–15 repetitions daily',
+          description: '• Use a loop band placed just above the knees\n• Stand on the injured leg with hands on hips\n• Move the uninjured leg outward (abduction) and return\n• Perform on both sides\n• 3 sets x 10-15 repetitions daily',
           image: '🏋️',
           media: {
             videoUrl: '/exercise-demo-videos/MCL/Banded Hip Abduction.mp4'
@@ -391,7 +391,7 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           reps: 10,
           hold: '6 seconds',
           summary: 'Lift straight leg to strengthen hip flexors',
-          description: '• Lie on your back with the injured leg straight\n• Press the back of the knee gently into the floor\n• Lift the leg about 30 cm off the floor\n• Hold for 6 seconds, then lower slowly\n• 3 sets × 8–12 repetitions daily',
+          description: '• Lie on your back with the injured leg straight\n• Press the back of the knee gently into the floor\n• Lift the leg about 30 cm off the floor\n• Hold for 6 seconds, then lower slowly\n• 3 sets x 8-12 repetitions daily',
           image: '🦵',
           media: {
             videoUrl: '/exercise-demo-videos/MCL/Hip Flexion with Straight Leg Raise.mp4'
@@ -406,7 +406,7 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           reps: 12,
           hold: '6 seconds',
           summary: 'Squeeze pillow between knees',
-          description: '• Sit with knees bent and a pillow or folded towel between them\n• Squeeze gently, hold for 6 seconds, then relax\n• 8–12 repetitions daily',
+          description: '• Sit with knees bent and a pillow or folded towel between them\n• Squeeze gently, hold for 6 seconds, then relax\n• 8-12 repetitions daily',
           image: '💺',
           media: {
             videoUrl: '/exercise-demo-videos/MCL/Hip Adduction (Seated Pillow:Towel Squeeze).mp4'
@@ -421,10 +421,10 @@ export const MCL_REHAB_PLAN: InjuryRehabPlan = {
           sets: 3,
           reps: 10,
           summary: 'Step up sideways onto platform',
-          description: '• Stand sideways on a low step with the injured leg on the step\n• Lean slightly forward and step up\n• Slowly lower back down\n• 8–12 repetitions daily\n• Progress by increasing step height as tolerated',
+          description: '• Stand sideways on a low step with the injured leg on the step\n• Lean slightly forward and step up\n• Slowly lower back down\n• 8-12 repetitions daily\n• Progress by increasing step height as tolerated',
           image: '📦',
           media: {
-            videoUrl: '/exercise-demo-videos/MCL/Lateral Step-Up.mp4'
+            videoUrl: '/exercise-demo-videos/MCL/Lateral Step Up.mp4'
           },
           difficulty: 'intermediate',
           requiredEquipment: ['Step or platform (start 4-6 inches)'],
@@ -502,7 +502,7 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
         },
         {
           id: 'men-1-2',
-          name: 'Quadriceps Set',
+          name: 'Quad Set',
           sets: 3,
           reps: 10,
           hold: '10 seconds',
@@ -521,7 +521,7 @@ export const MENISCUS_REHAB_PLAN: InjuryRehabPlan = {
           sets: 3,
           reps: 30,
           summary: 'Flex and extend ankle to improve circulation',
-          description: '• Place a rolled towel under the ankle\n• Flex and extend the ankle (pull toes toward you, then point away)\n• Frequency: 3 sets × 20–30 repetitions daily or for 2–3 minutes continuously',
+          description: '• Place a rolled towel under the ankle\n• Flex and extend the ankle (pull toes toward you, then point away)\n• Frequency: 3 sets x 20-30 repetitions daily or for 2-3 minutes continuously',
           image: '👣',
           media: {
             videoUrl: '/exercise-demo-videos/Meniscus Tear/Ankle Pumps.mp4'
@@ -973,7 +973,7 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
         },
         {
           id: 'mas-2-2',
-          name: 'Ankle Inversion - Band',
+          name: 'Ankle Inversion – Band',
           sets: 3,
           reps: 15,
           summary: 'Pull foot inward with resistance band',
@@ -988,7 +988,7 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
         },
         {
           id: 'mas-2-3',
-          name: 'Ankle Eversion - Band',
+          name: 'Ankle Eversion – Band',
           sets: 3,
           reps: 15,
           summary: 'Push foot outward with resistance band',
@@ -1003,7 +1003,7 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
         },
         {
           id: 'mas-2-4',
-          name: 'Heel Raise - Off Step',
+          name: 'Heel Raise – Off Step',
           sets: 3,
           reps: 15,
           summary: 'Raise heel on step edge',
@@ -1018,7 +1018,7 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
         },
         {
           id: 'mas-2-5',
-          name: 'Ankle Dorsiflexion - Wall Support',
+          name: 'Ankle Dorsiflexion – Wall Support',
           sets: 3,
           reps: 15,
           summary: 'Lift toes against wall for ankle strength',
@@ -1050,7 +1050,7 @@ export const MEDIAL_ANKLE_SPRAIN_PLAN: InjuryRehabPlan = {
       exercises: [
         {
           id: 'mas-3-1',
-          name: 'Double-Leg Jump',
+          name: 'Double Leg Jump',
           sets: 3,
           reps: 10,
           summary: 'Jump and land on both legs',

@@ -47,7 +47,38 @@ Last Updated: November 5, 2025
 
 ---
 
-## ✨ Features (4 documents)
+## ✨ Features (5 documents - Cleaned up!)
+
+### 🎯 Personalized Plan System (Complete & Ready!)
+
+| Document | What's Inside | When to Read |
+|----------|---------------|--------------|
+| [📖 README.md](./features/README.md) | **START HERE** - Navigation & overview | Main entry point |
+| [⚡ QUICK_REFERENCE.md](./features/QUICK_REFERENCE.md) | Quick commands & checklist | Quick lookups |
+| [� COMPLETE_SUMMARY.md](./features/COMPLETE_SUMMARY.md) | Full refactor documentation | Deep dive |
+| [🎬 PERSONALIZED_PLAN_VIDEO_FIX.md](./features/PERSONALIZED_PLAN_VIDEO_FIX.md) | Latest video fix details | Recent changes |
+
+**✅ What Was Done:**
+- Removed ALL hardcoded databases (~1300 lines deleted)
+- Single source of truth: `injuryPlans.ts`
+- Fixed video mismatches completely
+- Clean, maintainable architecture
+
+**📚 Documentation Cleanup:**
+- Removed 11 duplicate/outdated docs
+- Kept only 5 essential files
+- Created clear navigation
+
+**🧪 Quick Test:**
+```bash
+npm run dev
+# Medial Ankle Sprain + Pain 8 → Shows correct videos
+# ACL + Pain 7 → Shows ACL videos (not ankle!)
+```
+
+---
+
+## ✨ Other Features
 
 | Document | What's Inside | When to Use |
 |----------|---------------|-------------|
@@ -55,11 +86,16 @@ Last Updated: November 5, 2025
 | [🏥 COMPLETE_REHAB_PLANS.md](./features/COMPLETE_REHAB_PLANS.md) | All rehab programs, exercises, phases | Understanding rehab programs |
 | [💻 IMPLEMENTATION_SUMMARY.md](./features/IMPLEMENTATION_SUMMARY.md) | Technical implementation notes | Developer reference |
 | [🔄 REFRESH_FIX.md](./features/REFRESH_FIX.md) | Refresh bug fixes, infinite loop solutions | Troubleshooting refresh issues |
+| [🎯 PERSONALIZED_PLAN_EXERCISE_FIX.md](./features/PERSONALIZED_PLAN_EXERCISE_FIX.md) | Original personalized plan fix | Historical reference |
+| [⚡ PERSONALIZED_PLAN_ENRICHMENT_SUMMARY.md](./features/PERSONALIZED_PLAN_ENRICHMENT_SUMMARY.md) | Quick summary of enrichment fix | **Quick reference** |
+| [📚 PERSONALIZED_PLAN_ENRICHMENT_COMPLETE.md](./features/PERSONALIZED_PLAN_ENRICHMENT_COMPLETE.md) | Complete enrichment documentation | **Deep dive** into personalization fix |
+| [🎥 MEDIAL_ANKLE_VIDEO_FIX.md](./features/MEDIAL_ANKLE_VIDEO_FIX.md) | Fixed video display for Medial Ankle Sprain | Video troubleshooting |
 
 **🎯 Recommended Reading Order:**
 1. COMPLETE_FEATURE_GUIDE.md (overview)
 2. COMPLETE_REHAB_PLANS.md (rehab details)
-3. REFRESH_FIX.md (if encountering issues)
+3. PERSONALIZED_PLAN_ENRICHMENT_SUMMARY.md (personalization quick ref)
+4. REFRESH_FIX.md (if encountering issues)
 
 ---
 

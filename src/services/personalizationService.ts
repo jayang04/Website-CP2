@@ -1,21 +1,22 @@
-// Integration service to connect personalization engine with existing data
+// Simplified Integration Service - Uses injuryPlans.ts as single source of truth
 
 import { rehabEngine } from './rehabRecommendationEngine';
 import type { UserProfile, SessionHistory, PersonalizedPlan } from '../types/personalization';
 
 /**
- * Service to manage personalized rehab recommendations
+ * Simplified service to manage personalized rehab recommendations
+ * No more complex enrichment - exercises come directly from injuryPlans.ts
  */
 export class PersonalizationService {
   
   /**
-   * Normalize injury type to match exercise database keys
+   * Normalize injury type to match standard format
    */
   private static normalizeInjuryType(injuryType: string): string {
     console.log('🔍 Normalizing injury type:', injuryType);
     const normalized = injuryType.toUpperCase();
     
-    // Map full injury names to database keys
+    // Map full injury names to standard keys
     if (normalized.includes('ACL')) {
       console.log('✅ Matched to: ACL');
       return 'ACL';
@@ -41,7 +42,7 @@ export class PersonalizationService {
       return 'HIGH_ANKLE';
     }
     
-    // Default: remove common suffixes
+    // Default
     const result = normalized.replace(/\s+(TEAR|SPRAIN|INJURY)$/i, '').trim();
     console.log('⚠️ Using default normalization:', result);
     return result;
@@ -91,12 +92,21 @@ export class PersonalizationService {
   
   /**
    * Generate personalized weekly plan
+   * Now simplified - all exercise data comes from injuryPlans.ts via rehabEngine
    */
   static generatePlan(userId: string, injuryData: any, sessionData: any[]): PersonalizedPlan {
+    console.log('🎯 Generating personalized plan for user:', userId);
+    
     const userProfile = this.createUserProfile(userId, injuryData);
     const sessionHistory = sessionData.map(s => this.createSessionHistory(s));
     
-    return rehabEngine.generateWeeklyPlan(userProfile, sessionHistory);
+    // The rehabEngine now pulls exercises directly from injuryPlans.ts
+    // No enrichment needed - everything is already there!
+    const plan = rehabEngine.generateWeeklyPlan(userProfile, sessionHistory);
+    
+    console.log('✅ Generated plan with', plan.exercises.length, 'exercises');
+    
+    return plan;
   }
   
   /**
