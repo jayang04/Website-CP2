@@ -43,7 +43,7 @@ export const CLOUDINARY_VIDEO_IDS: Record<string, string> = {
   // Medial Ankle Sprain Videos
   'exercise-demo-videos/Medial_Ankle_Sprain/Ankle_Pumps': 'Ankle_Pumps_zlxxwr', // TODO: Add actual ID
   'exercise-demo-videos/Medial_Ankle_Sprain/Ankle_Circles': 'Ankle_Circles_skslbq', // TODO: Add actual ID
-  'exercise-demo-videos/Medial_Ankle_Sprain/Single-Leg_Balance': 'Single-Leg_Balance_d4qldy', // TODO: Add actual ID
+  'exercise-demo-videos/Medial_Ankle_Sprain/Single-Leg_Balance': 'Single_Leg_Balance_d4qldy', // TODO: Add actual ID
   'exercise-demo-videos/Medial_Ankle_Sprain/Ankle_Inversion_–_Band': 'Ankle_Inversion_Band_dj26td', // TODO: Add actual ID
   'exercise-demo-videos/Medial_Ankle_Sprain/Ankle_Eversion_–_Band': 'Ankle_Eversion_Band_fbqvwx', // TODO: Add actual ID
   'exercise-demo-videos/Medial_Ankle_Sprain/Heel_Raise_–_Off_Step': 'Heel_Raise_Off_Step_syjgjo', // TODO: Add actual ID
