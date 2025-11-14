@@ -737,7 +737,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
                               preload="metadata"
                               className="exercise-video"
                             >
-                              <source src={exercise.media.videoUrl} type="video/mp4" />
+                              <source src={getCloudinaryVideoUrl(convertToCloudinaryPath(exercise.media.videoUrl))} type="video/mp4" />
                               Your browser does not support the video tag.
                             </video>
                           </div>
