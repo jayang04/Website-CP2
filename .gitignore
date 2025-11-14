@@ -23,13 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Exercise demo videos (large files)
-public/exercise-demo-videos/
+# Thumbnails (if you have them)
 public/thumbnails/
 
-# Video files
-*.mp4
-*.mov
+# Note: Exercise videos are now tracked via Git LFS
+# Large video files (non-exercise videos)
 *.avi
 *.mkv
-*.webm
