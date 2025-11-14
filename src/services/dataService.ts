@@ -361,6 +361,15 @@ export const injuryRehabService = {
     }
   },
 
+  // Clear user's injury data (for resetting general program)
+  clearUserInjury: (userId: string): void => {
+    const userInjuryKey = `${STORAGE_KEYS.USER_INJURY}_${userId}`;
+    const injuryProgressKey = `${STORAGE_KEYS.INJURY_PROGRESS}_${userId}`;
+    localStorage.removeItem(userInjuryKey);
+    localStorage.removeItem(injuryProgressKey);
+    console.log('🗑️ Cleared general program data for user:', userId);
+  },
+
   // Get injury rehabilitation plan
   getInjuryPlan: (userId: string) => {
     const injuryType = injuryRehabService.getUserInjury(userId);
