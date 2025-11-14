@@ -48,15 +48,15 @@ export const CLOUDINARY_VIDEO_IDS: Record<string, string> = {
   'exercise-demo-videos/Medial_Ankle_Sprain/Ankle_Eversion_–_Band': 'Ankle_Eversion_Band_fbqvwx', // TODO: Add actual ID
   'exercise-demo-videos/Medial_Ankle_Sprain/Heel_Raise_–_Off_Step': 'Heel_Raise_Off_Step_syjgjo', // TODO: Add actual ID
   'exercise-demo-videos/Medial_Ankle_Sprain/Ankle_Dorsiflexion_–_Wall_Support': 'Ankle_Dorsiflexion_Wall_Support_tcjooz', // TODO: Add actual ID
-  'exercise-demo-videos/Medial_Ankle_Sprain/Double-Leg_Jump': 'Double-Leg_Jump_rbscw2', // TODO: Add actual ID
+  'exercise-demo-videos/Medial_Ankle_Sprain/Double-Leg_Jump': 'Double_Leg_Jump_rbscw2', // TODO: Add actual ID
   'exercise-demo-videos/Medial_Ankle_Sprain/Lateral_Bound': 'Lateral_Bound_mdbrte', // TODO: Add actual ID
-  'exercise-demo-videos/Medial_Ankle_Sprain/Single-Leg_Hops': 'Single-Leg_Hops_xoc6gc', // TODO: Add actual ID
+  'exercise-demo-videos/Medial_Ankle_Sprain/Single-Leg_Hops': 'Single_Leg_Hops_xoc6gc', // TODO: Add actual ID
 
   // High Ankle Sprain Videos
   'exercise-demo-videos/High_Ankle_Sprain/Elevated_Ankle_Pumps': 'Elevated_Ankle_Pumps_nmwzad', // TODO: Add actual ID
-  'exercise-demo-videos/High_Ankle_Sprain/Ankle_Circles': 'High_Ankle_Circles_mj1drj', // TODO: Add actual ID
+  'exercise-demo-videos/High_Ankle_Sprain/Ankle_Circles': 'Ankle_Circles_mj1drj', // TODO: Add actual ID
   'exercise-demo-videos/High_Ankle_Sprain/Progressive_Weight_Bearing': 'Progressive_Weight_Bearing_wvphds', // TODO: Add actual ID
-  'exercise-demo-videos/High_Ankle_Sprain/Double-Leg_Calf_Raises': 'Double-Leg_Calf_Raises_qkumb2', // TODO: Add actual ID
-  'exercise-demo-videos/High_Ankle_Sprain/Proprioceptive_Control_(Clock_Reaches)': 'High_Proprioceptive_Control_Clock_Reaches_pol1qu', // TODO: Add actual ID
+  'exercise-demo-videos/High_Ankle_Sprain/Double-Leg_Calf_Raises': 'Double_Leg_Calf_Raises_qkumb2', // TODO: Add actual ID
+  'exercise-demo-videos/High_Ankle_Sprain/Proprioceptive_Control_(Clock_Reaches)': 'Proprioceptive_Control_Clock_Reaches_pol1qu', // TODO: Add actual ID
   'exercise-demo-videos/High_Ankle_Sprain/Glute_Bridge': 'Glute_Bridge_uziyap', // TODO: Add actual ID
 };
