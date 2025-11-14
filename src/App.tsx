@@ -275,25 +275,29 @@ function App() {
     localStorage.setItem(`intake_skipped_${user?.uid}`, 'true');
   };
 
-  // Handle reset plan (for testing)
-  const handleResetPlan = () => {
+  // Handle reset ALL programs (both personalized and general)
+  const resetAllPrograms = () => {
     if (!user) return;
     
-    if (window.confirm('Are you sure you want to reset your personalized plan? This will clear all your intake data and progress.')) {
-      console.log('🗑️ Resetting personalized plan for user:', user.uid);
+    if (window.confirm('Are you sure you want to reset ALL your programs? This will clear both personalized and general program data and progress.')) {
+      console.log('🗑️ Resetting ALL programs for user:', user.uid);
       
-      // Clear localStorage with user-specific keys
+      // Clear personalized plan data
       localStorage.removeItem(`intake_data_${user.uid}`);
       localStorage.removeItem(`intake_skipped_${user.uid}`);
+      
+      // Clear general program data
+      injuryRehabService.clearUserInjury(user.uid);
       
       // Clear React state
       setPersonalizedPlan(null);
       setIntakeData(null);
+      setActivePlanType(null);
       
       // Trigger dashboard refresh
       refreshDashboard();
       
-      console.log('✅ Plan reset complete');
+      console.log('✅ All programs reset complete');
     }
   };
 
@@ -516,7 +520,7 @@ function App() {
           onShowIntakeForm={() => setShowIntakeForm(true)}
           refreshKey={dashboardRefreshKey}
           onRefreshDashboard={refreshDashboard}
-          onResetPlan={handleResetPlan}
+          onResetPlan={resetAllPrograms}
           activePlanType={activePlanType}
         />
       )}
@@ -537,16 +541,27 @@ function App() {
           userId={user.uid}
           onBack={() => navigateTo('dashboard')}
           onProgramSelected={() => {
+            // Clear personalized data when starting general program
+            localStorage.removeItem(`intake_data_${user.uid}`);
+            localStorage.removeItem(`intake_skipped_${user.uid}`);
+            setPersonalizedPlan(null);
+            setIntakeData(null);
             setActivePlanType('general');
             refreshDashboard();
             navigateTo('dashboard');
           }}
           onDashboardRefresh={refreshDashboard}
+          onResetAllPrograms={resetAllPrograms}
         />
       )}
       {currentPage === 'injury-selection' && user && (
         <InjurySelection 
           onSelectInjury={(injuryType: InjuryType) => {
+            // Clear personalized data when starting general program
+            localStorage.removeItem(`intake_data_${user.uid}`);
+            localStorage.removeItem(`intake_skipped_${user.uid}`);
+            setPersonalizedPlan(null);
+            setIntakeData(null);
             injuryRehabService.setUserInjury(user.uid, injuryType);
             setActivePlanType('general'); // User chose general program
             navigateTo('injury-rehab');
@@ -559,6 +574,7 @@ function App() {
           userId={user.uid}
           onBack={() => navigateTo('dashboard')}
           onDashboardRefresh={refreshDashboard}
+          onResetAllPrograms={resetAllPrograms}
         />
       )}
       {currentPage === 'debug' && <PoseTestPage />}
@@ -1149,6 +1165,7 @@ function DashboardPage({
                   userId={user.uid}
                   onBack={() => {}}
                   onDashboardRefresh={onRefreshDashboard}
+                  onResetAllPrograms={onResetPlan}
                 />
               </div>
             ) : (

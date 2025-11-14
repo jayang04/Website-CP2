@@ -14,9 +14,10 @@ interface InjuryRehabProgramProps {
   onBack: () => void;
   onProgramSelected?: () => void; // Callback when program is selected
   onDashboardRefresh?: () => void; // Callback to refresh dashboard
+  onResetAllPrograms?: () => void; // Callback to reset all programs (both personalized and general)
 }
 
-export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramSelected, onDashboardRefresh }: InjuryRehabProgramProps) {
+export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramSelected, onDashboardRefresh, onResetAllPrograms }: InjuryRehabProgramProps) {
   const [plan, setPlan] = useState<InjuryRehabPlan | null>(null);
   const [progress, setProgress] = useState<any>(null);
   const [selectedPhase, setSelectedPhase] = useState(1);
@@ -253,6 +254,11 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
   }, [userId, checkBadgesOnLoad]);
 
   const handleSelectProgram = (injuryType: 'acl-tear' | 'mcl-tear' | 'meniscus-tear' | 'ankle-sprain' | 'medial-ankle-sprain' | 'high-ankle-sprain') => {
+    // Clear personalized plan data when selecting a general program
+    localStorage.removeItem(`intake_data_${userId}`);
+    localStorage.removeItem(`intake_skipped_${userId}`);
+    console.log('🗑️ Cleared personalized plan data for user:', userId);
+    
     injuryRehabService.setUserInjury(userId, injuryType);
     setShowProgramSelection(false);
     loadData();
@@ -392,22 +398,28 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
   };
 
   const handleResetProgram = () => {
-    const confirmed = window.confirm(
-      '⚠️ Are you sure you want to reset your program? This will clear your current progress and let you choose a new rehab path.'
-    );
-    
-    if (confirmed) {
-      // Clear the user's injury selection and progress
-      localStorage.removeItem(`rehabmotion_user_injury_${userId}`);
-      localStorage.removeItem(`rehabmotion_injury_progress_${userId}`);
-      
-      // Refresh dashboard to update stats
-      if (onDashboardRefresh) {
-        onDashboardRefresh();
-      }
-      
-      // Navigate back to dashboard where user can choose again
+    // Use the unified reset function if provided, otherwise fall back to local reset
+    if (onResetAllPrograms) {
+      onResetAllPrograms();
       _onBack();
+    } else {
+      const confirmed = window.confirm(
+        '⚠️ Are you sure you want to reset your program? This will clear your current progress and let you choose a new rehab path.'
+      );
+      
+      if (confirmed) {
+        // Clear the user's injury selection and progress
+        localStorage.removeItem(`rehabmotion_user_injury_${userId}`);
+        localStorage.removeItem(`rehabmotion_injury_progress_${userId}`);
+        
+        // Refresh dashboard to update stats
+        if (onDashboardRefresh) {
+          onDashboardRefresh();
+        }
+        
+        // Navigate back to dashboard where user can choose again
+        _onBack();
+      }
     }
   };
 
