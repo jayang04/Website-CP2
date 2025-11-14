@@ -8,6 +8,7 @@ import ExerciseAngleTracker from './ExerciseAngleTracker';
 import { cloudDashboardService, cloudCompletionsService } from '../services/cloudDataService';
 import { useBadges } from '../hooks/useBadges';
 import BadgeNotificationToast from './BadgeNotificationToast';
+import { getCloudinaryVideoUrl, convertToCloudinaryPath } from '../services/cloudinaryService';
 import '../styles/InjuryRehabProgram.css';
 import '../styles/PersonalizedPlan.css';
 import '../styles/AngleDetector.css';
@@ -442,7 +443,7 @@ export default function PersonalizedPlanView({
                   
                   <h4>{exercise.name}</h4>
                   
-                  {/* Exercise Video - Uses video URL from injuryPlans.ts ONLY */}
+                  {/* Exercise Video - Uses Cloudinary hosted videos */}
                   {exercise.media?.videoUrl ? (
                     <div className="exercise-media">
                       <div className="video-container">
@@ -456,7 +457,7 @@ export default function PersonalizedPlanView({
                           preload="metadata"
                           className="exercise-video"
                         >
-                          <source src={exercise.media.videoUrl} type="video/mp4" />
+                          <source src={getCloudinaryVideoUrl(convertToCloudinaryPath(exercise.media.videoUrl))} type="video/mp4" />
                           Your browser does not support the video tag.
                         </video>
                       </div>
@@ -579,7 +580,7 @@ export default function PersonalizedPlanView({
             </div>
 
             <div className="modal-body">
-              {/* Large Video/Media Section - Uses video from injuryPlans.ts ONLY */}
+              {/* Large Video/Media Section - Uses Cloudinary hosted videos */}
               <div className="modal-media-section">
                 {selectedExercise.media?.videoUrl ? (
                   <div className="modal-video-container">
@@ -592,7 +593,7 @@ export default function PersonalizedPlanView({
                       controls 
                       className="modal-exercise-video"
                     >
-                      <source src={selectedExercise.media.videoUrl} type="video/mp4" />
+                      <source src={getCloudinaryVideoUrl(convertToCloudinaryPath(selectedExercise.media.videoUrl))} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </div>

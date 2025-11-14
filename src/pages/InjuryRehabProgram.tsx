@@ -6,6 +6,7 @@ import ExerciseAngleTracker from '../components/ExerciseAngleTracker';
 import { cloudDashboardService } from '../services/cloudDataService';
 import { useBadges } from '../hooks/useBadges';
 import BadgeNotificationToast from '../components/BadgeNotificationToast';
+import { getCloudinaryVideoUrl, convertToCloudinaryPath } from '../services/cloudinaryService';
 import '../styles/InjuryRehabProgram.css';
 import '../styles/AngleDetector.css';
 
@@ -921,39 +922,32 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
             </div>
 
             <div className="modal-body">
-              {/* Large Video/Media Section */}
-              <div className="modal-media-section">
                 {selectedExercise.media?.videoUrl ? (
-                  <div className="modal-video-container">
-                    <video 
-                      ref={registerVideo}
-                      controls 
-                      poster={selectedExercise.media.thumbnail}
-                      className="modal-exercise-video"
-                    >
-                      <source src={selectedExercise.media.videoUrl} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
-                ) : selectedExercise.media?.images && selectedExercise.media.images.length > 0 ? (
-                  <div className="modal-image-gallery">
-                    {selectedExercise.media.images.map((img: string, idx: number) => (
-                      <img 
-                        key={idx}
-                        src={img} 
-                        alt={`${selectedExercise.name} step ${idx + 1}`}
-                        className="modal-exercise-image"
-                      />
-                    ))}
+                  <div className="exercise-media">
+                    <div className="video-container">
+                      <video 
+                        ref={(video) => {
+                          if (video && (window as any).__registerVideo) {
+                            (window as any).__registerVideo(video);
+                          }
+                        }}
+                        controls 
+                        preload="metadata"
+                        className="exercise-video"
+                      >
+                        <source src={getCloudinaryVideoUrl(convertToCloudinaryPath(selectedExercise.media.videoUrl))} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
                   </div>
                 ) : (
-                  <div className="modal-media-placeholder">
-                    <span className="placeholder-icon-large">🎥</span>
-                    <p>Demo video coming soon</p>
+                  <div className="exercise-media-placeholder">
+                    <div className="placeholder-content">
+                      <span className="placeholder-icon">🎥</span>
+                      <span className="placeholder-text">Demo Coming Soon</span>
+                    </div>
                   </div>
                 )}
-              </div>
-
               {/* Detailed Information */}
               <div className="modal-info-section">
                 <div className="modal-section">
