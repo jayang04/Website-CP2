@@ -15,7 +15,7 @@ export default function AboutUs() {
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
           <p className="text-lg text-gray-700 leading-relaxed">
             RehabMotion is dedicated to making professional-grade rehabilitation accessible to everyone. 
-            We combine cutting-edge AI technology with evidence-based physical therapy protocols to create 
+            We combine technology with evidence-based physical therapy protocols to create 
             personalized recovery programs that adapt to your unique needs and progress.
           </p>
         </div>
@@ -42,7 +42,7 @@ export default function AboutUs() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8">What Sets Us Apart</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { icon: '🎯', title: 'AI-Powered Tracking', desc: 'Our advanced pose detection technology ensures you perform exercises correctly, counting reps and monitoring form in real-time.' },
+              { icon: '🎯', title: 'Live Form Tracking', desc: 'Our advanced pose detection technology ensures you perform exercises correctly, counting reps and monitoring form in real-time.' },
               { icon: '📊', title: 'Personalized Programs', desc: 'Evidence-based rehabilitation plans customized to your specific injury, fitness level, and recovery goals.' },
               { icon: '🎓', title: 'Expert-Designed', desc: 'All programs are created by licensed physical therapists with years of clinical experience in sports rehabilitation.' },
               { icon: '📱', title: 'Accessible Anywhere', desc: 'Complete your rehabilitation exercises from home, the gym, or on the go. All you need is a device with a camera.' },

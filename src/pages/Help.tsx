@@ -20,7 +20,7 @@ export default function Help() {
     {
       category: 'Getting Started',
       question: 'How do I track my exercises?',
-      answer: 'Each exercise has a "Track with Camera" button that uses AI-powered pose detection to count your repetitions and ensure proper form. You can also manually mark exercises as complete.'
+      answer: 'Each exercise has a "Track with Camera" button that uses pose detection to count your repetitions and ensure proper form. You can also manually mark exercises as complete.'
     },
     {
       category: 'Exercises',

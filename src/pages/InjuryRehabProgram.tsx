@@ -754,7 +754,24 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
                       </div>
                     )}
                     
-                    <p className="exercise-desc">{exercise.summary || exercise.description}</p>
+                    <p className="exercise-desc">
+                      {(() => {
+                        const summary = exercise.summary || exercise.description || '';
+                        // Extract credit if it exists in the summary
+                        const creditMatch = summary.match(/^(.*?)\s*Credit to:\s*(.+)$/s);
+                        if (creditMatch) {
+                          return (
+                            <>
+                              {creditMatch[1].trim()}
+                              <span style={{ display: 'block', marginTop: '8px', fontSize: '0.85em', color: '#666', fontStyle: 'italic' }}>
+                                Credit to: {creditMatch[2].trim()}
+                              </span>
+                            </>
+                          );
+                        }
+                        return summary;
+                      })()}
+                    </p>
                     
                     <div className="exercise-details">
                       <div className="detail-row">

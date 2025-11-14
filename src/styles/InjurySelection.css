@@ -4,22 +4,52 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 20px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .injury-selection-header {
   text-align: center;
   margin-bottom: 40px;
+  animation: slideDown 0.6s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .injury-selection-header h1 {
   font-size: 2.5rem;
   color: var(--text-primary);
   margin-bottom: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .injury-selection-header .subtitle {
   font-size: 1.1rem;
   color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .injury-selection-controls {
@@ -34,6 +64,18 @@
   max-width: 500px;
   margin: 0 auto;
   width: 100%;
+  animation: scaleIn 0.5s ease-out 0.2s both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .search-icon {
@@ -42,6 +84,11 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.search-bar:focus-within .search-icon {
+  transform: translateY(-50%) scale(1.1);
 }
 
 .search-bar input {
@@ -50,12 +97,15 @@
   border: 2px solid #e0e0e0;
   border-radius: 12px;
   font-size: 16px;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .search-bar input:focus {
   outline: none;
   border-color: var(--primary-color);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
 }
 
 .category-filters {
@@ -72,23 +122,64 @@
   border-radius: 25px;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(102, 126, 234, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.filter-btn:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .filter-btn:hover {
   border-color: var(--primary-color);
   color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .filter-btn.active {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
   color: white;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+.filter-btn.active::before {
+  display: none;
 }
 
 .injury-category-section {
   margin-bottom: 50px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .category-title {
@@ -99,11 +190,24 @@
   align-items: center;
   gap: 12px;
   padding-bottom: 15px;
-  border-bottom: 3px solid var(--primary-color);
+  border-bottom: 3px solid transparent;
+  background: linear-gradient(to right, #667eea, #764ba2) bottom no-repeat;
+  background-size: 100% 3px;
+  font-weight: 700;
 }
 
 .category-icon {
   font-size: 2rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .injuries-grid {
@@ -119,15 +223,36 @@
   border-radius: 16px;
   padding: 25px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  animation: cardFadeIn 0.5s ease-out backwards;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.injury-card:nth-child(1) { animation-delay: 0.1s; }
+.injury-card:nth-child(2) { animation-delay: 0.2s; }
+.injury-card:nth-child(3) { animation-delay: 0.3s; }
+.injury-card:nth-child(4) { animation-delay: 0.4s; }
+.injury-card:nth-child(5) { animation-delay: 0.5s; }
+.injury-card:nth-child(6) { animation-delay: 0.6s; }
+
 .injury-card:hover {
-  border-color: var(--primary-color);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.2);
+  transform: translateY(-8px);
 }
 
 .injury-card-header {
@@ -139,6 +264,12 @@
 
 .injury-icon {
   font-size: 3rem;
+  transition: transform 0.4s ease;
+  display: inline-block;
+}
+
+.injury-card:hover .injury-icon {
+  transform: scale(1.15) rotate(5deg);
 }
 
 .severity-badge {
@@ -148,20 +279,36 @@
   font-weight: 600;
   color: white;
   text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.injury-card:hover .severity-badge {
+  transform: scale(1.05);
 }
 
 .injury-card h3 {
   font-size: 1.3rem;
   color: var(--text-primary);
   margin-bottom: 10px;
+  font-weight: 700;
+  transition: color 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.injury-card:hover h3 {
+  color: var(--primary-color);
 }
 
 .injury-description {
   color: var(--text-secondary);
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.6;
   margin-bottom: 15px;
   flex-grow: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .injury-meta {
@@ -170,6 +317,8 @@
   margin-bottom: 20px;
   padding-top: 15px;
   border-top: 1px solid #f0f0f0;
+  position: relative;
+  z-index: 1;
 }
 
 .meta-item {
@@ -178,6 +327,15 @@
   gap: 5px;
   font-size: 0.9rem;
   color: var(--text-secondary);
+  padding: 6px 10px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.injury-card:hover .meta-item {
+  background: rgba(102, 126, 234, 0.1);
+  transform: translateX(3px);
 }
 
 .meta-icon {
@@ -187,45 +345,78 @@
 .select-injury-btn {
   width: 100%;
   padding: 12px;
-  background: var(--primary-color);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.select-injury-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transition: left 0.4s ease;
+  z-index: -1;
+}
+
+.select-injury-btn:hover::before {
+  left: 0;
 }
 
 .select-injury-btn:hover {
-  background: var(--primary-dark);
   transform: translateX(5px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.select-injury-btn:active {
+  transform: translateX(3px);
 }
 
 .no-results {
   text-align: center;
   padding: 60px 20px;
   color: var(--text-secondary);
+  animation: fadeIn 0.5s ease-in;
 }
 
 .no-results p {
   font-size: 1.2rem;
   margin-bottom: 20px;
+  font-weight: 500;
 }
 
 .no-results button {
   padding: 12px 30px;
-  background: var(--primary-color);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  font-weight: 600;
 }
 
 .no-results button:hover {
-  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.no-results button:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 1200px) {

@@ -506,7 +506,7 @@ function App() {
       </header>
 
       {/* Main Content */}
-      {currentPage === 'home' && <HomePage />}
+      {currentPage === 'home' && <HomePage user={user} navigateTo={navigateTo} />}
       {currentPage === 'dashboard' && (
         <DashboardPage 
           user={user} 
@@ -622,60 +622,260 @@ function App() {
 }
 
 // Home Page Component
-function HomePage() {
+interface HomePageProps {
+  user: User | null;
+  navigateTo: (page: Page) => void;
+}
+
+function HomePage({ user, navigateTo }: HomePageProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const testimonials = [
+    {
+      name: "Sarah K.",
+      role: "ACL Recovery Patient",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+      quote: "This platform made my knee recovery so much easier! The guided exercises were perfect for my fitness level.",
+      rating: 5
+    },
+    {
+      name: "Mike L.",
+      role: "Ankle Sprain Recovery",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+      quote: "I loved tracking my progress and seeing real results. The charts kept me motivated throughout my ankle rehabilitation.",
+      rating: 5
+    },
+    {
+      name: "Priya S.",
+      role: "MCL Tear Recovery",
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+      quote: "The community support kept me motivated every day. Sharing my journey with others who understood made all the difference.",
+      rating: 5
+    },
+    {
+      name: "James T.",
+      role: "Meniscus Tear Recovery",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+      quote: "The live form tracking helped me perfect my technique and prevented re-injury. Incredible technology!",
+      rating: 5
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <>
-      <div className="hero-header">
-        <div className="container">
-          <h1>Welcome to RehabMotion</h1>
-          <p>Interactive injury recovery for knee and ankle rehabilitation</p>
+      {/* Hero Section */}
+      <div className="hero-section-modern">
+        <div className="hero-background"></div>
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1 className="hero-title">
+              Your Journey to
+              <span className="gradient-text"> Full Recovery</span>
+            </h1>
+            <p className="hero-subtitle">
+              Evidence-based rehabilitation programs powered by new technology for knee and ankle injuries
+            </p>
+            <div className="hero-stats">
+              <div className="stat-item">
+                <div className="stat-numbers">10K+</div>
+                <div className="stat-label">Successful Recoveries</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-numbers">95%</div>
+                <div className="stat-label">Recovery Rate</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-numbers">24/7</div>
+                <div className="stat-label">Support Available</div>
+              </div>
+            </div>
+            <div className="hero-cta">
+              <a 
+                onClick={() => user ? navigateTo('dashboard') : navigateTo('login')} 
+                className="btn-primary-modern"
+                style={{ cursor: 'pointer' }}
+              >
+                Start Your Recovery
+                <span className="btn-arrow">→</span>
+              </a>
+              <a href="#how-it-works" className="btn-secondary-modern">
+                How It Works
+              </a>
+            </div>
+          </div>
+          <div className="hero-image">
+            <div className="floating-card card-1">
+              <div className="card-icon">✅</div>
+              <div className="card-text">Personalized or General Rehab Plans</div>
+            </div>
+            <div className="floating-card card-2">
+              <div className="card-icon">🎥</div>
+              <div className="card-text">Video Demonstrations and Live Form Tracking</div>
+            </div>
+            <div className="floating-card card-3">
+              <div className="card-icon">📊</div>
+              <div className="card-text">Progress Tracking</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <main>
-        <section className="intro">
-          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Physical therapy session" className="intro-img" />
-          <div>
-            <h2>🎯 Guided Rehabilitation</h2>
-            <p>Personalized programs for knee and ankle recovery, designed by certified physical therapists and medical professionals.</p>
-            <h2>📊 Track Your Progress</h2>
-            <p>Visualize your recovery journey with interactive charts, milestone tracking, and detailed analytics.</p>
+      <main className="modern-main">
+        {/* Features Section */}
+        <section className="features-modern" id="features">
+          <div className="section-header">
+            <h2 className="section-title">Why Choose RehabMotion?</h2>
+            <p className="section-subtitle">Everything you need for a successful recovery journey</p>
+          </div>
+          <div className="features-grid">
+            <div className="feature-card-modern">
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">🤖</div>
+              </div>
+              <h3>Live Form Tracking</h3>
+              <p>Real-time exercise form analysis using computer vision to ensure safe and effective rehabilitation</p>
+              <div className="feature-badge">New</div>
+            </div>
+            <div className="feature-card-modern">
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">👨‍⚕️</div>
+              </div>
+              <h3>Expert-Designed Programs</h3>
+              <p>Created by certified physical therapists and medical professionals with years of experience</p>
+            </div>
+            <div className="feature-card-modern">
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">📈</div>
+              </div>
+              <h3>Smart Progress Tracking</h3>
+              <p>Visualize your recovery with interactive charts, pain tracking, and milestone achievements</p>
+            </div>
+            <div className="feature-card-modern">
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">🎯</div>
+              </div>
+              <h3>Personalized Plans</h3>
+              <p>Adaptive programs that adjust based on your pain levels, fitness, and recovery progress</p>
+            </div>
+            <div className="feature-card-modern">
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">🎥</div>
+              </div>
+              <h3>Video Demonstrations</h3>
+              <p>High-quality exercise videos with step-by-step instructions for every movement</p>
+            </div>
+            <div className="feature-card-modern">
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">🏆</div>
+              </div>
+              <h3>Achievement Badges</h3>
+              <p>Stay motivated with rewards for consistency, milestones, and recovery progress</p>
+            </div>
           </div>
         </section>
 
-        <section className="features">
-          <div className="feature-card">
-            <h3>🏥 Expert-Guided Rehab</h3>
-            <p>Step-by-step exercise plans tailored to your specific condition and recovery needs, created by licensed professionals.</p>
+        {/* How It Works Section */}
+        <section className="how-it-works" id="how-it-works">
+          <div className="section-header">
+            <h2 className="section-title">Your Recovery Journey</h2>
+            <p className="section-subtitle">Four simple steps to start your rehabilitation</p>
           </div>
-          <div className="feature-card">
-            <h3>📈 Smart Progress Tracking</h3>
-            <p>Monitor your improvements with easy-to-read graphs, pain level tracking, and milestone achievements.</p>
-          </div>
-          <div className="feature-card">
-            <h3>🤝 Community Support</h3>
-            <p>Connect with others on a similar recovery journey, share experiences, and get motivated by success stories.</p>
+          <div className="steps-container">
+            <div className="step-card">
+              <div className="step-number">1</div>
+              <div className="step-content">
+                <h3>Create Your Profile</h3>
+                <p>Sign up and tell us about your injury, fitness level, and recovery goals</p>
+              </div>
+            </div>
+            <div className="step-connector">→</div>
+            <div className="step-card">
+              <div className="step-number">2</div>
+              <div className="step-content">
+                <h3>Get Your Plan</h3>
+                <p>Receive a personalized or general rehab program tailored to your specific needs</p>
+              </div>
+            </div>
+            <div className="step-connector">→</div>
+            <div className="step-card">
+              <div className="step-number">3</div>
+              <div className="step-content">
+                <h3>Start Exercising</h3>
+                <p>Follow guided exercises with video demos and live form tracking</p>
+              </div>
+            </div>
+            <div className="step-connector">→</div>
+            <div className="step-card">
+              <div className="step-number">4</div>
+              <div className="step-content">
+                <h3>Track Progress</h3>
+                <p>Monitor your recovery with detailed analytics and celebrate milestones</p>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="testimonials">
-          <h2>💬 What Our Users Say</h2>
-          <div className="testimonial-list">
-            <div className="testimonial">
-              <img src="https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80" alt="Sarah K." className="avatar" />
-              <blockquote>"This platform made my knee recovery so much easier! The guided exercises were perfect for my fitness level."</blockquote>
-              <cite>- Sarah K., Knee Recovery Patient</cite>
-            </div>
-            <div className="testimonial">
-              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80" alt="Mike L." className="avatar" />
-              <blockquote>"I loved tracking my progress and seeing real results. The charts kept me motivated throughout my ankle rehabilitation."</blockquote>
-              <cite>- Mike L., Ankle Recovery Patient</cite>
-            </div>
-            <div className="testimonial">
-              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80" alt="Priya S." className="avatar" />
-              <blockquote>"The community support kept me motivated every day. Sharing my journey with others who understood made all the difference."</blockquote>
-              <cite>- Priya S., Recovery Advocate</cite>
-            </div>
+        {/* Testimonials Section */}
+        <section className="testimonials-modern">
+          <div className="section-header">
+            <h2 className="section-title">Success Stories</h2>
+            <p className="section-subtitle">Join thousands who have recovered successfully</p>
+          </div>
+          <div className="testimonial-slider">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className={`testimonial-slide ${index === currentSlide ? 'active' : ''}`}
+                style={{ display: index === currentSlide ? 'flex' : 'none' }}
+              >
+                <div className="testimonial-content">
+                  <div className="quote-icon">"</div>
+                  <p className="testimonial-quote">{testimonial.quote}</p>
+                  <div className="testimonial-rating">
+                    {'⭐'.repeat(testimonial.rating)}
+                  </div>
+                  <div className="testimonial-author">
+                    <img src={testimonial.image} alt={testimonial.name} className="author-avatar" />
+                    <div className="author-info">
+                      <div className="author-name">{testimonial.name}</div>
+                      <div className="author-role">{testimonial.role}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="testimonial-dots">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                className={`dot ${index === currentSlide ? 'active' : ''}`}
+                onClick={() => setCurrentSlide(index)}
+                aria-label={`Go to testimonial ${index + 1}`}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="cta-section">
+          <div className="cta-content">
+            <h2>Ready to Start Your Recovery?</h2>
+            <p>Join thousands of users who have successfully recovered with RehabMotion</p>
+            <a 
+              onClick={() => user ? navigateTo('dashboard') : navigateTo('login')} 
+              className="btn-cta"
+              style={{ cursor: 'pointer' }}
+            >
+              Get Started
+              <span className="btn-arrow">→</span>
+            </a>
           </div>
         </section>
       </main>
