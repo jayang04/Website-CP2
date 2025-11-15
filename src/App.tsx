@@ -601,12 +601,10 @@ function App() {
           <div className="footer-info">
             <h4>Contact Information</h4>
             <p><strong>Email:</strong><br />
-              <a href="mailto:support@rehabmotion.com">support@rehabmotion.com</a><br />
-              <a href="mailto:help@rehabmotion.com">help@rehabmotion.com</a>
+              <a href="mailto:23029762@imail.sunway.edu.my">23029762@imail.sunway.edu.my</a><br />
             </p>
             <p><strong>Phone:</strong><br />
-              <a href="tel:+1234567890">+1 (234) 567-890</a><br />
-              <a href="tel:+1234567891">+1 (234) 567-891</a>
+              <a href="tel:+60122163450">+6012-2163450</a><br />
             </p>
           </div>
           <div className="footer-links">
