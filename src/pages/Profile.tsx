@@ -88,7 +88,7 @@ export default function Profile() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Profile Header */}
         <div className="text-center mb-12">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center mx-auto mb-6 text-white text-5xl font-bold shadow-xl">
+          <div className="w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-5xl font-bold shadow-xl" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
             {user?.photoURL ? (
               <img src={user.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover" />
             ) : (
@@ -118,7 +118,8 @@ export default function Profile() {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg transition-all focus:outline-none focus:ring-4 focus:ring-blue-300"
+                  className="px-6 py-3 text-white rounded-lg font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all focus:outline-none focus:ring-4"
+                  style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                 >
                   ✏️ Edit Profile
                 </button>
@@ -161,7 +162,8 @@ export default function Profile() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg text-base font-semibold hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-300"
+                    className="flex-1 px-6 py-3 text-white rounded-lg text-base font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-4"
+                    style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                   >
                     {loading ? 'Saving...' : '💾 Save Changes'}
                   </button>

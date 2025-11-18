@@ -15,12 +15,12 @@ export default function Help() {
     {
       category: 'Getting Started',
       question: 'How do I start my rehabilitation program?',
-      answer: 'Navigate to "My Rehab Programs" from the dashboard, select your injury type (ACL, MCL, Meniscus, or Ankle Sprain), and follow the guided assessment to create your personalized program.'
+      answer: 'Navigate to the dashboard, select whether you want a personalised plan or a general plan according to your injury type (ACL, MCL, Meniscus, or Ankle Sprain).'
     },
     {
       category: 'Getting Started',
       question: 'How do I track my exercises?',
-      answer: 'Each exercise has a "Track with Camera" button that uses pose detection to count your repetitions and ensure proper form. You can also manually mark exercises as complete.'
+      answer: 'After finishing the exercises, you can mark them as completed to show that you have already completed them every day. Some exercises have a "Live Form Tracker" button that uses pose detection to count your repetitions and ensure you did it correctly'
     },
     {
       category: 'Exercises',
@@ -55,33 +55,13 @@ export default function Help() {
     {
       category: 'Technical',
       question: 'Why isn\'t the camera working for exercise tracking?',
-      answer: 'Make sure you\'ve granted camera permissions to your browser. The camera feature requires good lighting and should show your full body in the frame. If issues persist, try using a different browser or device.'
+      answer: 'Make sure you\'ve granted camera permissions to your browser. The camera feature requires good lighting and should show your full body in the frame.'
     },
     {
       category: 'Technical',
       question: 'What browsers are supported?',
       answer: 'RehabMotion works best on Chrome, Firefox, Safari, and Edge (latest versions). The AI pose detection feature requires a modern browser with camera support.'
     },
-    {
-      category: 'Technical',
-      question: 'Is my data secure?',
-      answer: 'Yes! All your data is encrypted and stored securely in Firebase. We never share your personal health information without your explicit consent.'
-    },
-    {
-      category: 'Account',
-      question: 'How do I change my password?',
-      answer: 'Go to your Profile page and click "Edit Profile". You can update your password in the Change Password section.'
-    },
-    {
-      category: 'Account',
-      question: 'Can I have multiple injury programs active?',
-      answer: 'Yes! You can work on rehabilitation for multiple injuries simultaneously. Each program tracks progress independently.'
-    },
-    {
-      category: 'Account',
-      question: 'How do I delete my account?',
-      answer: 'Contact us at support@rehabmotion.com to request account deletion. We\'ll process your request within 48 hours.'
-    }
   ];
 
   const categories = ['all', ...Array.from(new Set(faqs.map(faq => faq.category)))];
@@ -122,11 +102,15 @@ export default function Help() {
           {categories.map(category => (
             <button
               key={category}
-              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+              className={`px-6 py-3 rounded-lg font-semibold transition-all border-2 ${
                 selectedCategory === category
-                  ? 'bg-blue-600 text-white border-2 border-blue-600'
-                  : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                  ? 'text-white'
+                  : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
               }`}
+              style={selectedCategory === category 
+                ? { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderColor: '#667eea' }
+                : {}
+              }
               onClick={() => setSelectedCategory(category)}
             >
               {category === 'all' ? 'All Topics' : category}
@@ -149,12 +133,14 @@ export default function Help() {
                   }`}
                   onClick={() => toggleFAQ(index)}
                 >
-                  <div className={`flex items-center gap-4 p-5 ${
-                    expandedFAQ === index 
-                      ? 'bg-gradient-to-r from-blue-50 to-blue-100' 
-                      : 'bg-gray-50'
-                  }`}>
-                    <span className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-bold uppercase tracking-wide flex-shrink-0">
+                  <div 
+                    className="flex items-center gap-4 p-5"
+                    style={expandedFAQ === index 
+                      ? { background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' }
+                      : { background: '#f9fafb' }
+                    }
+                  >
+                    <span className="px-3 py-1 text-white rounded text-xs font-bold uppercase tracking-wide flex-shrink-0" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
                       {faq.category}
                     </span>
                     <h3 className="flex-1 text-lg font-semibold text-gray-900 leading-snug">
@@ -179,54 +165,22 @@ export default function Help() {
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Quick Links</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <a href="#" className="bg-white p-8 rounded-xl border-2 border-gray-300 hover:border-blue-600 hover:-translate-y-1 hover:shadow-xl transition-all text-center group">
-              <span className="text-5xl block mb-4">📚</span>
-              <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">User Guide</h3>
-              <p className="text-gray-600 text-sm">Complete guide to using RehabMotion</p>
-            </a>
-            <a href="#" className="bg-white p-8 rounded-xl border-2 border-gray-300 hover:border-blue-600 hover:-translate-y-1 hover:shadow-xl transition-all text-center group">
-              <span className="text-5xl block mb-4">🎥</span>
-              <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">Video Tutorials</h3>
-              <p className="text-gray-600 text-sm">Watch step-by-step tutorials</p>
-            </a>
-            <a href="#" className="bg-white p-8 rounded-xl border-2 border-gray-300 hover:border-blue-600 hover:-translate-y-1 hover:shadow-xl transition-all text-center group">
-              <span className="text-5xl block mb-4">💬</span>
-              <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">Community Forum</h3>
-              <p className="text-gray-600 text-sm">Connect with other users</p>
-            </a>
-            <a href="#" className="bg-white p-8 rounded-xl border-2 border-gray-300 hover:border-blue-600 hover:-translate-y-1 hover:shadow-xl transition-all text-center group">
-              <span className="text-5xl block mb-4">📧</span>
-              <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600">Contact Support</h3>
-              <p className="text-gray-600 text-sm">Email: support@rehabmotion.com</p>
-            </a>
-          </div>
-        </div>
-
         {/* Contact Section */}
-        <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white p-12 rounded-xl text-center">
-          <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Our support team is here to help you Monday-Friday, 9AM-5PM EST
+        <div className="text-white p-12 rounded-xl text-center" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+          <h2 className="text-3xl font-bold mb-4 text-white">Still Need Help?</h2>
+          <p className="text-xl mb-8" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+            We are here to help you
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
             <div className="bg-white bg-opacity-15 backdrop-blur-lg p-8 rounded-lg border border-white border-opacity-20">
               <span className="text-5xl block mb-4">📧</span>
               <strong className="block text-lg mb-2">Email</strong>
-              <p className="text-blue-100">support@rehabmotion.com</p>
-            </div>
-            <div className="bg-white bg-opacity-15 backdrop-blur-lg p-8 rounded-lg border border-white border-opacity-20">
-              <span className="text-5xl block mb-4">💬</span>
-              <strong className="block text-lg mb-2">Live Chat</strong>
-              <p className="text-blue-100">Available during business hours</p>
+              <p style={{ color: 'rgba(255, 255, 255, 0.9)' }}>23029762@imail.sunway.edu.my</p>
             </div>
             <div className="bg-white bg-opacity-15 backdrop-blur-lg p-8 rounded-lg border border-white border-opacity-20">
               <span className="text-5xl block mb-4">📞</span>
               <strong className="block text-lg mb-2">Phone</strong>
-              <p className="text-blue-100">1-800-REHAB-HELP</p>
+              <p style={{ color: 'rgba(255, 255, 255, 0.9)' }}>+6012-2163450</p>
             </div>
           </div>
         </div>

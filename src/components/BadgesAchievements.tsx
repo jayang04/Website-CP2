@@ -74,7 +74,7 @@ export default function BadgesAchievements({ userId, currentStats = {} }: Badges
   const unlockedCount = filteredBadges.filter(b => b.unlockedAt).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+    <div className="min-h-screen p-6" style={{ background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)' }}>
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
@@ -88,7 +88,7 @@ export default function BadgesAchievements({ userId, currentStats = {} }: Badges
 
         {/* User Stats Card */}
         {userBadges && (
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-2xl p-8 mb-8 text-white">
+          <div className="rounded-3xl shadow-2xl p-8 mb-8 text-white" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
             <div className="grid md:grid-cols-3 gap-6">
               
               {/* Level Section */}
@@ -146,9 +146,13 @@ export default function BadgesAchievements({ userId, currentStats = {} }: Badges
                   onClick={() => setSelectedCategory(cat.key)}
                   className={`px-4 py-2 rounded-xl font-semibold transition-all duration-200 ${
                     selectedCategory === cat.key
-                      ? 'bg-blue-600 text-white shadow-lg scale-105'
+                      ? 'text-white shadow-lg scale-105'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
+                  style={selectedCategory === cat.key 
+                    ? { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }
+                    : {}
+                  }
                 >
                   <span className="mr-2">{cat.icon}</span>
                   {cat.label}

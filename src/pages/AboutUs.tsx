@@ -1,14 +1,15 @@
 export default function AboutUs() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="dashboard-fullscreen">
+      {/* Hero Section */}
+      <div className="text-center py-16 mb-12 text-white px-4 w-full" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+        <h1 className="text-5xl font-bold mb-4 text-white">🏥 About RehabMotion</h1>
+        <p className="text-2xl max-w-3xl mx-auto leading-relaxed text-white opacity-90">
+          Revolutionizing rehabilitation through AI-powered technology and personalized care
+        </p>
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        {/* Hero Section */}
-        <div className="text-center py-16 bg-gradient-to-br from-blue-600 to-blue-800 -mx-4 sm:-mx-6 lg:-mx-8 mb-12 text-white px-4">
-          <h1 className="text-5xl font-bold mb-4 text-white">🏥 About RehabMotion</h1>
-          <p className="text-2xl max-w-3xl mx-auto leading-relaxed text-blue-100">
-            Revolutionizing rehabilitation through AI-powered technology and personalized care
-          </p>
-        </div>
 
         {/* Mission Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 mb-8">
@@ -21,18 +22,14 @@ export default function AboutUs() {
         </div>
 
         {/* Story Section */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 p-12 mb-8">
+        <div className="rounded-xl border-2 p-12 mb-8" style={{ background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)', borderColor: 'rgba(102, 126, 234, 0.3)' }}>
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
-            Founded by a team of physical therapists, engineers, and athletes, RehabMotion was born 
-            from a simple observation: too many people lack access to quality rehabilitation care. 
-            Whether due to cost, location, or time constraints, millions struggle to get the 
-            professional guidance they need to recover from injuries.
+            RehabMotion was developed from a simple observation: too many people lack access to quality rehabilitation care. Whether due to cost, location, or time constraints, millions struggle to get the professional guidance they need to recover from injuries themselves.
           </p>
           <p className="text-lg text-gray-700 leading-relaxed">
-            We created RehabMotion to bridge this gap, leveraging artificial intelligence and computer 
-            vision to bring expert-level rehabilitation guidance directly to your home. Our platform 
-            uses real-time pose detection to ensure proper form, tracks your progress automatically, 
+            RehabMotion was created to bridge this gap, leveraging technology and computer vision to bring expert-level rehabilitation guidance directly to your home. Our platform
+            uses real-time pose detection to ensure proper form, tracks your progress automatically,
             and adapts your program based on your recovery journey.
           </p>
         </div>
@@ -62,15 +59,14 @@ export default function AboutUs() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Team</h2>
           <p className="text-lg text-gray-700 leading-relaxed">
-            RehabMotion is powered by a diverse team of healthcare professionals, software engineers, 
-            and designers who share a passion for improving healthcare accessibility. Our physical 
+            RehabMotion is powered by a diverse team of healthcare professionals who share a passion for improving healthcare accessibility. Our physical 
             therapists bring decades of combined clinical experience, while our engineers leverage 
-            the latest in machine learning and computer vision technology.
+            the latest in computer vision technology.
           </p>
         </div>
 
         {/* Impact Section */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 p-12 mb-8">
+        <div className="rounded-xl border-2 p-12 mb-8" style={{ background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)', borderColor: 'rgba(102, 126, 234, 0.3)' }}>
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Impact</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -92,7 +88,7 @@ export default function AboutUs() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Injuries We Support</h2>
           <div className="space-y-6">
             {[
-              { icon: '🦵', title: 'Knee Injuries', desc: 'ACL Tear, MCL Tear, Meniscus Tear, Patellar Tendonitis' },
+              { icon: '🦵', title: 'Knee Injuries', desc: 'ACL Tear, MCL Tear, Meniscus Tear' },
               { icon: '🦶', title: 'Ankle Injuries', desc: 'Lateral Ankle Sprain, Medial Ankle Sprain, High Ankle Sprain' },
             ].map((injury, idx) => (
               <div key={idx} className="flex items-center gap-6 p-6 bg-gray-50 rounded-lg border-2 border-gray-200">
@@ -118,7 +114,7 @@ export default function AboutUs() {
         </div>
 
         {/* Values Section */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 p-12 mb-8">
+        <div className="rounded-xl border-2 p-12 mb-8" style={{ background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)', borderColor: 'rgba(102, 126, 234, 0.3)' }}>
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
