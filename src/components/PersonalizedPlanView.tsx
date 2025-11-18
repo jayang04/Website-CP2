@@ -9,6 +9,8 @@ import { cloudDashboardService, cloudCompletionsService } from '../services/clou
 import { useBadges } from '../hooks/useBadges';
 import BadgeNotificationToast from './BadgeNotificationToast';
 import { getCloudinaryVideoUrl, convertToCloudinaryPath } from '../services/cloudinaryService';
+import FeedbackModal from './FeedbackModal';
+import type { ExerciseFeedback, FeedbackResponse } from '../types/feedback';
 import '../styles/InjuryRehabProgram.css';
 import '../styles/PersonalizedPlan.css';
 import '../styles/AngleDetector.css';
@@ -56,6 +58,11 @@ export default function PersonalizedPlanView({
   const [completedExercises, setCompletedExercises] = useState<string[]>([]);
   const [currentWeek, setCurrentWeek] = useState<number>(1);
   const [lastCompletedExercise, setLastCompletedExercise] = useState<{id: string, name: string} | null>(null);
+  
+  // Feedback modal state
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackExercise, setFeedbackExercise] = useState<{id: string, name: string} | null>(null);
+  const [sessionId, setSessionId] = useState<string>('');
   
   // Badge system integration
   const { notifications, checkBadges, dismissNotification } = useBadges(userId);
@@ -155,7 +162,7 @@ export default function PersonalizedPlanView({
 
   // Log to dashboard when new exercise is completed
   useEffect(() => {
-    if (lastCompletedExercise) {
+    if (lastCompletedExercise && !showFeedbackModal) {
       cloudDashboardService.addActivity(userId, {
         type: 'completed',
         title: `Completed "${lastCompletedExercise.name}" exercise`,
@@ -170,7 +177,8 @@ export default function PersonalizedPlanView({
         // Update progress percentage and days active
         await updateDashboardProgress();
       }).then(() => {
-        if (onDashboardRefresh) {
+        // Only refresh dashboard if modal is not open to prevent flicker
+        if (onDashboardRefresh && !showFeedbackModal) {
           onDashboardRefresh();
         }
       }).catch(error => {
@@ -179,7 +187,7 @@ export default function PersonalizedPlanView({
       
       setLastCompletedExercise(null);
     }
-  }, [lastCompletedExercise, userId, completedExercises.length, onDashboardRefresh]);
+  }, [lastCompletedExercise, userId, completedExercises.length, onDashboardRefresh, showFeedbackModal]);
 
   useEffect(() => {
     generatePlan();
@@ -253,9 +261,18 @@ export default function PersonalizedPlanView({
         newCompletions = prev.filter(id => id !== exerciseId);
       } else {
         newCompletions = [...prev, exerciseId];
-        setLastCompletedExercise({ id: exerciseId, name: exerciseName });
         
-        // Check for badge unlocks when exercise is completed
+        // Show feedback modal FIRST before any other updates
+        setFeedbackExercise({ id: exerciseId, name: exerciseName });
+        setSessionId(`session_${userId}_${Date.now()}`);
+        setShowFeedbackModal(true);
+        
+        // Delay dashboard updates to prevent interference with modal
+        setTimeout(() => {
+          setLastCompletedExercise({ id: exerciseId, name: exerciseName });
+        }, 100);
+        
+        // Check for badge unlocks when exercise is completed (delayed)
         setTimeout(async () => {
           try {
             const dashboardData = await cloudDashboardService.getDashboardData(userId);
@@ -281,7 +298,7 @@ export default function PersonalizedPlanView({
           } catch (error) {
             console.error('Error checking badges:', error);
           }
-        }, 500);
+        }, 1000);
       }
       
       saveCompletedExercises(newCompletions);
@@ -743,6 +760,37 @@ export default function PersonalizedPlanView({
           onClose={() => dismissNotification(index)}
         />
       ))}
+
+      {/* Feedback Modal */}
+      {feedbackExercise && (
+        <FeedbackModal
+          userId={userId}
+          exerciseId={feedbackExercise.id}
+          exerciseName={feedbackExercise.name}
+          sessionId={sessionId}
+          isOpen={showFeedbackModal}
+          onClose={() => {
+            setShowFeedbackModal(false);
+            setFeedbackExercise(null);
+            
+            // Trigger dashboard update after modal closes
+            if (onDashboardRefresh) {
+              setTimeout(() => {
+                onDashboardRefresh();
+              }, 300);
+            }
+          }}
+          onSubmit={(feedback: ExerciseFeedback, response: FeedbackResponse) => {
+            console.log('Feedback submitted:', feedback);
+            console.log('Response generated:', response);
+            
+            // Store additional context if needed
+            if (response.adjustIntensity) {
+              console.log('⚠️ User may need intensity adjustment');
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

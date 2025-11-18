@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { auth } from '../firebase/config';
+import NotificationService from '../services/notificationService';
+import type { ReminderSchedule } from '../types/feedback';
 
 interface Settings {
   notifications: {
@@ -11,6 +13,8 @@ interface Settings {
     shareProgress: boolean;
     publicProfile: boolean;
   };
+  reminderTime?: string; // HH:MM format
+  reminderFrequency?: 'daily' | 'every-other-day';
 }
 
 export default function Settings() {
@@ -24,7 +28,9 @@ export default function Settings() {
     privacy: {
       shareProgress: false,
       publicProfile: false
-    }
+    },
+    reminderTime: '09:00', // Default 9 AM
+    reminderFrequency: 'daily'
   });
 
   const [saved, setSaved] = useState(false);
@@ -40,13 +46,14 @@ export default function Settings() {
     }
   }, [user]);
 
-  const handleToggle = (category: keyof Settings, key: string) => {
+  const handleToggle = (category: 'notifications' | 'privacy', key: string) => {
     setSettings(prev => {
+      const categorySettings = prev[category];
       const newSettings = {
         ...prev,
         [category]: {
-          ...prev[category],
-          [key]: !prev[category][key as keyof typeof prev[typeof category]]
+          ...categorySettings,
+          [key]: !(categorySettings as any)[key]
         }
       };
       
@@ -62,6 +69,28 @@ export default function Settings() {
   const handleSave = () => {
     if (user) {
       localStorage.setItem(`userSettings_${user.uid}`, JSON.stringify(settings));
+      
+      // Save reminder schedule
+      if (settings.notifications.reminders && settings.reminderTime) {
+        const schedule: ReminderSchedule = {
+          userId: user.uid,
+          reminderTime: settings.reminderTime,
+          frequency: settings.reminderFrequency || 'daily',
+          enabled: true
+        };
+        NotificationService.saveReminderSchedule(schedule);
+        
+        // Request notification permission if not granted
+        NotificationService.requestPermission().then(granted => {
+          if (granted) {
+            NotificationService.initializeReminders(user.uid);
+          }
+        });
+      } else if (user) {
+        // Disable reminders
+        NotificationService.cancelReminders(user.uid);
+      }
+      
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     }
@@ -148,20 +177,62 @@ export default function Settings() {
               </div>
 
               {/* Exercise Reminders */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">Exercise Reminders</h3>
-                  <p className="text-sm text-gray-600">Daily reminders to complete your exercises</p>
+              <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900">Exercise Reminders</h3>
+                    <p className="text-sm text-gray-600">Get reminded to complete your exercises</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.notifications.reminders}
+                      onChange={() => handleToggle('notifications', 'reminders')}
+                      className="sr-only peer"
+                    />
+                    <div className="toggle-gradient w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all"></div>
+                  </label>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.notifications.reminders}
-                    onChange={() => handleToggle('notifications', 'reminders')}
-                    className="sr-only peer"
-                  />
-                  <div className="toggle-gradient w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all"></div>
-                </label>
+
+                {/* Reminder Time Settings */}
+                {settings.notifications.reminders && (
+                  <div className="space-y-4 pt-4 border-t-2 border-gray-200">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        ⏰ Reminder Time
+                      </label>
+                      <input
+                        type="time"
+                        value={settings.reminderTime}
+                        onChange={(e) => setSettings({ ...settings, reminderTime: e.target.value })}
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        📅 Frequency
+                      </label>
+                      <select
+                        value={settings.reminderFrequency}
+                        onChange={(e) => setSettings({ ...settings, reminderFrequency: e.target.value as 'daily' | 'every-other-day' })}
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="daily">Every Day</option>
+                        <option value="every-other-day">Every Other Day</option>
+                      </select>
+                    </div>
+
+                    <button
+                      onClick={async () => {
+                        await NotificationService.sendTestNotification();
+                      }}
+                      className="w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-semibold hover:bg-blue-200 transition-colors"
+                    >
+                      🔔 Test Notification
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

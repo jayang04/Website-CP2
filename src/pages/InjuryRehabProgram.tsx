@@ -7,6 +7,8 @@ import { cloudDashboardService } from '../services/cloudDataService';
 import { useBadges } from '../hooks/useBadges';
 import BadgeNotificationToast from '../components/BadgeNotificationToast';
 import { getCloudinaryVideoUrl, convertToCloudinaryPath } from '../services/cloudinaryService';
+import FeedbackModal from '../components/FeedbackModal';
+import type { ExerciseFeedback, FeedbackResponse } from '../types/feedback';
 import '../styles/InjuryRehabProgram.css';
 import '../styles/AngleDetector.css';
 
@@ -32,6 +34,11 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
   const [exerciseForAngleDetection, setExerciseForAngleDetection] = useState<any>(null);
   const [showProgramSelection, setShowProgramSelection] = useState(false);
   const [lastCompletedExercise, setLastCompletedExercise] = useState<{id: string, name: string} | null>(null);
+  
+  // Feedback modal state
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackExercise, setFeedbackExercise] = useState<{id: string, name: string} | null>(null);
+  const [sessionId, setSessionId] = useState<string>('');
   
   // Badge system integration
   const { notifications, checkBadges, dismissNotification } = useBadges(userId);
@@ -192,7 +199,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
 
   // Log to dashboard when new exercise is completed
   useEffect(() => {
-    if (lastCompletedExercise && progress) {
+    if (lastCompletedExercise && progress && !showFeedbackModal) {
       cloudDashboardService.addActivity(userId, {
         type: 'completed',
         title: `Completed "${lastCompletedExercise.name}" exercise`,
@@ -202,7 +209,8 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
         // Update all dashboard stats including progress percentage and days active
         await updateDashboardProgress();
       }).then(() => {
-        if (onDashboardRefresh) {
+        // Only refresh dashboard if modal is not open to prevent flicker
+        if (onDashboardRefresh && !showFeedbackModal) {
           onDashboardRefresh();
         }
       }).catch(error => {
@@ -211,7 +219,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
       
       setLastCompletedExercise(null);
     }
-  }, [lastCompletedExercise, userId]); // Removed progress and onDashboardRefresh from dependencies
+  }, [lastCompletedExercise, userId, showFeedbackModal]); // Added showFeedbackModal to dependencies
 
   // Check badges when component loads or data updates
   const checkBadgesOnLoad = useCallback(async () => {
@@ -298,10 +306,19 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
       }, 100);
     } else {
       injuryRehabService.completeExercise(userId, exerciseId);
-      setLastCompletedExercise({ id: exerciseId, name: exerciseName });
       loadData();
       
-      // Check for badge unlocks
+      // Show feedback modal FIRST before any other updates
+      setFeedbackExercise({ id: exerciseId, name: exerciseName });
+      setSessionId(`session_${userId}_${Date.now()}`);
+      setShowFeedbackModal(true);
+      
+      // Delay dashboard updates to prevent interference with modal
+      setTimeout(() => {
+        setLastCompletedExercise({ id: exerciseId, name: exerciseName });
+      }, 100);
+      
+      // Check for badge unlocks when exercise is completed (delayed)
       setTimeout(async () => {
         try {
           const dashboardData = await cloudDashboardService.getDashboardData(userId);
@@ -327,7 +344,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
         } catch (error) {
           console.error('Error checking badges:', error);
         }
-      }, 500);
+      }, 1000);
     }
   };
 
@@ -1015,7 +1032,10 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
                 className={`modal-complete-btn ${progress.completedExercises.includes(selectedExercise.id) ? 'completed' : ''}`}
                 onClick={() => {
                   handleToggleExercise(selectedExercise.id);
-                  handleCloseExerciseModal();
+                  // Close modal after a short delay to allow feedback modal to appear
+                  setTimeout(() => {
+                    handleCloseExerciseModal();
+                  }, 200);
                 }}
               >
                 {progress.completedExercises.includes(selectedExercise.id) ? '✓ Completed' : 'Mark as Complete'}
@@ -1085,8 +1105,17 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
                   
                   if (!isAlreadyCompleted) {
                     injuryRehabService.completeExercise(userId, exerciseForAngleDetection.id);
-                    setLastCompletedExercise({ id: exerciseForAngleDetection.id, name: exerciseForAngleDetection.name });
                     loadData(); // Reload data to update the UI
+                    
+                    // Show feedback modal after angle tracking completion
+                    setFeedbackExercise({ id: exerciseForAngleDetection.id, name: exerciseForAngleDetection.name });
+                    setSessionId(`session_${userId}_${Date.now()}`);
+                    setShowFeedbackModal(true);
+                    
+                    // Delay dashboard update
+                    setTimeout(() => {
+                      setLastCompletedExercise({ id: exerciseForAngleDetection.id, name: exerciseForAngleDetection.name });
+                    }, 100);
                   }
                   
                   console.log(`✅ Exercise "${exerciseForAngleDetection.name}" marked as complete with ${reps} reps`);
@@ -1106,6 +1135,37 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
           onClose={() => dismissNotification(index)}
         />
       ))}
+
+      {/* Feedback Modal */}
+      {feedbackExercise && (
+        <FeedbackModal
+          userId={userId}
+          exerciseId={feedbackExercise.id}
+          exerciseName={feedbackExercise.name}
+          sessionId={sessionId}
+          isOpen={showFeedbackModal}
+          onClose={() => {
+            setShowFeedbackModal(false);
+            setFeedbackExercise(null);
+            
+            // Trigger dashboard update after modal closes
+            if (onDashboardRefresh) {
+              setTimeout(() => {
+                onDashboardRefresh();
+              }, 300);
+            }
+          }}
+          onSubmit={(feedback: ExerciseFeedback, response: FeedbackResponse) => {
+            console.log('Feedback submitted:', feedback);
+            console.log('Response generated:', response);
+            
+            // Store additional context if needed
+            if (response.adjustIntensity) {
+              console.log('⚠️ User may need intensity adjustment');
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
