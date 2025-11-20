@@ -145,13 +145,11 @@
   border-radius: 5px;
   background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
   outline: none;
-  -webkit-appearance: none;
   margin-bottom: 1rem;
 }
 
 .pain-slider::-webkit-slider-thumb {
   appearance: none;
-  -webkit-appearance: none;
   width: 24px;
   height: 24px;
   border-radius: 50%;
