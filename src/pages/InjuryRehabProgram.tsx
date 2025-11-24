@@ -45,6 +45,9 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
   
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
+  
+  // Store pending badge check data to run after feedback modal closes
+  const pendingBadgeCheck = useRef<any>(null);
 
   // Helper function to calculate progress percentage for general program
   const calculateGeneralProgramProgress = (): number => {
@@ -306,6 +309,11 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
       }, 100);
     } else {
       injuryRehabService.completeExercise(userId, exerciseId);
+      
+      // Get the updated completion count immediately after completing
+      const userProgress = injuryRehabService.getInjuryProgress(userId);
+      const newCompletionCount = userProgress?.completedExercises.length || 0;
+      
       loadData();
       
       // Show feedback modal FIRST before any other updates
@@ -318,7 +326,7 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
         setLastCompletedExercise({ id: exerciseId, name: exerciseName });
       }, 100);
       
-      // Check for badge unlocks when exercise is completed (delayed)
+      // Store badge check data to run AFTER feedback modal closes
       setTimeout(async () => {
         try {
           const dashboardData = await cloudDashboardService.getDashboardData(userId);
@@ -330,21 +338,22 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
           const videosWatchedStr = localStorage.getItem(`videos_watched_${userId}`) || '[]';
           const videosWatched = JSON.parse(videosWatchedStr).length;
           
-          checkBadges({
-            exercisesCompleted: dashboardData.stats.exercisesCompleted,
+          // Store badge check data to be used when feedback modal closes
+          pendingBadgeCheck.current = {
+            exercisesCompleted: newCompletionCount,
             daysActive: dashboardData.stats.daysActive,
-            currentStreak: 0, // TODO: Track streak
+            currentStreak: 0,
             progressPercentage: dashboardData.stats.progressPercentage,
             phasesCompleted,
             videosWatched,
             isEarlyMorning: currentHour < 8,
             isLateNight: currentHour >= 20,
             isWeekend: currentDay === 0 || currentDay === 6,
-          });
+          };
         } catch (error) {
-          console.error('Error checking badges:', error);
+          console.error('Error preparing badge check:', error);
         }
-      }, 1000);
+      }, 500);
     }
   };
 
@@ -1147,6 +1156,14 @@ export default function InjuryRehabProgram({ userId, onBack: _onBack, onProgramS
           onClose={() => {
             setShowFeedbackModal(false);
             setFeedbackExercise(null);
+            
+            // Check for badge unlocks AFTER feedback modal closes
+            if (pendingBadgeCheck.current) {
+              setTimeout(() => {
+                checkBadges(pendingBadgeCheck.current);
+                pendingBadgeCheck.current = null;
+              }, 500);
+            }
             
             // Trigger dashboard update after modal closes
             if (onDashboardRefresh) {
