@@ -69,9 +69,6 @@ export default function PersonalizedPlanView({
   
   // Track all video elements for auto-pause functionality
   const videoRefs = useRef<Map<HTMLVideoElement, () => void>>(new Map());
-  
-  // Store pending badge check data to run after feedback modal closes
-  const pendingBadgeCheck = useRef<any>(null);
 
   // Helper function to update dashboard progress and days active
   const updateDashboardProgress = async () => {
@@ -275,10 +272,7 @@ export default function PersonalizedPlanView({
           setLastCompletedExercise({ id: exerciseId, name: exerciseName });
         }, 100);
         
-        // Store badge check data to run AFTER feedback modal closes
-        // This ensures badge notifications appear after user submits feedback
-        const newCompletionCount = newCompletions.length;
-        
+        // Check for badge unlocks when exercise is completed (delayed)
         setTimeout(async () => {
           try {
             const dashboardData = await cloudDashboardService.getDashboardData(userId);
@@ -290,22 +284,21 @@ export default function PersonalizedPlanView({
             const videosWatchedStr = localStorage.getItem(`videos_watched_${userId}`) || '[]';
             const videosWatched = JSON.parse(videosWatchedStr).length;
             
-            // Store badge check data to be used when feedback modal closes
-            pendingBadgeCheck.current = {
-              exercisesCompleted: newCompletionCount,
+            checkBadges({
+              exercisesCompleted: dashboardData.stats.exercisesCompleted,
               daysActive: dashboardData.stats.daysActive,
-              currentStreak: 0,
+              currentStreak: 0, // TODO: Track streak
               progressPercentage: dashboardData.stats.progressPercentage,
               phasesCompleted,
               videosWatched,
               isEarlyMorning: currentHour < 8,
               isLateNight: currentHour >= 20,
               isWeekend: currentDay === 0 || currentDay === 6,
-            };
+            });
           } catch (error) {
-            console.error('Error preparing badge check:', error);
+            console.error('Error checking badges:', error);
           }
-        }, 500);
+        }, 1000);
       }
       
       saveCompletedExercises(newCompletions);
@@ -779,14 +772,6 @@ export default function PersonalizedPlanView({
           onClose={() => {
             setShowFeedbackModal(false);
             setFeedbackExercise(null);
-            
-            // Check for badge unlocks AFTER feedback modal closes
-            if (pendingBadgeCheck.current) {
-              setTimeout(() => {
-                checkBadges(pendingBadgeCheck.current);
-                pendingBadgeCheck.current = null;
-              }, 500);
-            }
             
             // Trigger dashboard update after modal closes
             if (onDashboardRefresh) {
