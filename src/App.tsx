@@ -1243,7 +1243,7 @@ function LoginPage({ onLogin, navigateTo }: { onLogin: (email: string, password:
     const result = await authService.resetPassword(email);
     setResetting(false);
     if (result.success) {
-      setResetMessage('Password reset email sent! Please check your inbox.');
+      setResetMessage('Password reset email sent! Please check your inbox and spam folder.');
     } else {
       setResetError(result.message || 'Failed to send reset email.');
     }

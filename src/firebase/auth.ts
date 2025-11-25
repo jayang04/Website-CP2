@@ -105,7 +105,7 @@ export class AuthService {
             await sendPasswordResetEmail(auth, email);
             return {
                 success: true,
-                message: 'Password reset email sent!'
+                message: 'Password reset email sent! Please check your inbox and spam folder.'
             };
         } catch (error: any) {
             return {
