@@ -197,8 +197,8 @@ export default function Settings() {
                 {/* Reminder Time Settings */}
                 {settings.notifications.reminders && (
                   <div className="space-y-4 pt-4 border-t-2 border-gray-200">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <label className="text-sm font-semibold text-gray-700">
                         ⏰ Reminder Time
                       </label>
                       <input
@@ -207,11 +207,8 @@ export default function Settings() {
                         onChange={(e) => {
                           const newSettings = { ...settings, reminderTime: e.target.value };
                           setSettings(newSettings);
-                          // Auto-save reminder time and update reminder schedule
                           if (user) {
                             localStorage.setItem(`userSettings_${user.uid}`, JSON.stringify(newSettings));
-                            
-                            // Update reminder schedule immediately
                             if (settings.notifications.reminders && newSettings.reminderTime) {
                               const schedule: ReminderSchedule = {
                                 userId: user.uid,
@@ -223,12 +220,13 @@ export default function Settings() {
                             }
                           }
                         }}
-                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                        // Changed w-full to w-full sm:w-auto to control width
+                        className="w-full sm:w-auto px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <label className="text-sm font-semibold text-gray-700">
                         📅 Frequency
                       </label>
                       <select
@@ -236,11 +234,8 @@ export default function Settings() {
                         onChange={(e) => {
                           const newSettings = { ...settings, reminderFrequency: e.target.value as 'daily' | 'every-other-day' };
                           setSettings(newSettings);
-                          // Auto-save frequency and update reminder schedule
                           if (user) {
                             localStorage.setItem(`userSettings_${user.uid}`, JSON.stringify(newSettings));
-                            
-                            // Update reminder schedule immediately
                             if (settings.notifications.reminders && newSettings.reminderTime) {
                               const schedule: ReminderSchedule = {
                                 userId: user.uid,
@@ -252,13 +247,13 @@ export default function Settings() {
                             }
                           }
                         }}
-                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                        // Changed w-full to w-full sm:w-auto
+                        className="w-full sm:w-auto px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
                       >
                         <option value="daily">Every Day</option>
                         <option value="every-other-day">Every Other Day</option>
                       </select>
                     </div>
-
 
                   </div>
                 )}
