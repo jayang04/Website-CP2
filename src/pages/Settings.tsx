@@ -197,6 +197,8 @@ export default function Settings() {
                 {/* Reminder Time Settings */}
                 {settings.notifications.reminders && (
                   <div className="space-y-4 pt-4 border-t-2 border-gray-200">
+                    
+                    {/* TIME INPUT: Stacked on Mobile, Row on Desktop */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <label className="text-sm font-semibold text-gray-700">
                         ⏰ Reminder Time
@@ -220,11 +222,15 @@ export default function Settings() {
                             }
                           }
                         }}
-                        // Changed w-full to w-full sm:w-auto to control width
-                        className="w-full sm:w-auto px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                        // BEST VERSION CLASSES:
+                        // 1. appearance-none: Removes iOS bubble style
+                        // 2. w-full sm:w-auto: Full width on phone, auto on desktop
+                        // 3. bg-transparent: Fixes white background issues on some iOS versions
+                        className="w-full sm:w-auto appearance-none bg-transparent px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
                       />
                     </div>
 
+                    {/* FREQUENCY SELECT: Stacked on Mobile, Row on Desktop */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <label className="text-sm font-semibold text-gray-700">
                         📅 Frequency
@@ -247,8 +253,7 @@ export default function Settings() {
                             }
                           }
                         }}
-                        // Changed w-full to w-full sm:w-auto
-                        className="w-full sm:w-auto px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                        className="w-full sm:w-auto appearance-none bg-transparent px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
                       >
                         <option value="daily">Every Day</option>
                         <option value="every-other-day">Every Other Day</option>
