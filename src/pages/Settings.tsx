@@ -259,39 +259,7 @@ export default function Settings() {
                       </select>
                     </div>
 
-                    <div className="space-y-2">
-                      <button
-                        onClick={async () => {
-                          console.log('Test notification button clicked');
-                          const success = await NotificationService.sendTestNotification();
-                          if (success) {
-                            console.log('✅ Test notification sent successfully');
-                          } else {
-                            console.log('❌ Test notification failed');
-                          }
-                        }}
-                        className="w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-semibold hover:bg-blue-200 transition-colors"
-                      >
-                        🔔 Test Notification
-                      </button>
-                      
-                      <button
-                        onClick={async () => {
-                          if (!user) return;
-                          console.log('Send reminder now button clicked');
-                          const success = await NotificationService.sendImmediateReminder(user.uid);
-                          if (success) {
-                            console.log('✅ Reminder sent immediately');
-                            alert('✅ Exercise reminder sent! Check your notifications.');
-                          } else {
-                            console.log('❌ Failed to send reminder');
-                          }
-                        }}
-                        className="w-full px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold hover:bg-green-200 transition-colors"
-                      >
-                        🚀 Send Reminder Now (Test)
-                      </button>
-                    </div>
+
                   </div>
                 )}
               </div>

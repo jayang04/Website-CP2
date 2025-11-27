@@ -54,7 +54,6 @@ function App() {
   // Load saved page from localStorage or default to 'home'
   const [currentPage, setCurrentPage] = useState<Page>(() => {
     const saved = localStorage.getItem('rehabmotion_current_page');
-    console.log('🔍 Loading saved page:', saved);
     return (saved as Page) || 'home';
   });
   const [user, setUser] = useState<User | null>(null);
@@ -96,7 +95,6 @@ function App() {
 
   // Save current page to localStorage when it changes
   useEffect(() => {
-    console.log('💾 Saving page to localStorage:', currentPage);
     localStorage.setItem('rehabmotion_current_page', currentPage);
   }, [currentPage]);
 
@@ -125,7 +123,6 @@ function App() {
   // Listen for auth state changes
   useEffect(() => {
     const handleAuthStateChange = (firebaseUser: FirebaseUser | null) => {
-      console.log('🔐 Auth state changed:', firebaseUser ? `User: ${firebaseUser.email}` : 'No user');
       if (firebaseUser) {
         const fullName = firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User';
         setUser({
@@ -139,7 +136,6 @@ function App() {
         hasCompletedInitialAuth.current = true; // Auth complete with user
         
         // Initialize reminders when user logs in
-        console.log('🔔 Initializing reminders for user:', firebaseUser.uid);
         NotificationService.initializeReminders(firebaseUser.uid);
         
         // Track activity when user logs in
@@ -154,7 +150,7 @@ function App() {
               return cloudDashboardService.updateStats(firebaseUser.uid, { daysActive });
             });
           })
-        ]).catch(err => console.error('Error tracking activity:', err));
+        ]).catch(() => {});
       } else {
         setUser(null);
         setLoading(false);
@@ -181,8 +177,6 @@ function App() {
   // IMPORTANT: Only redirect if we're SURE the user is not authenticated
   // Don't redirect during the initial loading phase
   useEffect(() => {
-    console.log('🛡️ Protection check - loading:', loading, 'user:', !!user, 'currentPage:', currentPage, 'hasCompletedInitialAuth:', hasCompletedInitialAuth.current);
-    
     // Only check protection AFTER initial auth check is complete
     if (hasCompletedInitialAuth.current && !loading) {
       // Small delay to ensure auth state is fully propagated
@@ -190,10 +184,7 @@ function App() {
         // If no user and trying to access protected page, redirect
         const protectedPages = ['dashboard', 'profile', 'settings', 'rehab-program', 'injury-selection', 'injury-rehab'];
         if (!user && protectedPages.includes(currentPage)) {
-          console.log('⚠️ Redirecting to home - user not authenticated');
           setCurrentPage('home');
-        } else if (user) {
-          console.log('✅ User authenticated - access granted to:', currentPage);
         }
       }, 100); // 100ms delay
       
@@ -249,7 +240,6 @@ function App() {
     
     // Generate personalized plan automatically
     if (user) {
-      console.log('🤖 Generating personalized rehab plan...');
       const plan = PersonalizationService.generatePlan(
         user.uid,
         {
@@ -268,7 +258,6 @@ function App() {
       );
       
       setPersonalizedPlan(plan);
-      console.log('✅ Plan generated successfully:', plan.phase, `- Week ${plan.weekNumber}`);
     }
     
     setShowIntakeForm(false);
@@ -285,8 +274,6 @@ function App() {
     if (!user) return;
     
     if (window.confirm('Are you sure you want to reset ALL your programs? This will clear both personalized and general program data and progress.')) {
-      console.log('🗑️ Resetting ALL programs for user:', user.uid);
-      
       // Clear personalized plan data
       localStorage.removeItem(`intake_data_${user.uid}`);
       localStorage.removeItem(`intake_skipped_${user.uid}`);
@@ -301,8 +288,6 @@ function App() {
       
       // Trigger dashboard refresh
       refreshDashboard();
-      
-      console.log('✅ All programs reset complete');
     }
   };
 
@@ -332,7 +317,7 @@ function App() {
           );
           setPersonalizedPlan(plan);
         } catch (error) {
-          console.error('Error loading intake data:', error);
+          // Silent fail
         }
       }
     }
@@ -935,31 +920,23 @@ function DashboardPage({
       
       // Import and load dashboard data from cloud
       import('./services/cloudDataService').then(({ cloudDashboardService, migrateToCloud }) => {
-        console.log('📊 Loading dashboard for user:', user.uid);
-        
         // First, migrate any existing localStorage data to cloud (runs once)
         return migrateToCloud(user.uid).then(() => {
-          console.log('🔄 Migration complete, loading data...');
           // Then load data from cloud
           return cloudDashboardService.getDashboardData(user.uid);
         });
       }).then(data => {
-        console.log('✅ Dashboard data loaded:', data);
         setDashboardData(data);
         setIsLoadingDashboard(false);
       }).catch(error => {
-        console.error('❌ Error loading dashboard data:', error);
         setDashboardError(error.message);
         
         // Fallback to localStorage if cloud fails
-        console.log('⚠️ Falling back to localStorage...');
         import('./services/dataService').then(({ dashboardService }) => {
           const localData = dashboardService.getDashboardData(user.uid);
-          console.log('📦 Loaded from localStorage:', localData);
           setDashboardData(localData);
           setIsLoadingDashboard(false);
-        }).catch(fallbackError => {
-          console.error('❌ Fallback also failed:', fallbackError);
+        }).catch(() => {
           setIsLoadingDashboard(false);
         });
       });

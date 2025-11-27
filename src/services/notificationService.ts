@@ -14,7 +14,6 @@ class NotificationService {
    */
   static async requestPermission(): Promise<boolean> {
     if (!('Notification' in window)) {
-      console.log('This browser does not support notifications');
       return false;
     }
 
@@ -88,14 +87,10 @@ class NotificationService {
     const existingTimer = this.notificationTimers.get(schedule.userId);
     if (existingTimer) {
       clearTimeout(existingTimer);
-      console.log('🔄 Cancelled previous reminder timer');
     }
 
     const now = new Date();
     const [hours, minutes] = schedule.reminderTime.split(':').map(Number);
-    
-    console.log(`⏰ Current time: ${now.toLocaleTimeString()}`);
-    console.log(`⏰ Target time: ${hours}:${String(minutes).padStart(2, '0')}`);
     
     // Calculate next reminder time
     const nextReminder = new Date();
@@ -106,15 +101,11 @@ class NotificationService {
     const timeDiff = nextReminder.getTime() - now.getTime();
     const minutesDiff = timeDiff / (1000 * 60);
     
-    console.log(`⏰ Time difference: ${Math.round(minutesDiff)} minutes`);
-    
     if (minutesDiff < -1) {
       // Time has passed by more than a minute, schedule for tomorrow
       nextReminder.setDate(nextReminder.getDate() + 1);
-      console.log('📆 Time already passed today, scheduling for tomorrow');
     } else if (minutesDiff < 0) {
       // Just passed (within 1 minute), send immediately
-      console.log('🚀 Time just passed, sending reminder immediately');
       setTimeout(() => {
         this.sendReminder(schedule.userId);
       }, 1000);
@@ -130,28 +121,20 @@ class NotificationService {
       if (daysSinceActivity % 2 !== 0) {
         // Skip today, schedule for next day
         nextReminder.setDate(nextReminder.getDate() + 1);
-        console.log('📆 Every-other-day: Skipping today, scheduling for next occurrence');
       }
     }
 
     // Calculate delay in milliseconds
     const delay = nextReminder.getTime() - now.getTime();
-    const delayMinutes = Math.round(delay / (1000 * 60));
-
-    console.log(`⏰ Next reminder in ${delayMinutes} minutes`);
-    console.log(`📅 Next reminder at: ${nextReminder.toLocaleString()}`);
 
     // Schedule the reminder
     const timer = setTimeout(() => {
-      console.log('🔔 Reminder timer triggered!');
       this.sendReminder(schedule.userId);
       // Reschedule for next day
       this.scheduleNextReminder(schedule);
     }, delay) as unknown as number;
 
     this.notificationTimers.set(schedule.userId, timer);
-    
-    console.log(`✅ Reminder successfully scheduled`);
   }
 
   /**
@@ -169,20 +152,15 @@ class NotificationService {
    * Send reminder notification
    */
   static async sendReminder(userId: string, skipActivityCheck: boolean = false): Promise<void> {
-    console.log('🔔 sendReminder called for user:', userId);
-    
     // Check if user actually needs a reminder (can be skipped for manual testing)
     if (!skipActivityCheck && !FeedbackService.shouldSendReminder(userId)) {
-      console.log('ℹ️ User is active, skipping reminder');
       return;
     }
 
     const message = FeedbackService.getContextualReminder(userId);
-    console.log('📝 Reminder message:', message);
     
     // Send browser notification if supported
     if (this.isNotificationSupported()) {
-      console.log('✅ Sending browser notification...');
       new Notification('RehabMotion Reminder 🏃', {
         body: message,
         icon: '/logo.png',
@@ -190,9 +168,6 @@ class NotificationService {
         tag: 'exercise-reminder',
         requireInteraction: false
       });
-      console.log('✅ Browser notification sent successfully!');
-    } else {
-      console.log('⚠️ Browser notifications not supported or not permitted');
     }
 
     // Store notification in history
@@ -213,10 +188,8 @@ class NotificationService {
       existing.push(notificationRecord);
       localStorage.setItem(`notifications_${userId}`, JSON.stringify(existing.slice(-50))); // Keep last 50
     } catch (error) {
-      console.error('Error storing notification:', error);
+      // Silent fail
     }
-
-    console.log('🔔 Reminder sent:', message);
   }
 
   /**
@@ -232,8 +205,6 @@ class NotificationService {
         tag: 'encouragement'
       });
     }
-
-    console.log('✨ Encouragement sent:', message);
   }
 
   /**
@@ -244,7 +215,6 @@ class NotificationService {
       const stored = localStorage.getItem(`notifications_${userId}`);
       return stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error('Error loading notification history:', error);
       return [];
     }
   }
@@ -253,95 +223,13 @@ class NotificationService {
    * Initialize reminders for user (call on app load)
    */
   static initializeReminders(userId: string): void {
-    console.log('🔔 Initializing reminders for user:', userId);
     const schedule = this.getReminderSchedule(userId);
     
-    if (!schedule) {
-      console.log('ℹ️ No reminder schedule found for user');
+    if (!schedule || !schedule.enabled) {
       return;
     }
-    
-    if (!schedule.enabled) {
-      console.log('ℹ️ Reminders are disabled for user');
-      return;
-    }
-    
-    console.log('✅ Reminder schedule found:', {
-      time: schedule.reminderTime,
-      frequency: schedule.frequency,
-      enabled: schedule.enabled
-    });
     
     this.scheduleNextReminder(schedule);
-  }
-
-  /**
-   * Send test notification
-   */
-  static async sendTestNotification(): Promise<boolean> {
-    console.log('🔔 Test notification button clicked');
-    console.log('Notification support:', 'Notification' in window);
-    console.log('Current permission:', Notification?.permission);
-    
-    // Check if notifications are supported
-    if (!('Notification' in window)) {
-      alert('❌ Your browser does not support notifications.\nPlease try Chrome, Firefox, or Edge.');
-      console.error('Notifications not supported in this browser');
-      return false;
-    }
-
-    const hasPermission = await this.requestPermission();
-    console.log('Permission granted:', hasPermission);
-    
-    if (!hasPermission) {
-      alert('⚠️ Notification permission denied.\n\nTo enable notifications:\n1. Click the lock/info icon in your address bar\n2. Find "Notifications"\n3. Select "Allow"\n4. Refresh the page and try again');
-      return false;
-    }
-
-    try {
-      const notification = new Notification('RehabMotion Test', {
-        body: '🎉 Notifications are working! You will receive exercise reminders.',
-        icon: '/logo.png',
-        badge: '/logo.png',
-        requireInteraction: false,
-        silent: false
-      });
-
-      notification.onclick = () => {
-        console.log('✅ Test notification clicked');
-        window.focus();
-        notification.close();
-      };
-
-      console.log('✅ Test notification sent successfully');
-      return true;
-    } catch (error) {
-      console.error('❌ Error sending notification:', error);
-      alert('Failed to send test notification. Check browser console for details.');
-      return false;
-    }
-  }
-
-  /**
-   * Send immediate reminder for testing (bypasses activity check)
-   */
-  static async sendImmediateReminder(userId: string): Promise<boolean> {
-    console.log('🚀 Sending immediate reminder for testing...');
-    
-    const hasPermission = await this.requestPermission();
-    if (!hasPermission) {
-      alert('Please enable notifications first');
-      return false;
-    }
-
-    try {
-      await this.sendReminder(userId, true); // true = skip activity check
-      console.log('✅ Immediate reminder sent successfully');
-      return true;
-    } catch (error) {
-      console.error('❌ Error sending immediate reminder:', error);
-      return false;
-    }
   }
 }
 
