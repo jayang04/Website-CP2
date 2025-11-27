@@ -16,6 +16,7 @@ import PersonalizedPlanView from './components/PersonalizedPlanView'
 import SmartIntakeForm from './components/SmartIntakeForm'
 import { PersonalizationService } from './services/personalizationService'
 import type { PersonalizedPlan } from './types/personalization'
+import NotificationService from './services/notificationService'
 
 // Types
 interface User {
@@ -136,6 +137,10 @@ function App() {
         });
         setLoading(false);
         hasCompletedInitialAuth.current = true; // Auth complete with user
+        
+        // Initialize reminders when user logs in
+        console.log('🔔 Initializing reminders for user:', firebaseUser.uid);
+        NotificationService.initializeReminders(firebaseUser.uid);
         
         // Track activity when user logs in
         Promise.all([
