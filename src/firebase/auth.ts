@@ -52,8 +52,9 @@ export class AuthService {
             }
             
             // Send email verification
+            // Use current domain (works for localhost and production)
             await sendEmailVerification(user, {
-                url: window.location.origin + '/dashboard', // Redirect after verification
+                url: window.location.origin, // Redirect to home after verification
                 handleCodeInApp: false
             });
             
@@ -155,7 +156,7 @@ export class AuthService {
             }
             
             await sendEmailVerification(this.currentUser, {
-                url: window.location.origin + '/dashboard',
+                url: window.location.origin, // Use current domain
                 handleCodeInApp: false
             });
             

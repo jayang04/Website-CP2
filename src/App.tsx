@@ -958,7 +958,7 @@ function DashboardPage({
           You need to be logged in to access the dashboard.
         </p>
         <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-          Please <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} style={{ color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 600 }}>log in</a> to continue.
+          Please <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('login'); }} style={{ color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 600 }}>log in</a> to continue.
         </p>
       </div>
     );
