@@ -143,12 +143,12 @@ export default function Settings() {
             </div>
             <div className="space-y-4">
               {/* Email Notifications */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-semibold text-gray-900">Email Notifications</h3>
                   <p className="text-sm text-gray-600">Receive updates about your rehab progress via email</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                   <input
                     type="checkbox"
                     checked={settings.notifications.email}
@@ -160,12 +160,12 @@ export default function Settings() {
               </div>
 
               {/* Push Notifications */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-semibold text-gray-900">Push Notifications</h3>
                   <p className="text-sm text-gray-600">Get real-time notifications in your browser</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                   <input
                     type="checkbox"
                     checked={settings.notifications.push}
@@ -276,12 +276,12 @@ export default function Settings() {
             </div>
             <div className="space-y-4">
               {/* Share Progress */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-semibold text-gray-900">Share Progress</h3>
                   <p className="text-sm text-gray-600">Allow sharing your progress with healthcare providers</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                   <input
                     type="checkbox"
                     checked={settings.privacy.shareProgress}
@@ -293,12 +293,12 @@ export default function Settings() {
               </div>
 
               {/* Public Profile */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors">
-                <div className="flex-1">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors gap-4">
+                <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-semibold text-gray-900">Public Profile</h3>
                   <p className="text-sm text-gray-600">Make your profile visible to other users</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                   <input
                     type="checkbox"
                     checked={settings.privacy.publicProfile}
