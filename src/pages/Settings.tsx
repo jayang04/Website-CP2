@@ -178,12 +178,12 @@ export default function Settings() {
 
               {/* Exercise Reminders */}
               <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-colors">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex-1">
+                <div className="flex items-start justify-between mb-4 gap-4">
+                  <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-semibold text-gray-900">Exercise Reminders</h3>
-                    <p className="text-sm text-gray-600">Get reminded to complete your exercises</p>
+                    <p className="text-sm text-gray-600 pr-2">Get reminded to complete your exercises</p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
+                  <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                     <input
                       type="checkbox"
                       checked={settings.notifications.reminders}
