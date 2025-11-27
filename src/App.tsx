@@ -1086,11 +1086,11 @@ function DashboardPage({
                 />
               </div>
               <div className="progress-details">
-                <h3>Knee Rehabilitation Program</h3>
+                <h3>{dashboardData.programProgress.programName}</h3>
                 <div className="progress-bar-full">
-                  <div className="progress-fill" style={{ width: '75%' }}></div>
+                  <div className="progress-fill" style={{ width: `${dashboardData.programProgress.progressPercentage}%` }}></div>
                 </div>
-                <p>Week 3 of 8 - You're doing great! Keep up the excellent work.</p>
+                <p>Week {dashboardData.programProgress.currentWeek} of {dashboardData.programProgress.totalWeeks} - {dashboardData.programProgress.description}</p>
               </div>
             </div>
           </div>

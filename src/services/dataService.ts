@@ -71,7 +71,7 @@ const getDefaultDashboardData = (): DashboardData => ({
   },
   activities: [],
   programProgress: {
-    programName: 'No active program',
+    programName: 'No Active Program',
     currentWeek: 0,
     totalWeeks: 8,
     progressPercentage: 0,
@@ -88,8 +88,8 @@ const getDefaultDashboardData = (): DashboardData => ({
     {
       id: '2',
       icon: '🏆',
-      title: 'Achievements and Badges',
-      description: 'View your achievements and earned badges',
+      title: 'Badges and Achievements',
+      description: 'View your badges and earned achievements',
       link: '#'
     }
   ]
