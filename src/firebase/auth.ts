@@ -6,6 +6,7 @@ import {
     signOut,
     onAuthStateChanged,
     sendPasswordResetEmail,
+    sendEmailVerification,
     updateProfile,
     type User as FirebaseUser
 } from "firebase/auth";
@@ -50,10 +51,16 @@ export class AuthService {
                 this.notifyAuthStateListeners(auth.currentUser);
             }
             
+            // Send email verification
+            await sendEmailVerification(user, {
+                url: window.location.origin + '/dashboard', // Redirect after verification
+                handleCodeInApp: false
+            });
+            
             return {
                 success: true,
                 user: auth.currentUser || user,
-                message: 'Account created successfully!'
+                message: 'Account created! Please check your email to verify your account.'
             };
         } catch (error: any) {
             return {
@@ -68,9 +75,21 @@ export class AuthService {
     async login(email: string, password: string): Promise<AuthResult> {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            
+            // Check if email is verified
+            if (!user.emailVerified) {
+                return {
+                    success: false,
+                    user: user,
+                    error: 'auth/email-not-verified',
+                    message: 'Please verify your email before logging in. Check your inbox for the verification link.'
+                };
+            }
+            
             return {
                 success: true,
-                user: userCredential.user,
+                user: user,
                 message: 'Login successful!'
             };
         } catch (error: any) {
@@ -114,6 +133,48 @@ export class AuthService {
                 message: this.getErrorMessage(error.code)
             };
         }
+    }
+    
+    // Resend email verification
+    async resendVerificationEmail(): Promise<AuthResult> {
+        try {
+            if (!this.currentUser) {
+                return {
+                    success: false,
+                    error: 'auth/no-user',
+                    message: 'No user is currently logged in.'
+                };
+            }
+            
+            if (this.currentUser.emailVerified) {
+                return {
+                    success: false,
+                    error: 'auth/already-verified',
+                    message: 'Your email is already verified!'
+                };
+            }
+            
+            await sendEmailVerification(this.currentUser, {
+                url: window.location.origin + '/dashboard',
+                handleCodeInApp: false
+            });
+            
+            return {
+                success: true,
+                message: 'Verification email sent! Please check your inbox and spam folder.'
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                error: error.code,
+                message: this.getErrorMessage(error.code)
+            };
+        }
+    }
+    
+    // Check if current user's email is verified
+    isEmailVerified(): boolean {
+        return this.currentUser?.emailVerified ?? false;
     }
     
     // Upload profile picture

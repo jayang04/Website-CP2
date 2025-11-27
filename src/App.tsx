@@ -10,6 +10,7 @@ import Settings from './pages/Settings'
 import Help from './pages/Help'
 import AboutUs from './pages/AboutUs'
 import BadgesPage from './pages/Badges'
+import EmailVerificationNotice from './components/EmailVerificationNotice'
 import { injuryRehabService } from './services/dataService'
 import { type InjuryType } from './types/injuries'
 import PersonalizedPlanView from './components/PersonalizedPlanView'
@@ -207,7 +208,8 @@ function App() {
     const displayName = `${firstName} ${lastName}`;
     const result = await authService.register(email, password, displayName);
     if (result.success) {
-      setCurrentPage('dashboard');
+      alert(result.message); // Show verification email message
+      setCurrentPage('login'); // Redirect to login page to verify email
     } else {
       alert(result.message);
     }
@@ -332,6 +334,11 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  // Show email verification notice if user is logged in but email not verified
+  if (user && authService.currentUser && !authService.currentUser.emailVerified) {
+    return <EmailVerificationNotice userEmail={user.email} />;
   }
 
   // Navigation with auth protection
