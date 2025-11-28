@@ -639,44 +639,46 @@ interface HomePageProps {
 }
 
 function HomePage({ user, navigateTo }: HomePageProps) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const testimonials = [
-    {
-      name: "Sarah K.",
-      role: "ACL Recovery Patient",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
-      quote: "This platform made my knee recovery so much easier! The guided exercises were perfect for my fitness level.",
-      rating: 5
-    },
-    {
-      name: "Mike L.",
-      role: "Ankle Sprain Recovery",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
-      quote: "I loved tracking my progress and seeing real results. The charts kept me motivated throughout my ankle rehabilitation.",
-      rating: 5
-    },
-    {
-      name: "Priya S.",
-      role: "MCL Tear Recovery",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
-      quote: "The community support kept me motivated every day. Sharing my journey with others who understood made all the difference.",
-      rating: 5
-    },
-    {
-      name: "James T.",
-      role: "Meniscus Tear Recovery",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
-      quote: "The live form tracking helped me perfect my technique and prevented re-injury. Incredible technology!",
-      rating: 5
-    }
-  ];
+  // Temporarily commented out for real reviews after survey
+  // const [currentSlide, setCurrentSlide] = useState(0);
+  // const testimonials = [
+  //   {
+  //     name: "Sarah K.",
+  //     role: "ACL Recovery Patient",
+  //     image: "https://images.unsplash.com/photo-1494790108755-2616b9d59278?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+  //     quote: "This platform made my knee recovery so much easier! The guided exercises were perfect for my fitness level.",
+  //     rating: 5
+  //   },
+  //   {
+  //     name: "Mike L.",
+  //     role: "Ankle Sprain Recovery",
+  //     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+  //     quote: "I loved tracking my progress and seeing real results. The charts kept me motivated throughout my ankle rehabilitation.",
+  //     rating: 5
+  //   },
+  //   {
+  //     name: "Priya S.",
+  //     role: "MCL Tear Recovery",
+  //     image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+  //     quote: "The community support kept me motivated every day. Sharing my journey with others who understood made all the difference.",
+  //     rating: 5
+  //   },
+  //   {
+  //     name: "James T.",
+  //     role: "Meniscus Tear Recovery",
+  //     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=60&h=60&q=80",
+  //     quote: "The live form tracking helped me perfect my technique and prevented re-injury. Incredible technology!",
+  //     rating: 5
+  //   }
+  // ];
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+  // Temporarily commented out for real reviews after survey
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+  //   }, 5000);
+  //   return () => clearInterval(timer);
+  // }, []);
 
   return (
     <>
@@ -832,8 +834,8 @@ function HomePage({ user, navigateTo }: HomePageProps) {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="testimonials-modern">
+        {/* Testimonials Section - TEMPORARILY COMMENTED OUT - Will include real reviews after post survey evaluation */}
+        {/* <section className="testimonials-modern">
           <div className="section-header">
             <h2 className="section-title">Success Stories</h2>
             <p className="section-subtitle">Join thousands who have recovered successfully</p>
@@ -872,7 +874,7 @@ function HomePage({ user, navigateTo }: HomePageProps) {
               />
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* CTA Section */}
         <section className="cta-section">
