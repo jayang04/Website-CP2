@@ -66,7 +66,7 @@ export default function Settings() {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (user) {
       localStorage.setItem(`userSettings_${user.uid}`, JSON.stringify(settings));
       
@@ -81,11 +81,12 @@ export default function Settings() {
         NotificationService.saveReminderSchedule(schedule);
         
         // Request notification permission if not granted
-        NotificationService.requestPermission().then(granted => {
-          if (granted) {
-            NotificationService.initializeReminders(user.uid);
-          }
-        });
+        const granted = await NotificationService.requestPermission();
+        if (granted) {
+          NotificationService.initializeReminders(user.uid);
+        } else {
+          alert('Please enable browser notifications to receive exercise reminders.');
+        }
       } else if (user) {
         // Disable reminders
         NotificationService.cancelReminders(user.uid);

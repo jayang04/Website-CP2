@@ -96,20 +96,11 @@ class NotificationService {
     const nextReminder = new Date();
     nextReminder.setHours(hours, minutes, 0, 0);
     
-    // If time has passed today by more than 1 minute, schedule for tomorrow
-    // Allow 1-minute grace period for just-set reminders
+    // Calculate time difference in milliseconds
     const timeDiff = nextReminder.getTime() - now.getTime();
-    const minutesDiff = timeDiff / (1000 * 60);
     
-    if (minutesDiff < -1) {
-      // Time has passed by more than a minute, schedule for tomorrow
-      nextReminder.setDate(nextReminder.getDate() + 1);
-    } else if (minutesDiff < 0) {
-      // Just passed (within 1 minute), send immediately
-      setTimeout(() => {
-        this.sendReminder(schedule.userId);
-      }, 1000);
-      // Then schedule for tomorrow
+    // If time has already passed today, schedule for tomorrow
+    if (timeDiff < 0) {
       nextReminder.setDate(nextReminder.getDate() + 1);
     }
 
@@ -124,13 +115,20 @@ class NotificationService {
       }
     }
 
-    // Calculate delay in milliseconds
+    // Calculate final delay in milliseconds
     const delay = nextReminder.getTime() - now.getTime();
+    
+    // Ensure delay is positive
+    if (delay <= 0) {
+      console.error('Invalid delay calculated:', delay);
+      return;
+    }
 
     // Schedule the reminder
     const timer = setTimeout(() => {
+      console.log('Reminder timer fired at', new Date().toLocaleTimeString());
       this.sendReminder(schedule.userId);
-      // Reschedule for next day
+      // Reschedule for next occurrence based on frequency
       this.scheduleNextReminder(schedule);
     }, delay) as unknown as number;
 
@@ -154,6 +152,7 @@ class NotificationService {
   static async sendReminder(userId: string, skipActivityCheck: boolean = false): Promise<void> {
     // Check if user actually needs a reminder (can be skipped for manual testing)
     if (!skipActivityCheck && !FeedbackService.shouldSendReminder(userId)) {
+      console.log('Reminder skipped - user has been active within 24 hours');
       return;
     }
 
@@ -161,6 +160,7 @@ class NotificationService {
     
     // Send browser notification if supported
     if (this.isNotificationSupported()) {
+      console.log('Sending reminder notification');
       new Notification('RehabMotion Reminder 🏃', {
         body: message,
         icon: '/logo.png',
@@ -168,6 +168,8 @@ class NotificationService {
         tag: 'exercise-reminder',
         requireInteraction: false
       });
+    } else {
+      console.warn('Notifications not available - permission:', 'Notification' in window ? Notification.permission : 'not supported');
     }
 
     // Store notification in history
