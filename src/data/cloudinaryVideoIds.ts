@@ -36,7 +36,7 @@ export const CLOUDINARY_VIDEO_IDS: Record<string, string> = {
   'exercise-demo-videos/Lateral_Ankle_Sprain/Ankle_Strengthening_(Isometric:Eversion_Band_Work)': 'Ankle_Strengthening_Isometric_Eversion_Band_Work_vnx67i', // TODO: Add actual ID
   'exercise-demo-videos/Lateral_Ankle_Sprain/Calf_Raise_Exercise': 'Calf_Raise_Exercise_k55lww', // TODO: Add actual ID
   'exercise-demo-videos/Lateral_Ankle_Sprain/Proprioceptive_Control_(Clock_Reaches)': 'Proprioceptive_Control_Clock_Reaches_ych3nv', // TODO: Add actual ID
-  'exercise-demo-videos/Lateral_Ankle_Sprain/Single-Leg_Squat': 'Single-Leg_Squat_ybk61e', // TODO: Add actual ID
+  'exercise-demo-videos/Lateral_Ankle_Sprain/Single-Leg_Squat': 'Single_Leg_Squat_ybk61e', // TODO: Add actual ID
   'exercise-demo-videos/Lateral_Ankle_Sprain/Forward_Lunge': 'Forward_Lunge_q4znso', // TODO: Add actual ID
   'exercise-demo-videos/Lateral_Ankle_Sprain/Hop_to_Landing': 'Hop_to_Landing_a5fk8t', // TODO: Add actual ID
 
