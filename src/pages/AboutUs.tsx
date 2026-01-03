@@ -106,7 +106,7 @@ export default function AboutUs() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Technology</h2>
           <p className="text-lg text-gray-700 leading-relaxed">
-            RehabMotion uses TensorFlow.js and MediaPipe Pose for real-time pose detection and 
+            RehabMotion uses Google MediaPipe Pose Landmarker for real-time pose detection and 
             exercise tracking. Our algorithms can detect 33 body landmarks with high accuracy, 
             enabling precise form analysis and automatic rep counting. The entire system runs 
             in your browser, ensuring privacy and instant feedback without server delays.

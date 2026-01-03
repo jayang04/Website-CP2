@@ -106,7 +106,7 @@ npm run dev
 
 | Document | What's Inside | When to Use |
 |----------|---------------|-------------|
-| [📐 ANGLE_DETECTION_GUIDE.md](./guides/ANGLE_DETECTION_GUIDE.md) | Pose detection setup, TensorFlow.js, angle tracking | Implementing pose detection |
+| [📐 ANGLE_DETECTION_GUIDE.md](./guides/ANGLE_DETECTION_GUIDE.md) | Pose detection setup, angle tracking | Implementing pose detection |
 | [🎬 EXERCISE_MEDIA_GUIDE.md](./guides/EXERCISE_MEDIA_GUIDE.md) | Video management, media guidelines | Adding/managing videos |
 | [🎨 PERSONALIZATION_GUIDE.md](./guides/PERSONALIZATION_GUIDE.md) | Personalization system, user preferences | Customization features |
 | [🎨 LOGO_GUIDE.md](./guides/LOGO_GUIDE.md) | Branding guidelines, logo usage | Design reference |
@@ -212,7 +212,6 @@ npm run dev
 - [TailwindCSS Documentation](https://tailwindcss.com/docs)
 
 ### Pose Detection
-- [TensorFlow.js](https://www.tensorflow.org/js)
 - [MediaPipe](https://developers.google.com/mediapipe)
 
 ---
